@@ -2,7 +2,7 @@ from ROOT import *; import glob, numpy as n; from array import array
 from variables import *
 isMC = 0
 
-_fileOUT = 'BsJpsiPhi_notall_v3.root'
+_fileOUT = 'BsJpsiPhi_v3_notall.root'
 
 MyFileNamesMC = glob.glob( MCpath(1) + "*.root")
 MyFileNamesDA = glob.glob("/afs/cern.ch/work/o/ofilatov/CMSSW_5_3_24/src/XbFrame/Xb_frame/crab_projects_Bfinder_Bs_v3/crab_Bfinder_*/results/*.root")
@@ -78,7 +78,7 @@ for _var_ in _MY_VARS_:
 
 ###  declaration and connecting to the branches of my new variables }}}1
 
-match_i = 0
+match_i = 0; bad_values = 0
 for evt in range(0, nEvt):
     ##
     if (ch.GetEntry(evt) <= 0) : break;
@@ -93,6 +93,13 @@ for evt in range(0, nEvt):
         ibs = Bj
         ##
 
+
+        if -1 or -999 in ([ch.JP_Bsdecay_weight[ibs], ch.phi_Bsdecay_weight[ibs], ch.BsVertex_Chi[ibs],
+                           ch.BsVertex_normChi[ibs], ch.BsVertex_normChi[ibs], ch.BsVertex_normChi[ibs],
+                           ch.mum_isTight[ibs], ch.mum_normChi2[ibs], ch.mum_NMuonHits[ibs],
+                           ch.mup_isTight[ibs], ch.mup_normChi2[ibs], ch.mup_NMuonHits[ibs]]):
+            bad_values += 1
+            continue
 #####~~~~~~~~~~~~~~~~~~~~~#####
 ###~~~~~~~~~~Muons~~~~~~~~~~###
 #####~~~~~~~~~~~~~~~~~~~~~#####
@@ -308,4 +315,4 @@ for evt in range(0, nEvt):
 
 fileOUT.Write();
 print NOUT, ' ', NOUT_evt
-print 'nEvt = ', nEvt, '; match_i = ', match_i
+print 'nEvt = ', nEvt, '; match_i = ', match_i, '; bad_values = ', bad_values 
