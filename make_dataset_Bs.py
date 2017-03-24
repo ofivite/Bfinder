@@ -56,7 +56,7 @@ if cut:
     ##    
     ##    if ch.mum_relIso < -0.15 or ch.mup_relIso < -0.15    :continue
     ##    if ch.deltaR_mupmum_cjp > 0.5   :continue
-##        if ch.JP_Bsdecay_weight < 0.5   :continue
+##        if ch.JP_Bsdecay_weight < 0.5   :continue  ## -1 is included here
 ##        if ch.Jpsi_VtxProb < 0.1   :continue
 
 
@@ -100,7 +100,7 @@ if cut:
 
         if ch.phi_mass_0c < 1.01 or ch.phi_mass_0c > 1.03   :continue   # 1.01 and 1.03 in MySel
 ##        if ch.Phi_VtxProb < 0.1          :continue
-##        if ch.phi_Bsdecay_weight < 0.5   :continue
+##        if ch.phi_Bsdecay_weight < 0.5   :continue  ## -1 is included here
     ##    if ch.deltaR_KpKm < 0.7   :continue 
     ##    if ch.phi_pt_cjp < 1.4           :continue
 
@@ -118,7 +118,7 @@ if cut:
     ##    if ch.Bs_pt_Cjp               < 10.             :continue        # none in MySel
         if abs(ch.Bs_Eta_cjp)          > 2.5             :continue        # 2.5 in MySel
 
-    ##    if ch.BsVertex_normChi   > 1.   :continue
+    ##    if ch.BsVertex_normChi   > 1.   :continue  ## -1 is included here
     ##    if ch.BsVertex_isValid   != 1     :continue  
     ##    if ch.PV_refit_prob      <= 0.5    :continue 
 

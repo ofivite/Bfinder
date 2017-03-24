@@ -78,7 +78,7 @@ for _var_ in _MY_VARS_:
 
 ###  declaration and connecting to the branches of my new variables }}}1
 
-match_i = 0; bad_values = 0
+match_i = 0
 for evt in range(0, nEvt):
     ##
     if (ch.GetEntry(evt) <= 0) : break;
@@ -93,13 +93,6 @@ for evt in range(0, nEvt):
         ibs = Bj
         ##
 
-
-        if -1 or -999 in ([ch.JP_Bsdecay_weight[ibs], ch.phi_Bsdecay_weight[ibs], ch.BsVertex_Chi[ibs],
-                           ch.BsVertex_normChi[ibs], ch.BsVertex_normChi[ibs], ch.BsVertex_normChi[ibs],
-                           ch.mum_isTight[ibs], ch.mum_normChi2[ibs], ch.mum_NMuonHits[ibs],
-                           ch.mup_isTight[ibs], ch.mup_normChi2[ibs], ch.mup_NMuonHits[ibs]]):
-            bad_values += 1
-            continue
 #####~~~~~~~~~~~~~~~~~~~~~#####
 ###~~~~~~~~~~Muons~~~~~~~~~~###
 #####~~~~~~~~~~~~~~~~~~~~~#####
@@ -112,7 +105,7 @@ for evt in range(0, nEvt):
 	      			      ch.mumAngT[ibs] == 0 or ch.mupAngT[ibs] == 0  ) else 1
 	
 	# Default Tight J/psi muons #	
-	areTight_def[0] = 0   if ( ch.mum_isTight[ibs] == 0 or ch.mup_isTight[ibs] == 0) else 1
+	areTight_def[0] = 0   if ( ch.mum_isTight[ibs] <= 0 or ch.mup_isTight[ibs] <= 0) else 1
 
 
 	# Handmade Tight J/psi muons #
@@ -123,7 +116,9 @@ for evt in range(0, nEvt):
 	    			       ch.mum_NMuonStations[ibs] <= 1 or ch.mup_NMuonStations[ibs] <= 1 or
 	    			       abs(ch.mum_dxy_Bsdecay[ibs]) >= 0.2 or abs(ch.mup_dxy_Bsdecay[ibs]) >= 0.2 or abs(ch.mum_dz_Bsdecay[ibs]) >= 0.5 or abs(ch.mup_dz_Bsdecay[ibs]) >= 0.5 or
 	  			       ch.mumNPHits[ibs] <= 0 or ch.mupNPHits[ibs] <= 0 or
-	  			       ch.mum_NTrackerLayers[ibs] <= 5 or ch.mup_NTrackerLayers[ibs] <= 5) else 1
+	  			       ch.mum_NTrackerLayers[ibs] <= 5 or ch.mup_NTrackerLayers[ibs] <= 5 or 
+				       ch.mum_normChi2[ibs] < 0 or ch.mum_NMuonHits < 0 or
+				       ch.mup_normChi2[ibs] < 0 or ch.mup_NMuonHits < 0 ) else 1
 
 
 	mum_relIso[0] = ch.mum_relIso[ibs]; mup_relIso[0] = ch.mup_relIso[ibs];
@@ -315,4 +310,4 @@ for evt in range(0, nEvt):
 
 fileOUT.Write();
 print NOUT, ' ', NOUT_evt
-print 'nEvt = ', nEvt, '; match_i = ', match_i, '; bad_values = ', bad_values 
+print 'nEvt = ', nEvt, '; match_i = ', match_i
