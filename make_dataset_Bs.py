@@ -7,12 +7,12 @@ REMUC = True
 ##REMUC = False
 
 ch = TChain("mytree");
-ch.Add('~/cernbox/Backup/Bs to JPsi Phi/BsJpsiPhi_notall_v2_wrong_nB.root');
+ch.Add('~/BsJpsiPhi_v3_notall.root');
 
 print "Adding chain done", ch.GetNtrees(), 'files '
 
 mass_min = 5.2; mass_max = 5.5   
-Bs_mass_Cjp = RooRealVar('Bs_mass_Cjp', 'm(B_{s}), GeV', mass_min, mass_max)
+Bs_mass_Cjp = RooRealVar('Bs_mass_Cjp', 'm(B_{s}^{0}), GeV', mass_min, mass_max)
 ##Bs_varset = RooArgSet( Bc_pvcos2_Cjp, Bc_mass_Cjp, Bc_pt_Cjp, Bc_pvdistsignif2_Cjp, Bc_vtxprob_Cjp, DeltaR_JP_Pi_cjp, JP_Eta_cjp, Pi_Eta_cjp, Pi_pt_cjp)
 Bs_varset = RooArgSet(Bs_mass_Cjp)
 dataset = RooDataSet("ds","Dataset", Bs_varset)
@@ -150,7 +150,7 @@ if cut:
     dataset.Print();
     print 'dataset entries = ', dataset.sumEntries()
 
-    fileOUT = TFile('~/cernbox/Backup/Bs to JPsi Phi/DataSet_Bs_notall.root', 'recreate')
+    fileOUT = TFile('~/cernbox/Backup/Bs to JPsi Phi/DataSet_Bs_v3_notall.root', 'recreate')
     dataset.Write()
     fileOUT.Close()
 
@@ -159,7 +159,7 @@ if cut:
 #### --- Let's plot! --- ####
 #---------------------------#
 
-f = TFile('~/cernbox/Backup/Bs to JPsi Phi/DataSet_Bs_notall.root')
+f = TFile('~/cernbox/Backup/Bs to JPsi Phi/DataSet_Bs_v3_notall.root')
 dataset = f.Get('ds')
 
 frame = Bs_mass_Cjp.frame(RooFit.Title(""), RooFit.Bins(60))
@@ -180,7 +180,7 @@ gauss_2 = RooGaussian('gauss_2', 'gauss_2', Bs_mass_Cjp, mean_gauss, sigma_2)
 backgr = RooExponential('backgr', 'backgr', Bs_mass_Cjp, exp_par)
 
 N_gauss.setPlotLabel('N_{sig}')
-mean_gauss.setPlotLabel('m(B_{s})')
+mean_gauss.setPlotLabel('m(B_{s}^{0})')
 sigma_1.setPlotLabel('#sigma_{1}')
 sigma_2.setPlotLabel('#sigma_{2}')
 N_backgr.setPlotLabel('N_{bkg}')
