@@ -7,11 +7,11 @@ REMUC = True
 ##REMUC = False
 
 ch = TChain("mytree");
-ch.Add('~/BsJpsiPhi_v3_notall.root');
+ch.Add('~/cernbox/Bs to JPsi Phi/BsJpsiPhi_v3.root');
 
 print "Adding chain done", ch.GetNtrees(), 'files '
 
-mass_min = 5.2; mass_max = 5.5   
+mass_min = 5.266; mass_max = 5.466 
 Bs_mass_Cjp = RooRealVar('Bs_mass_Cjp', 'm(B_{s}^{0}), GeV', mass_min, mass_max)
 ##Bs_varset = RooArgSet( Bc_pvcos2_Cjp, Bc_mass_Cjp, Bc_pt_Cjp, Bc_pvdistsignif2_Cjp, Bc_vtxprob_Cjp, DeltaR_JP_Pi_cjp, JP_Eta_cjp, Pi_Eta_cjp, Pi_pt_cjp)
 Bs_varset = RooArgSet(Bs_mass_Cjp)
@@ -112,8 +112,8 @@ if cut:
         
         if ch.Bs_mass_Cjp < mass_min or ch.Bs_mass_Cjp > mass_max   :continue
         if ch.Bs_vtxprob_Cjp          < 0.05           :continue       # 0.05 in MySel  
-        if ch.Bs_pvdistsignif2_Cjp    < 3.                :continue       # 3 in MySel              
-        if ch.Bs_pvcos2_Cjp           < 0.99        :continue        # 0.9 in MySel                             
+        if ch.Bs_pvdistsignif2_Cjp    < 5.                :continue       # 3 in MySel              
+        if ch.Bs_pvcos2_Cjp           < 0.999        :continue        # 0.9 in MySel                             
         
     ##    if ch.Bs_pt_Cjp               < 10.             :continue        # none in MySel
         if abs(ch.Bs_Eta_cjp)          > 2.5             :continue        # 2.5 in MySel
@@ -150,7 +150,7 @@ if cut:
     dataset.Print();
     print 'dataset entries = ', dataset.sumEntries()
 
-    fileOUT = TFile('~/cernbox/Backup/Bs to JPsi Phi/DataSet_Bs_v3_notall.root', 'recreate')
+    fileOUT = TFile('~/cernbox/Bs to JPsi Phi/DataSet_Bs_v3.root', 'recreate')
     dataset.Write()
     fileOUT.Close()
 
@@ -159,21 +159,21 @@ if cut:
 #### --- Let's plot! --- ####
 #---------------------------#
 
-f = TFile('~/cernbox/Backup/Bs to JPsi Phi/DataSet_Bs_v3_notall.root')
+f = TFile('~/cernbox/Bs to JPsi Phi/DataSet_Bs_v3.root')
 dataset = f.Get('ds')
 
-frame = Bs_mass_Cjp.frame(RooFit.Title(""), RooFit.Bins(60))
+frame = Bs_mass_Cjp.frame(RooFit.Title(""), RooFit.Bins(50))
 
 mean_gauss = RooRealVar ("mean_1", "mean_1", 5.366, 5.35, 5.39)
 sigma_1= RooRealVar ("sigma_1", "sigma_1", 0.01, 0.001, 0.03)
 sigma_2= RooRealVar ("sigma_2", "sigma_2", 0.01, 0.001, 0.03)
-exp_par = RooRealVar('exp_par', 'exp_par', -3, -10, -0.000000001)
+exp_par = RooRealVar('exp_par', 'exp_par', -1.5, -10, -0.000000001)
 
 N_gauss = RooRealVar('N_gauss', 'N_gauss', 30000, 0, 70000)
 fr = RooRealVar('fr', 'fr', 0.5 , 0, 1)
 N_gauss_1 = RooFormulaVar('N_gauss_1', 'N_gauss * fr', RooArgList(N_gauss, fr))
 N_gauss_2 = RooFormulaVar('N_gauss_2', 'N_gauss * (1-fr)', RooArgList(N_gauss, fr))
-N_backgr = RooRealVar('N_backgr', 'N_backgr', 3000, 0, 50000)
+N_backgr = RooRealVar('N_backgr', 'N_backgr', 30000, 0, 700000)
 
 gauss_1 = RooGaussian('gauss_1', 'gauss_1', Bs_mass_Cjp, mean_gauss, sigma_1)
 gauss_2 = RooGaussian('gauss_2', 'gauss_2', Bs_mass_Cjp, mean_gauss, sigma_2)
