@@ -101,7 +101,7 @@ if cut:
         if ch.phi_mass_0c < 1.01 or ch.phi_mass_0c > 1.03   :continue   # 1.01 and 1.03 in MySel
 ##        if ch.Phi_VtxProb < 0.1          :continue
 ##        if ch.phi_Bsdecay_weight < 0.5   :continue  ## -1 is included here
-    ##    if ch.deltaR_KpKm < 0.7   :continue 
+##        if ch.deltaR_KpKm < 0.25   :continue 
     ##    if ch.phi_pt_cjp < 1.4           :continue
 
 
@@ -112,8 +112,8 @@ if cut:
         
         if ch.Bs_mass_Cjp < mass_min or ch.Bs_mass_Cjp > mass_max   :continue
         if ch.Bs_vtxprob_Cjp          < 0.05           :continue       # 0.05 in MySel  
-        if ch.Bs_pvdistsignif2_Cjp    < 5.                :continue       # 3 in MySel              
-        if ch.Bs_pvcos2_Cjp           < 0.999        :continue        # 0.9 in MySel                             
+        if ch.Bs_pvdistsignif2_Cjp    < 3.                :continue       # 3 in MySel              
+        if ch.Bs_pvcos2_Cjp           < 0.99        :continue        # 0.9 in MySel                             
         
     ##    if ch.Bs_pt_Cjp               < 10.             :continue        # none in MySel
         if abs(ch.Bs_Eta_cjp)          > 2.5             :continue        # 2.5 in MySel
