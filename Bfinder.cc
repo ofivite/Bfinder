@@ -94,10 +94,19 @@ Bfinder::Bfinder(const edm::ParameterSet& iConfig)
    triggersMuPL(0), triggersMuML(0),
    triggersL1L2_MuPL(0), triggersL1L2_MuML(0),
 
-   Bs_mass_cjp(0),
+ Bc_mass(0),
+ Bc_px(0),           Bc_py(0),          Bc_pz(0),
+ Bc_DecayVtxX(0),    Bc_DecayVtxY(0),   Bc_DecayVtxZ(0),
+ Bc_DecayVtxXE(0),   Bc_DecayVtxYE(0),  Bc_DecayVtxZE(0),
+
+ Bs_mass_cjp(0),
  Bs_px_cjp(0),           Bs_py_cjp(0),          Bs_pz_cjp(0),
  Bs_DecayVtxX(0),    Bs_DecayVtxY(0),   Bs_DecayVtxZ(0),
  Bs_DecayVtxXE(0),   Bs_DecayVtxYE(0),  Bs_DecayVtxZE(0),
+
+ pion_px_0c(0),       pion_py_0c(0),  pion_pz_0c(0),
+ pion_track_normchi2(0),     pion_Hits(0),  pion_PHits(0),
+ pion_dxy_Bcdecay(0), pion_dz_Bcdecay(0), pion_NTrackerLayers(0),  pion_NPixelLayers(0),
 
  B_J_mass(0),       B_J_px(0),            B_J_py(0),        B_J_pz(0),
  B_J_DecayVtxX(0),  B_J_DecayVtxY(0),     B_J_DecayVtxZ(0),
@@ -106,7 +115,7 @@ Bfinder::Bfinder(const edm::ParameterSet& iConfig)
  B_mu_px1_cjp(0),   B_mu_py1_cjp(0),  B_mu_pz1_cjp(0),
  B_mu_px2_cjp(0),   B_mu_py2_cjp(0),  B_mu_pz2_cjp(0),
 
- B_Prob(0), B_J_Prob(0), B_Phi_Prob(0),
+ Bc_Prob(0), Bc_Chi2(0), Bs_Prob(0), Bs_Chi2(0), B_J_Prob(0), B_Phi_Prob(0),
 
  kaonP_px_0c(0),       kaonP_py_0c(0),  kaonP_pz_0c(0),
  kaonP_px_cjp(0),       kaonP_py_cjp(0),  kaonP_pz_cjp(0),
@@ -130,12 +139,18 @@ Bfinder::Bfinder(const edm::ParameterSet& iConfig)
  PV_bestBang_RF_CL(0),  PV_bestBang_RF_NTrkDif(0),
 
  mum_normChi2(0),  mum_dxy_Bsdecay(0),    mum_dz_Bsdecay(0)    , mumCat(0) , mumAngT(0)    , mumNHits(0)   , mumNPHits(0),
- mum_isGlobalMuon(0), mum_isTrackerMuon(0), mum_isTight(0), mum_isGoodLS_OptimT(0),  mum_NMuonHits(0), mum_NMuonStations(0), mum_NTrackerLayers(0), mum_NPixelLayers(0), mum_relIso(0),
+ mum_isGlobalMuon(0), mum_isTrackerMuon(0), mum_isTight(0),
+ mum_LastStationOptimizedLowPtT(0), mum_LastStationT(0), mum_OneStationT(0),
+ mum_LastStationAngT(0), mum_OneStationAngT(0), mum_2DCompatibilityT(0),
+ mum_NMuonHits(0), mum_NMuonStations(0), mum_NTrackerLayers(0), mum_NPixelLayers(0), mum_relIso(0),
 
  mup_normChi2(0),  mup_dxy_Bsdecay(0),    mup_dz_Bsdecay(0)    , mupCat(0) , mupAngT(0)    , mupNHits(0)   , mupNPHits(0),
- mup_isGlobalMuon(0), mup_isTrackerMuon(0), mup_isTight(0), mup_isGoodLS_OptimT(0), mup_NMuonHits(0), mup_NMuonStations(0), mup_NTrackerLayers(0), mup_NPixelLayers(0), mup_relIso(0),
+ mup_isGlobalMuon(0), mup_isTrackerMuon(0), mup_isTight(0),
+ mup_LastStationOptimizedLowPtT(0), mup_LastStationT(0), mup_OneStationT(0),
+ mup_LastStationAngT(0), mup_OneStationAngT(0), mup_2DCompatibilityT(0),
+ mup_NMuonHits(0), mup_NMuonStations(0), mup_NTrackerLayers(0), mup_NPixelLayers(0), mup_relIso(0),
 
- BsVertex_isValid(0), BsVertex_Chi(0), BsVertex_normChi(0), JP_Bsdecay_weight(0), phi_Bsdecay_weight(0),
+ BcVertex_isValid(0), BcVertex_Chi(0), BcVertex_normChi(0), Bs_Bcdecay_weight(0), pion_Bcdecay_weight(0),
  run(0), event(0)
 
 {
@@ -426,7 +441,7 @@ void Bfinder::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
   reco::Vertex bestVtx;
   reco::Vertex bestVtxBS;
-  reco::Vertex BsVtx;
+  reco::Vertex BcVtx;
 
   // get primary vertex
   Handle<reco::VertexCollection> recVtxs;
@@ -519,6 +534,7 @@ void Bfinder::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       ParticleMass PM_PDG_MUON_MASS = PDG_MUON_MASS;
       ParticleMass PM_PDG_JPSI_MASS = PDG_JPSI_MASS;
       ParticleMass PM_PDG_KAON_MASS = PDG_KAON_MASS;
+      ParticleMass PM_PDG_PION_MASS = PDG_PION_MASS;
       float PM_muon_sigma = PM_PDG_MUON_MASS*1.e-6;
       float PM_kaon_sigma = PM_PDG_KAON_MASS*1.e-6;
       float PM_pion_sigma = PM_PDG_PION_MASS*1.e-6;
@@ -588,6 +604,7 @@ RefCountedKinematicTree
 
 	   pat::GenericParticle patTrack_Kp;
  	   pat::GenericParticle patTrack_Km;
+     pat::GenericParticle patTrack_Pi;
 
 	   for(vector<pat::GenericParticle>::const_iterator iKaonP = thePATTrackHandle->begin(); iKaonP != thePATTrackHandle->end(); ++iKaonP )
 	     {
@@ -711,22 +728,22 @@ for(vector<pat::GenericParticle>::const_iterator iKaonM = thePATTrackHandle->beg
                if (!BsFitTree->isValid()) continue;
 
                BsFitTree->movePointerToTheTop();
-               RefCountedKinematicParticle bCandCjp = BsFitTree->currentParticle();
+               RefCountedKinematicParticle BsCandCjp = BsFitTree->currentParticle();
                RefCountedKinematicVertex BsDecayVertexCjp = BsFitTree->currentDecayVertex();
                if (!BsDecayVertexCjp->vertexIsValid())  continue;
 
-               double Bs_mass_cjp_tmp = bCandCjp->currentState().mass();
+               double Bs_mass_cjp_tmp = BsCandCjp->currentState().mass();
 
                if(Bs_mass_cjp_tmp < 5.2) continue;
                if(Bs_mass_cjp_tmp > 5.5) continue;
                //
                if(BsDecayVertexCjp->chiSquared()<0) continue;
-               double B_Prob_tmp   = TMath::Prob(BsDecayVertexCjp->chiSquared(), (int) BsDecayVertexCjp->degreesOfFreedom());
-               if(B_Prob_tmp < 0.01) continue;
+               double Bs_Prob_tmp   = TMath::Prob(BsDecayVertexCjp->chiSquared(), (int) BsDecayVertexCjp->degreesOfFreedom());
+               if(Bs_Prob_tmp < 0.01) continue;
 
 
- 	             GlobalPoint BsGP = GlobalPoint( (*BsDecayVertexCjp).position().x(), (*BsDecayVertexCjp).position().y(), (*BsDecayVertexCjp).position().z() );
-               ROOT::Math::XYZPoint bDecayPoint( (*BsDecayVertexCjp).position().x(), (*BsDecayVertexCjp).position().y(), (*BsDecayVertexCjp).position().z() );
+ //	             GlobalPoint BsGP = GlobalPoint( (*BsDecayVertexCjp).position().x(), (*BsDecayVertexCjp).position().y(), (*BsDecayVertexCjp).position().z() );
+               ROOT::Math::XYZPoint BsDecayPoint( (*BsDecayVertexCjp).position().x(), (*BsDecayVertexCjp).position().y(), (*BsDecayVertexCjp).position().z() );
 
 	 // get children from final B fit
 
@@ -772,7 +789,7 @@ for(vector<pat::GenericParticle>::const_iterator iKaonM = thePATTrackHandle->beg
 
                          TLorentzVector p4pion_0c, p4Bs, p4Bc_0c;
                          p4pion_0c.SetXYZM(iPion->px(),iPion->py(),iPion->pz(), PDG_PION_MASS);
-                         p4Bs.SetXYZM(bCandCjp->currentState().globalMomentum().x(),bCandCjp->currentState().globalMomentum().y(),bCandCjp->currentState().globalMomentum().z(),bCandCjp->currentState().mass());
+                         p4Bs.SetXYZM(BsCandCjp->currentState().globalMomentum().x(),BsCandCjp->currentState().globalMomentum().y(),BsCandCjp->currentState().globalMomentum().z(), BsCandCjp->currentState().mass());
 
                          p4Bc_0c = p4pion_0c + p4Bs;
                          if(fabs(p4Bc_0c.M() - PDG_BC_MASS > 0.6)) continue;
@@ -780,10 +797,10 @@ for(vector<pat::GenericParticle>::const_iterator iKaonM = thePATTrackHandle->beg
 
 	                       VirtualKinematicParticleFactory vFactory;
                          float Bs_dof  = BsDecayVertexCjp->degreesOfFreedom();
-                         float Bs_chi2 = BsDecayVertexCjp->chiSquared();
+                         float Bs_fit_chi2 = BsDecayVertexCjp->chiSquared();
 
                          vector<RefCountedKinematicParticle> vFitMCParticlesBc;
-                         vFitMCParticlesBc.push_back(vFactory.particle(bCandCjp->currentState(), Bs_chi2, Bs_dof, bCandCjp));
+                         vFitMCParticlesBc.push_back(vFactory.particle(BsCandCjp->currentState(), Bs_fit_chi2, Bs_dof, BsCandCjp));
                          //vFitMCParticlesBc.push_back(pFactory.particle(bCandMC->refittedTransientTrack(),bs_mass,chi,ndf,bs_sigma));
                          vFitMCParticlesBc.push_back(pFactory.particle(pionTT, PM_PDG_PION_MASS, chi,ndf, PM_pion_sigma));
 
@@ -797,23 +814,22 @@ for(vector<pat::GenericParticle>::const_iterator iKaonM = thePATTrackHandle->beg
                   		   //std::cout << "por si otro" << std::endl;
 
                   		   vertexFitTreeBc->movePointerToTheTop();
-                  		   RefCountedKinematicParticle bcCandCjp = vertexFitTreeBc->currentParticle();
+                  		   RefCountedKinematicParticle BcCandCjp = vertexFitTreeBc->currentParticle();
                   		   RefCountedKinematicVertex BcDecayVertexCjp = vertexFitTreeBc->currentDecayVertex();
                   		   if (!BcDecayVertexCjp->vertexIsValid()){
                   		     //std::cout << "B MC fit vertex is not valid" << endl;
                   		     continue;
                   		   }
 
-                         double Bc_mass_cjp_tmp = bcCandCjp->currentState().mass();
+                         double Bc_mass_cjp_tmp = BcCandCjp->currentState().mass();
 
-                         if(fabs(Bc_mass_cjp_tmp - PDG_BC_MASS) > 0.300) continue;
+                         if(fabs(Bc_mass_cjp_tmp - PDG_BC_MASS) > 0.3) continue;
                          if(BcDecayVertexCjp->chiSquared()<0) continue;
                          double Bc_Prob_tmp   = TMath::Prob(BcDecayVertexCjp->chiSquared(), (int) BcDecayVertexCjp->degreesOfFreedom());
                          if(Bc_Prob_tmp < 0.01) continue;
 
-
-//           	             GlobalPoint BsGP = GlobalPoint( (*BsDecayVertexCjp).position().x(), (*BsDecayVertexCjp).position().y(), (*BsDecayVertexCjp).position().z() );
-//                         ROOT::Math::XYZPoint bDecayPoint( (*BsDecayVertexCjp).position().x(), (*BsDecayVertexCjp).position().y(), (*BsDecayVertexCjp).position().z() );
+                         ROOT::Math::XYZPoint BcDecayPoint( (*BcDecayVertexCjp).position().x(), (*BcDecayVertexCjp).position().y(), (*BcDecayVertexCjp).position().z() );
+           	             GlobalPoint BcGP = GlobalPoint( (*BcDecayVertexCjp).position().x(), (*BcDecayVertexCjp).position().y(), (*BcDecayVertexCjp).position().z() );
 
 
 
@@ -842,7 +858,7 @@ for(vector<pat::GenericParticle>::const_iterator iKaonM = thePATTrackHandle->beg
                     Double_t dx = (*BcDecayVertexCjp).position().x() - PVtxBeSp.x();
                     Double_t dy = (*BcDecayVertexCjp).position().y() - PVtxBeSp.y();
                     Double_t dz = (*BcDecayVertexCjp).position().z() - PVtxBeSp.z();
-                    Double_t cosAlphaXYZ = ( bCandCjp->currentState().globalMomentum().x() * dx + bCandCjp->currentState().globalMomentum().y()*dy + bCandCjp->currentState().globalMomentum().z()*dz  )/( sqrt(dx*dx+dy*dy+dz*dz)* bCandCjp->currentState().globalMomentum().mag() );
+                    Double_t cosAlphaXYZ = ( BcCandCjp->currentState().globalMomentum().x() * dx + BcCandCjp->currentState().globalMomentum().y()*dy + BcCandCjp->currentState().globalMomentum().z()*dz  )/( sqrt(dx*dx+dy*dy+dz*dz)* BcCandCjp->currentState().globalMomentum().mag() );
 
                     if(cosAlphaXYZ>lip)
                     {
@@ -878,6 +894,7 @@ for(vector<pat::GenericParticle>::const_iterator iKaonM = thePATTrackHandle->beg
                     // the 4 tracks in the B cand are  patTrack_Kp glbTrackP glbTrackM
                     if (  !(   (patTrack_Kp.track()==trackRef)  ||
                                (patTrack_Km.track()==trackRef)  ||
+                               (patTrack_Pi.track()==trackRef)  ||
                                (trkTrackP==trackRef)            ||
                                (trkTrackM==trackRef)           ) )
                        {
@@ -913,37 +930,36 @@ for(vector<pat::GenericParticle>::const_iterator iKaonM = thePATTrackHandle->beg
                 }
                }
 
-     TransientTrack JP_TT = MUMUparticle->refittedTransientTrack();
-     if (!JP_TT.isValid()) continue;
 
-     TransientTrack phi_TT = PHIparticle->refittedTransientTrack();
-     if (!phi_TT.isValid()) continue;
+ ///~~~fit 2 tracks from Bc together~~~///
 
- ///~~~fit 4 tracks from Bs together~~~///
-  vector<reco::TransientTrack> BsTracks;
-  BsTracks.push_back(JP_TT);
-  BsTracks.push_back(phi_TT);
+ TransientTrack Bs_TT = BsCandCjp->refittedTransientTrack();
+ if (!Bs_TT.isValid()) continue;
 
-   AdaptiveVertexFitter BsVertexFitter;
-   TransientVertex BsTV = BsVertexFitter.vertex(BsTracks, BsGP);
+  vector<reco::TransientTrack> BcTracks;
+  BcTracks.push_back(Bs_TT);
+  BcTracks.push_back(pionTT);
 
-    BsVertex_isValid->push_back( BsTV.isValid() );
-    if ( BsTV.isValid() )
+   AdaptiveVertexFitter BcVertexFitter;
+   TransientVertex BcTV = BcVertexFitter.vertex(BcTracks, BcGP);
+
+    BcVertex_isValid->push_back( BcTV.isValid() );
+    if ( BcTV.isValid() )
      {
 
-       BsVtx = reco::Vertex(BsTV);
+       BcVtx = reco::Vertex(BcTV);
 
-        JP_Bsdecay_weight->push_back(BsVtx.trackWeight(JP_TT.trackBaseRef()));
-        phi_Bsdecay_weight->push_back(BsVtx.trackWeight(phi_TT.trackBaseRef()));
-        BsVertex_Chi->push_back(BsTV.totalChiSquared());
-        BsVertex_normChi->push_back(BsTV.normalisedChiSquared());
+        Bs_Bcdecay_weight->push_back(BcVtx.trackWeight(Bs_TT.trackBaseRef()));
+        pion_Bcdecay_weight->push_back(BcVtx.trackWeight(pionTT.trackBaseRef()));
+        BcVertex_Chi->push_back(BcTV.totalChiSquared());
+        BcVertex_normChi->push_back(BcTV.normalisedChiSquared());
       }
          else
           {
-               JP_Bsdecay_weight->push_back(-1);
-               phi_Bsdecay_weight->push_back(-1);
-               BsVertex_Chi->push_back(-999);
-               BsVertex_normChi->push_back(-999);
+               Bs_Bcdecay_weight->push_back(-1);
+               pion_Bcdecay_weight->push_back(-1);
+               BcVertex_Chi->push_back(-999);
+               BcVertex_normChi->push_back(-999);
           }
 
                //cout << "PV bestPV_Bang: " <<bestPV_Bang.x()<< " "<<bestPV_Bang.y()<<" "<<bestPV_Bang.z()<< endl;
@@ -1038,11 +1054,25 @@ for(vector<pat::GenericParticle>::const_iterator iKaonM = thePATTrackHandle->beg
                /////////////////////////////////////////////////////////////////////////////////////////////
                ////////////////////////////////////////////// HERE INDEX IS [nB] /////////////////////////
                         //
+
+                          Bc_mass           ->push_back(Bc_mass_cjp_tmp);
+
+                          Bc_px             ->push_back(BcCandCjp->currentState().globalMomentum().x());
+                          Bc_py             ->push_back(BcCandCjp->currentState().globalMomentum().y());
+                          Bc_pz             ->push_back(BcCandCjp->currentState().globalMomentum().z());
+                          Bc_DecayVtxX      ->push_back(BcDecayVertexCjp->position().x());
+                          Bc_DecayVtxY      ->push_back(BcDecayVertexCjp->position().y());
+                          Bc_DecayVtxZ      ->push_back(BcDecayVertexCjp->position().z());
+                          Bc_DecayVtxXE     ->push_back(BcDecayVertexCjp->error().cxx());
+                          Bc_DecayVtxYE     ->push_back(BcDecayVertexCjp->error().cyy());
+                          Bc_DecayVtxZE     ->push_back(BcDecayVertexCjp->error().czz());
+
+
                           Bs_mass_cjp           ->push_back(Bs_mass_cjp_tmp);
 
-                          Bs_px_cjp             ->push_back(bCandCjp->currentState().globalMomentum().x());
-                          Bs_py_cjp             ->push_back(bCandCjp->currentState().globalMomentum().y());
-                          Bs_pz_cjp             ->push_back(bCandCjp->currentState().globalMomentum().z());
+                          Bs_px_cjp             ->push_back(BsCandCjp->currentState().globalMomentum().x());
+                          Bs_py_cjp             ->push_back(BsCandCjp->currentState().globalMomentum().y());
+                          Bs_pz_cjp             ->push_back(BsCandCjp->currentState().globalMomentum().z());
                           Bs_DecayVtxX      ->push_back(BsDecayVertexCjp->position().x());
                           Bs_DecayVtxY      ->push_back(BsDecayVertexCjp->position().y());
                           Bs_DecayVtxZ      ->push_back(BsDecayVertexCjp->position().z());
@@ -1052,6 +1082,17 @@ for(vector<pat::GenericParticle>::const_iterator iKaonM = thePATTrackHandle->beg
            //                B_DecayVtxXYE->push_back(bDecayVertexCjp->error().cyx());
            //                B_DecayVtxXZE->push_back(bDecayVertexCjp->error().czx());
            //                B_DecayVtxYZE->push_back(bDecayVertexCjp->error().czy());
+
+                         pion_px_0c       ->push_back(iPion->px());
+                         pion_py_0c       ->push_back(iPion->py());
+                         pion_pz_0c       ->push_back(iPion->pz());
+                         pion_track_normchi2  ->push_back(patTrack_Pi.track()->normalizedChi2());
+                         pion_Hits       ->push_back(patTrack_Pi.track()->numberOfValidHits() );
+                         pion_PHits      ->push_back(patTrack_Pi.track()->hitPattern().numberOfValidPixelHits() );
+                         pion_dxy_Bcdecay	->push_back(patTrack_Pi.track()->dxy(BcDecayPoint) );
+                         pion_dz_Bcdecay		->push_back(patTrack_Pi.track()->dz(BcDecayPoint	) );
+                         pion_NTrackerLayers->push_back ( patTrack_Pi.track()->hitPattern().trackerLayersWithMeasurement() );
+                         pion_NPixelLayers->push_back ( patTrack_Pi.track()->hitPattern().pixelLayersWithMeasurement() );
 
                           B_J_mass         ->push_back( MUMU_mass_c0 );
                           B_J_px           ->push_back( MUMUparticle->currentState().globalMomentum().x() );
@@ -1073,8 +1114,8 @@ for(vector<pat::GenericParticle>::const_iterator iKaonM = thePATTrackHandle->beg
                           kaonP_track_normchi2  ->push_back(patTrack_Kp.track()->normalizedChi2());
                           kaonP_Hits       ->push_back(patTrack_Kp.track()->numberOfValidHits() );
                           kaonP_PHits      ->push_back(patTrack_Kp.track()->hitPattern().numberOfValidPixelHits() );
-                          kaonP_dxy_Bsdecay	->push_back(patTrack_Kp.track()->dxy(bDecayPoint) );
-                          kaonP_dz_Bsdecay		->push_back(patTrack_Kp.track()->dz(bDecayPoint) );
+                          kaonP_dxy_Bsdecay	->push_back(patTrack_Kp.track()->dxy(BsDecayPoint) );
+                          kaonP_dz_Bsdecay		->push_back(patTrack_Kp.track()->dz(BsDecayPoint) );
    		                    kaonP_NTrackerLayers->push_back ( patTrack_Kp.track()->hitPattern().trackerLayersWithMeasurement() );
    		                    kaonP_NPixelLayers->push_back ( patTrack_Kp.track()->hitPattern().pixelLayersWithMeasurement() );
 
@@ -1087,8 +1128,8 @@ for(vector<pat::GenericParticle>::const_iterator iKaonM = thePATTrackHandle->beg
                           kaonM_track_normchi2  ->push_back(patTrack_Km.track()->normalizedChi2());
                           kaonM_Hits       ->push_back(patTrack_Km.track()->numberOfValidHits() );
                           kaonM_PHits      ->push_back(patTrack_Km.track()->hitPattern().numberOfValidPixelHits() );
-                          kaonM_dxy_Bsdecay	->push_back(patTrack_Km.track()->dxy(bDecayPoint) );
-                          kaonM_dz_Bsdecay		->push_back(patTrack_Km.track()->dz(bDecayPoint	) );
+                          kaonM_dxy_Bsdecay	->push_back(patTrack_Km.track()->dxy(BsDecayPoint) );
+                          kaonM_dz_Bsdecay		->push_back(patTrack_Km.track()->dz(BsDecayPoint	) );
    		                    kaonM_NTrackerLayers->push_back ( patTrack_Km.track()->hitPattern().trackerLayersWithMeasurement() );
    		                    kaonM_NPixelLayers->push_back ( patTrack_Km.track()->hitPattern().pixelLayersWithMeasurement() );
 
@@ -1102,7 +1143,12 @@ for(vector<pat::GenericParticle>::const_iterator iKaonM = thePATTrackHandle->beg
                           B_mu_pz2_cjp ->push_back(mu2CandMC_p.z());
            //                B_J_charge2->push_back(mu2CandMC->currentState().particleCharge());
 
-                          B_Prob    ->push_back(B_Prob_tmp);
+                          Bc_Prob    ->push_back(Bc_Prob_tmp);
+                          Bc_Chi2    ->push_back(BcDecayVertexCjp->chiSquared());
+
+                          Bs_Prob    ->push_back(Bs_Prob_tmp);
+                          Bs_Chi2    ->push_back(BsDecayVertexCjp->chiSquared());
+
                           B_J_Prob  ->push_back(JP_Prob_tmp);
                           B_Phi_Prob->push_back(phi_Prob_tmp);
 
@@ -1111,14 +1157,12 @@ for(vector<pat::GenericParticle>::const_iterator iKaonM = thePATTrackHandle->beg
    	             mum_isGlobalMuon->push_back ( recoMuonM->isGlobalMuon() );
                   mum_isTrackerMuon->push_back ( recoMuonM->isTrackerMuon() );
                   mumAngT->push_back( muon::isGoodMuon(*recoMuonM,muon::TMOneStationTight) ); // este es para poner la condicion si es o no softmuon
-                  if ( BsTV.isValid() )
-        	           mum_isTight->push_back ( muon::isTightMuon(*recoMuonM, BsVtx ) );
+/*                  if ( BsTV.isValid() )
+        	          mum_isTight->push_back ( muon::isTightMuon(*recoMuonM, BsVtx ) );
                   else
-                    mum_isTight->push_back ( -1 );
-                  mum_isGoodLS_OptimT->push_back( muon::isGoodMuon(*recoMuonM,muon::TMLastStationOptimizedLowPtTight) );
-
-                  mum_dxy_Bsdecay->push_back( recoMuonM->muonBestTrack()->dxy(bDecayPoint) );// el dxy del Muon negatico respetcto del PV con BSc (el de mayor pt)
-                  mum_dz_Bsdecay->push_back( recoMuonM->muonBestTrack()->dz(bDecayPoint) );
+*/                    mum_isTight->push_back ( -1 );
+                  mum_dxy_Bsdecay->push_back( recoMuonM->muonBestTrack()->dxy(BsDecayPoint) );// el dxy del Muon negatico respetcto del PV con BSc (el de mayor pt)
+                  mum_dz_Bsdecay->push_back( recoMuonM->muonBestTrack()->dz(BsDecayPoint) );
 
          	       if (!(glbTrackM.isNull()))
                     {
@@ -1144,20 +1188,28 @@ for(vector<pat::GenericParticle>::const_iterator iKaonM = thePATTrackHandle->beg
                		float mum_puIso  = patMuonM->puChargedHadronIso();
                		mum_relIso->push_back( (mum_chIso + std::max(0.0, mum_nhIso + mum_phIso - 0.5 * mum_puIso)) / patMuonM->pt() );
 
+                  mum_LastStationOptimizedLowPtT->push_back( muon::isGoodMuon(*recoMuonM,muon::TMLastStationOptimizedLowPtTight) );
+                  mum_LastStationT->push_back( muon::isGoodMuon(*recoMuonM,muon::TMLastStationTight) );
+                  mum_OneStationT->push_back( muon::isGoodMuon(*recoMuonM,muon::TMOneStationTight) );
+                  mum_LastStationAngT->push_back( muon::isGoodMuon(*recoMuonM,muon::TMLastStationAngTight) );
+                  mum_OneStationAngT->push_back( muon::isGoodMuon(*recoMuonM,muon::TMOneStationAngTight) );
+                  mum_2DCompatibilityT->push_back( muon::isGoodMuon(*recoMuonM,muon::TM2DCompatibilityTight) );
+
+
+
 
    //------------------//
                   mupCat->push_back( mupCategory );
                   mup_isGlobalMuon->push_back ( recoMuonP->isGlobalMuon() );
                   mup_isTrackerMuon->push_back ( recoMuonP->isTrackerMuon() );
                   mupAngT->push_back( muon::isGoodMuon(*recoMuonP,muon::TMOneStationTight) ); // este es para poner la condicion si es o no softmuon
-                  if ( BsTV.isValid() )
+/*                  if ( BsTV.isValid() )
         	           mup_isTight->push_back ( muon::isTightMuon(*recoMuonP, BsVtx ) );
                   else
-                    mup_isTight->push_back ( -1 );
-                  mup_isGoodLS_OptimT->push_back( muon::isGoodMuon(*recoMuonP,muon::TMLastStationOptimizedLowPtTight) );
+*/                    mup_isTight->push_back ( -1 );
 
-                  mup_dxy_Bsdecay->push_back( recoMuonP->muonBestTrack()->dxy(bDecayPoint) );// el dxy del Muon negatico respetcto del PV con BSc (el de mayor pt)
-                  mup_dz_Bsdecay->push_back( recoMuonP->muonBestTrack()->dz(bDecayPoint) );
+                  mup_dxy_Bsdecay->push_back( recoMuonP->muonBestTrack()->dxy(BsDecayPoint) );// el dxy del Muon negatico respetcto del PV con BSc (el de mayor pt)
+                  mup_dz_Bsdecay->push_back( recoMuonP->muonBestTrack()->dz(BsDecayPoint) );
 
          	       if (!(glbTrackP.isNull()))
                   {
@@ -1182,6 +1234,14 @@ for(vector<pat::GenericParticle>::const_iterator iKaonM = thePATTrackHandle->beg
                		float mup_puIso  = patMuonP->puChargedHadronIso();
                		mup_relIso->push_back( (mup_chIso + std::max(0.0, mup_nhIso + mup_phIso - 0.5 * mup_puIso)) / patMuonP->pt() );
 
+                  mup_LastStationOptimizedLowPtT->push_back( muon::isGoodMuon(*recoMuonP,muon::TMLastStationOptimizedLowPtTight) );
+                  mup_LastStationT->push_back( muon::isGoodMuon(*recoMuonP,muon::TMLastStationTight) );
+                  mup_OneStationT->push_back( muon::isGoodMuon(*recoMuonP,muon::TMOneStationTight) );
+                  mup_LastStationAngT->push_back( muon::isGoodMuon(*recoMuonP,muon::TMLastStationAngTight) );
+                  mup_OneStationAngT->push_back( muon::isGoodMuon(*recoMuonP,muon::TMOneStationAngTight) );
+                  mup_2DCompatibilityT->push_back( muon::isGoodMuon(*recoMuonP,muon::TM2DCompatibilityTight) );
+
+
                           nB++;
 
                           /////////////////////////////////////////////////
@@ -1190,7 +1250,8 @@ for(vector<pat::GenericParticle>::const_iterator iKaonM = thePATTrackHandle->beg
                           muonParticles.clear();
                           Bs_candidate_init.clear();
                           Bs_candidate.clear();
-                          BsTracks.clear();
+                          vFitMCParticlesBc.clear();
+                          BcTracks.clear();
                           vertexTracks.clear();
             } // pion
    	     } // one kaon
@@ -1215,10 +1276,19 @@ for(vector<pat::GenericParticle>::const_iterator iKaonM = thePATTrackHandle->beg
       triggersMuPL->clear(); triggersMuML->clear();
       triggersL1L2_MuPL->clear(); triggersL1L2_MuML->clear();
 
+      Bc_mass->clear();
+      Bc_px->clear();           Bc_py->clear();          Bc_pz->clear();
+      Bc_DecayVtxX->clear();    Bc_DecayVtxY->clear();   Bc_DecayVtxZ->clear();
+      Bc_DecayVtxXE->clear();   Bc_DecayVtxYE->clear();  Bc_DecayVtxZE->clear();
+
       Bs_mass_cjp->clear();
       Bs_px_cjp->clear();           Bs_py_cjp->clear();          Bs_pz_cjp->clear();
       Bs_DecayVtxX->clear();    Bs_DecayVtxY->clear();   Bs_DecayVtxZ->clear();
       Bs_DecayVtxXE->clear();   Bs_DecayVtxYE->clear();  Bs_DecayVtxZE->clear();
+
+      pion_px_0c->clear();     pion_py_0c->clear();    pion_pz_0c->clear();
+      pion_track_normchi2->clear();   pion_Hits->clear();    pion_PHits->clear();
+      pion_dxy_Bcdecay->clear();  pion_dz_Bcdecay->clear(); pion_NTrackerLayers->clear();  pion_NPixelLayers->clear();
 
       B_J_mass->clear();       B_J_px->clear();            B_J_py->clear();        B_J_pz->clear();
       B_J_DecayVtxX->clear();  B_J_DecayVtxY->clear();     B_J_DecayVtxZ->clear();
@@ -1228,7 +1298,7 @@ for(vector<pat::GenericParticle>::const_iterator iKaonM = thePATTrackHandle->beg
       B_mu_px1_cjp->clear();   B_mu_py1_cjp->clear();  B_mu_pz1_cjp->clear();
       B_mu_px2_cjp->clear();   B_mu_py2_cjp->clear();  B_mu_pz2_cjp->clear();
 
-      B_Prob->clear(); B_J_Prob->clear(); B_Phi_Prob->clear();
+      Bc_Prob->clear(); Bc_Chi2->clear(); Bs_Prob->clear(); Bs_Chi2->clear(); B_J_Prob->clear(); B_Phi_Prob->clear();
 
       kaonP_px_0c->clear();     kaonP_py_0c->clear();    kaonP_pz_0c->clear();
       kaonP_px_cjp->clear();     kaonP_py_cjp->clear();    kaonP_pz_cjp->clear();
@@ -1253,12 +1323,18 @@ for(vector<pat::GenericParticle>::const_iterator iKaonM = thePATTrackHandle->beg
       PV_bestBang_RF_CL->clear();  PV_bestBang_RF_NTrkDif->clear();
 
       mum_normChi2->clear();  mum_dxy_Bsdecay->clear();    mum_dz_Bsdecay->clear(); mumCat->clear();    mumAngT->clear();   mumNHits->clear();  mumNPHits->clear();
-      mum_isGlobalMuon->clear(); mum_isTrackerMuon->clear(); mum_isTight->clear(); mum_isGoodLS_OptimT->clear(); mum_NMuonHits->clear(); mum_NMuonStations->clear(); mum_NTrackerLayers->clear(); mum_NPixelLayers->clear(); mum_relIso->clear();
+      mum_isGlobalMuon->clear(); mum_isTrackerMuon->clear(); mum_isTight->clear();
+      mum_LastStationOptimizedLowPtT->clear(); mum_LastStationT->clear(); mum_OneStationT->clear();
+      mum_LastStationAngT->clear(); mum_OneStationAngT->clear(); mum_2DCompatibilityT->clear();
+      mum_NMuonHits->clear(); mum_NMuonStations->clear(); mum_NTrackerLayers->clear(); mum_NPixelLayers->clear(); mum_relIso->clear();
 
       mup_normChi2->clear();   mup_dxy_Bsdecay->clear();    mup_dz_Bsdecay->clear(); mupCat->clear();    mupAngT->clear();   mupNHits->clear();  mupNPHits->clear();
-      mup_isGlobalMuon->clear(); mup_isTrackerMuon->clear(); mup_isTight->clear(); mup_isGoodLS_OptimT->clear(); mup_NMuonHits->clear(); mup_NMuonStations->clear(); mup_NTrackerLayers->clear(); mup_NPixelLayers->clear(); mup_relIso->clear();
+      mup_isGlobalMuon->clear(); mup_isTrackerMuon->clear(); mup_isTight->clear();
+      mup_LastStationOptimizedLowPtT->clear(); mup_LastStationT->clear(); mup_OneStationT->clear();
+      mup_LastStationAngT->clear(); mup_OneStationAngT->clear(); mup_2DCompatibilityT->clear();
+      mup_NMuonHits->clear(); mup_NMuonStations->clear(); mup_NTrackerLayers->clear(); mup_NPixelLayers->clear(); mup_relIso->clear();
 
-      BsVertex_isValid->clear(); BsVertex_Chi->clear(); BsVertex_normChi->clear(); JP_Bsdecay_weight->clear(); phi_Bsdecay_weight->clear();
+      BcVertex_isValid->clear(); BcVertex_Chi->clear(); BcVertex_normChi->clear(); Bs_Bcdecay_weight->clear(); pion_Bcdecay_weight->clear();
 
    }
 
@@ -1307,6 +1383,17 @@ for(vector<pat::GenericParticle>::const_iterator iKaonM = thePATTrackHandle->beg
      tree_->Branch("nMu"               , &nMu      , "nMu/i"   );
      tree_->Branch("nVtx"              , &nVtx     , "nVtx/i"  );
 
+     tree_->Branch("Bc_mass"            , &Bc_mass               );
+     tree_->Branch("Bc_px"              , &Bc_px                 );
+     tree_->Branch("Bc_py"              , &Bc_py                 );
+     tree_->Branch("Bc_pz"              , &Bc_pz                 );
+     tree_->Branch("Bc_DecayVtxX"       , &Bc_DecayVtxX          );
+     tree_->Branch("Bc_DecayVtxY"       , &Bc_DecayVtxY          );
+     tree_->Branch("Bc_DecayVtxZ"       , &Bc_DecayVtxZ          );
+     tree_->Branch("Bc_DecayVtxXE"      , &Bc_DecayVtxXE         );
+     tree_->Branch("Bc_DecayVtxYE"      , &Bc_DecayVtxYE         );
+     tree_->Branch("Bc_DecayVtxZE"      , &Bc_DecayVtxZE         );
+
      tree_->Branch("Bs_mass_cjp"            , &Bs_mass_cjp               );
      tree_->Branch("Bs_px_cjp"              , &Bs_px_cjp                 );
      tree_->Branch("Bs_py_cjp"              , &Bs_py_cjp                 );
@@ -1317,6 +1404,17 @@ for(vector<pat::GenericParticle>::const_iterator iKaonM = thePATTrackHandle->beg
      tree_->Branch("Bs_DecayVtxXE"      , &Bs_DecayVtxXE         );
      tree_->Branch("Bs_DecayVtxYE"      , &Bs_DecayVtxYE         );
      tree_->Branch("Bs_DecayVtxZE"      , &Bs_DecayVtxZE         );
+
+     tree_->Branch("pion_px_0c"        , &pion_px_0c           );
+     tree_->Branch("pion_py_0c"        , &pion_py_0c           );
+     tree_->Branch("pion_pz_0c"        , &pion_pz_0c           );
+     tree_->Branch("pion_track_normchi2"   , &pion_track_normchi2      );
+     tree_->Branch("pion_Hits"        , &pion_Hits           );
+     tree_->Branch("pion_PHits"       , &pion_PHits          );
+     tree_->Branch("pion_dxy_Bcdecay"         , &pion_dxy_Bcdecay          );
+     tree_->Branch("pion_dz_Bcdecay"          , &pion_dz_Bcdecay          );
+     tree_->Branch("pion_NTrackerLayers"       , &pion_NTrackerLayers          );
+     tree_->Branch("pion_NPixelLayers"       , &pion_NPixelLayers          );
 
      tree_->Branch("B_J_mass"          , &B_J_mass             );
      tree_->Branch("B_J_px"            , &B_J_px               );
@@ -1337,7 +1435,10 @@ for(vector<pat::GenericParticle>::const_iterator iKaonM = thePATTrackHandle->beg
      tree_->Branch("B_mu_py2_cjp"      , &B_mu_py2_cjp         );
      tree_->Branch("B_mu_pz2_cjp"      , &B_mu_pz2_cjp         );
 
-     tree_->Branch("B_Prob"            , &B_Prob               );
+     tree_->Branch("Bc_Prob"            , &Bc_Prob               );
+     tree_->Branch("Bc_Chi2"            , &Bc_Chi2               );
+     tree_->Branch("Bs_Prob"            , &Bs_Prob               );
+     tree_->Branch("Bs_Chi2"            , &Bs_Chi2               );
      tree_->Branch("B_J_Prob"          , &B_J_Prob             );
      tree_->Branch("B_Phi_Prob"          , &B_Phi_Prob             );
 
@@ -1413,10 +1514,15 @@ for(vector<pat::GenericParticle>::const_iterator iKaonM = thePATTrackHandle->beg
      tree_->Branch("mum_dxy_Bsdecay"            , &mum_dxy_Bsdecay               );
      tree_->Branch("mum_dz_Bsdecay"             , &mum_dz_Bsdecay                );
 
-     tree_->Branch("mum_isGlobalMuon"    , &mum_isGlobalMuon     );
-     tree_->Branch("mum_isTrackerMuon"   , &mum_isTrackerMuon    );
-     tree_->Branch("mum_isTight"         , &mum_isTight          );
-     tree_->Branch("mum_isGoodLS_OptimT" , &mum_isGoodLS_OptimT  );
+     tree_->Branch("mum_isGlobalMuon"               , &mum_isGlobalMuon     );
+     tree_->Branch("mum_isTrackerMuon"              , &mum_isTrackerMuon    );
+     tree_->Branch("mum_isTight"                    , &mum_isTight          );
+     tree_->Branch("mum_LastStationOptimizedLowPtT" , &mum_LastStationOptimizedLowPtT  );
+     tree_->Branch("mum_LastStationT"               , &mum_LastStationT          );
+     tree_->Branch("mum_OneStationT"                , &mum_OneStationT          );
+     tree_->Branch("mum_LastStationAngT"            , &mum_LastStationAngT          );
+     tree_->Branch("mum_OneStationAngT"             , &mum_OneStationAngT          );
+     tree_->Branch("mum_2DCompatibilityT"           , &mum_2DCompatibilityT          );
 
      tree_->Branch("mum_NMuonHits"     , &mum_NMuonHits        );
      tree_->Branch("mum_NMuonStations" , &mum_NMuonStations    );
@@ -1437,7 +1543,13 @@ for(vector<pat::GenericParticle>::const_iterator iKaonM = thePATTrackHandle->beg
      tree_->Branch("mup_isGlobalMuon"    , &mup_isGlobalMuon     );
      tree_->Branch("mup_isTrackerMuon"   , &mup_isTrackerMuon    );
      tree_->Branch("mup_isTight"         , &mup_isTight          );
-     tree_->Branch("mup_isGoodLS_OptimT" , &mup_isGoodLS_OptimT  );
+     tree_->Branch("mup_LastStationOptimizedLowPtT" , &mup_LastStationOptimizedLowPtT  );
+     tree_->Branch("mup_LastStationT"               , &mup_LastStationT          );
+     tree_->Branch("mup_OneStationT"                , &mup_OneStationT          );
+     tree_->Branch("mup_LastStationAngT"            , &mup_LastStationAngT          );
+     tree_->Branch("mup_OneStationAngT"             , &mup_OneStationAngT          );
+     tree_->Branch("mup_2DCompatibilityT"           , &mup_2DCompatibilityT          );
+
 
      tree_->Branch("mup_NMuonHits"     , &mup_NMuonHits        );
      tree_->Branch("mup_NMuonStations" , &mup_NMuonStations    );
@@ -1445,11 +1557,11 @@ for(vector<pat::GenericParticle>::const_iterator iKaonM = thePATTrackHandle->beg
      tree_->Branch("mup_NPixelLayers"  , &mup_NPixelLayers     );
      tree_->Branch("mup_relIso"        , &mup_relIso           );
 
-     tree_->Branch("BsVertex_isValid"        , &BsVertex_isValid           );
-     tree_->Branch("BsVertex_Chi"        , &BsVertex_Chi           );
-     tree_->Branch("BsVertex_normChi"        , &BsVertex_normChi           );
-     tree_->Branch("JP_Bsdecay_weight"       , &JP_Bsdecay_weight          );
-     tree_->Branch("phi_Bsdecay_weight"       , &phi_Bsdecay_weight          );
+     tree_->Branch("BcVertex_isValid"        , &BcVertex_isValid           );
+     tree_->Branch("BcVertex_Chi"        , &BcVertex_Chi           );
+     tree_->Branch("BcVertex_normChi"        , &BcVertex_normChi           );
+     tree_->Branch("Bs_Bcdecay_weight"       , &Bs_Bcdecay_weight          );
+     tree_->Branch("pion_Bcdecay_weight"       , &pion_Bcdecay_weight          );
    }
 
 
