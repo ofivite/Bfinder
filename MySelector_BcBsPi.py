@@ -135,8 +135,8 @@ for evt in range(0, nEvt):
     	    			       abs(ch.mum_dxy_Bsdecay[ibs]) >= 0.2 or abs(ch.mup_dxy_Bsdecay[ibs]) >= 0.2 or abs(ch.mum_dz_Bsdecay[ibs]) >= 0.5 or abs(ch.mup_dz_Bsdecay[ibs]) >= 0.5 or
     	  			       ch.mumNPHits[ibs] <= 0 or ch.mupNPHits[ibs] <= 0 or
     	  			       ch.mum_NTrackerLayers[ibs] <= 5 or ch.mup_NTrackerLayers[ibs] <= 5 or
-    				       ch.mum_normChi2[ibs] < 0 or ch.mum_NMuonHits < 0 or
-    				       ch.mup_normChi2[ibs] < 0 or ch.mup_NMuonHits < 0 ) else 1
+    				       ch.mum_normChi2[ibs] < 0 or ch.mum_NMuonHits[ibs] < 0 or
+    				       ch.mup_normChi2[ibs] < 0 or ch.mup_NMuonHits[ibs] < 0 ) else 1
 
 
     	mum_relIso[0] = ch.mum_relIso[ibs]; mup_relIso[0] = ch.mup_relIso[ibs];
@@ -175,8 +175,43 @@ for evt in range(0, nEvt):
         mup_2DCompatibilityT[0] = ch.mup_2DCompatibilityT[ibs]
 
     	#
-  ##      if (not 'HLT_DoubleMu4_Jpsi_Displaced' in ch.triggersMuPL[ibs]) or (not 'HLT_DoubleMu4_Jpsi_Displaced' in ch.triggersMuML[ibs])  :continue
+        if (not 'HLT_DoubleMu4_Jpsi_Displaced' in ch.triggersMuPL[ibs]) or (not 'HLT_DoubleMu4_Jpsi_Displaced' in ch.triggersMuML[ibs])  :continue
             #
+
+
+
+    #####~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#####
+    ###~~~~~~~~~~Vectors and Vertices initialization~~~~~~~~~~###
+    #####~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#####
+
+        MU1P4_cjp   .SetXYZM(ch.B_mu_px1_cjp[ibs], ch.B_mu_py1_cjp[ibs], ch.B_mu_pz1_cjp[ibs], PDG_MUON_MASS)
+        MU2P4_cjp   .SetXYZM(ch.B_mu_px2_cjp[ibs], ch.B_mu_py2_cjp[ibs], ch.B_mu_pz2_cjp[ibs], PDG_MUON_MASS)
+        MUMUP4_cjp = MU1P4_cjp + MU2P4_cjp
+
+        kaonP_P4_0c  .SetXYZM(ch.kaonP_px_0c[ibs], ch.kaonP_py_0c[ibs], ch.kaonP_pz_0c[ibs], PDG_KAON_MASS)
+        kaonP_P4_cjp .SetXYZM(ch.kaonP_px_cjp[ibs], ch.kaonP_py_cjp[ibs], ch.kaonP_pz_cjp[ibs], PDG_KAON_MASS)
+        kaonM_P4_0c  .SetXYZM(ch.kaonM_px_0c[ibs], ch.kaonM_py_0c[ibs], ch.kaonM_pz_0c[ibs], PDG_KAON_MASS)
+        kaonM_P4_cjp .SetXYZM(ch.kaonM_px_cjp[ibs], ch.kaonM_py_cjp[ibs], ch.kaonM_pz_cjp[ibs], PDG_KAON_MASS)
+
+        pionP4_0c  .SetXYZM(ch.pion_px_0c[ibs], ch.pion_py_0c[ibs], ch.pion_pz_0c[ibs], PDG_PION_MASS)
+
+        BsP4_Cjp    .SetXYZM  ( ch.Bs_px_cjp[ibs], ch.Bs_py_cjp[ibs], ch.Bs_pz_cjp[ibs], ch.Bs_mass_cjp[ibs])
+        BcP4        .SetXYZM  ( ch.Bc_px[ibs], ch.Bc_py[ibs], ch.Bc_pz[ibs], ch.Bc_mass[ibs])
+
+        PV          = TVector3( ch.PV_bestBang_RF_X[ibs],   ch.PV_bestBang_RF_Y[ibs],   ch.PV_bestBang_RF_Z[ibs]    )
+        PVE         = TVector3( sqrt(ch.PV_bestBang_RF_XE[ibs]),  sqrt(ch.PV_bestBang_RF_YE[ibs]),  sqrt(ch.PV_bestBang_RF_ZE[ibs])  )
+
+        JPV     = TVector3( ch.B_J_DecayVtxX[ibs],  ch.B_J_DecayVtxY[ibs],  ch.B_J_DecayVtxZ[ibs]   )
+        JPVE    = TVector3( sqrt(ch.B_J_DecayVtxXE[ibs]), sqrt(ch.B_J_DecayVtxYE[ibs]), sqrt(ch.B_J_DecayVtxZE[ibs])  )
+        JPP3    = TVector3( ch.B_J_px[ibs],         ch.B_J_py[ibs],         ch.B_J_pz[ibs])
+
+        BsV_Cjp     = TVector3(ch.Bs_DecayVtxX[ibs],  ch.Bs_DecayVtxY[ibs],  ch.Bs_DecayVtxZ[ibs]   )
+        BsVE_Cjp    = TVector3( sqrt(ch.Bs_DecayVtxXE[ibs]), sqrt(ch.Bs_DecayVtxYE[ibs]), sqrt(ch.Bs_DecayVtxZE[ibs])  )
+        BsP3_Cjp    = BsP4_Cjp.Vect()
+
+        BcV    = TVector3(ch.Bc_DecayVtxX[ibs],  ch.Bc_DecayVtxY[ibs],  ch.Bc_DecayVtxZ[ibs]   )
+        BcVE   = TVector3( sqrt(ch.Bc_DecayVtxXE[ibs]), sqrt(ch.Bc_DecayVtxYE[ibs]), sqrt(ch.Bc_DecayVtxZE[ibs])  )
+        BcP3   = BcP4.Vect()
 
 
 
@@ -184,24 +219,6 @@ for evt in range(0, nEvt):
     ###~~~~~~~~~~J/psi~~~~~~~~~~###
     #####~~~~~~~~~~~~~~~~~~~~~#####
 
-        MU1P4_cjp   .SetXYZM(ch.B_mu_px1_cjp[ibs], ch.B_mu_py1_cjp[ibs], ch.B_mu_pz1_cjp[ibs], PDG_MUON_MASS)
-        MU2P4_cjp   .SetXYZM(ch.B_mu_px2_cjp[ibs], ch.B_mu_py2_cjp[ibs], ch.B_mu_pz2_cjp[ibs], PDG_MUON_MASS)
-        MUMUP4_cjp = MU1P4_cjp + MU2P4_cjp
-
-        PV          = TVector3( ch.PV_bestBang_RF_X[ibs],   ch.PV_bestBang_RF_Y[ibs],   ch.PV_bestBang_RF_Z[ibs]    )
-        PVE         = TVector3( sqrt(ch.PV_bestBang_RF_XE[ibs]),  sqrt(ch.PV_bestBang_RF_YE[ibs]),  sqrt(ch.PV_bestBang_RF_ZE[ibs])  )
-
-        BcV    = TVector3(ch.Bc_DecayVtxX[ibs],  ch.Bc_DecayVtxY[ibs],  ch.Bc_DecayVtxZ[ibs]   )
-        BcVE   = TVector3( sqrt(ch.Bc_DecayVtxXE[ibs]), sqrt(ch.Bc_DecayVtxYE[ibs]), sqrt(ch.Bc_DecayVtxZE[ibs])  )
-        BcP3   = BcP4.Vect()
-
-        BsV_Cjp     = TVector3(ch.Bs_DecayVtxX[ibs],  ch.Bs_DecayVtxY[ibs],  ch.Bs_DecayVtxZ[ibs]   )
-        BsVE_Cjp    = TVector3( sqrt(ch.Bs_DecayVtxXE[ibs]), sqrt(ch.Bs_DecayVtxYE[ibs]), sqrt(ch.Bs_DecayVtxZE[ibs])  )
-        BsP3_Cjp    = BsP4_Cjp.Vect()
-
-        JPV     = TVector3( ch.B_J_DecayVtxX[ibs],  ch.B_J_DecayVtxY[ibs],  ch.B_J_DecayVtxZ[ibs]   )
-        JPVE    = TVector3( sqrt(ch.B_J_DecayVtxXE[ibs]), sqrt(ch.B_J_DecayVtxYE[ibs]), sqrt(ch.B_J_DecayVtxZE[ibs])  )
-        JPP3    = TVector3( ch.B_J_px[ibs],         ch.B_J_py[ibs],         ch.B_J_pz[ibs])
 
         if MU1P4_cjp.Pt() < 4.0 or MU2P4_cjp.Pt() < 4.0:
             H_cuts.Fill(11)
@@ -219,11 +236,11 @@ for evt in range(0, nEvt):
 
         if DirectionCos2 ( JPV - BcV, JPP3 ) < 0.9:
             H_cuts.Fill(14)
-  ##          continue
+##            continue
 
         if DetachSignificance2( JPV - BcV, BcVE, JPVE) < 3.0:
             H_cuts.Fill(15)
-  ##          continue
+##            continue
         if abs(MUMUP4_cjp.Eta()) > 2.2  :continue
 
     ##        JP_Eta_cjp[0] = MUMUP4_cjp.Eta()
@@ -237,11 +254,6 @@ for evt in range(0, nEvt):
     #####~~~~~~~~~~~~~~~~~~~~~#####
     ###~~~~~~~~~~Kaons~~~~~~~~~~###
     #####~~~~~~~~~~~~~~~~~~~~~#####
-
-        kaonP_P4_0c  .SetXYZM(ch.kaonP_px_0c[ibs], ch.kaonP_py_0c[ibs], ch.kaonP_pz_0c[ibs], PDG_KAON_MASS)
-        kaonP_P4_cjp .SetXYZM(ch.kaonP_px_cjp[ibs], ch.kaonP_py_cjp[ibs], ch.kaonP_pz_cjp[ibs], PDG_KAON_MASS)
-        kaonM_P4_0c  .SetXYZM(ch.kaonM_px_0c[ibs], ch.kaonM_py_0c[ibs], ch.kaonM_pz_0c[ibs], PDG_KAON_MASS)
-        kaonM_P4_cjp .SetXYZM(ch.kaonM_px_cjp[ibs], ch.kaonM_py_cjp[ibs], ch.kaonM_pz_cjp[ibs], PDG_KAON_MASS)
 
     	kaonP_pt_cjp[0] = kaonP_P4_cjp.Pt()
     	kaonM_pt_cjp[0] = kaonM_P4_cjp.Pt()
@@ -288,20 +300,16 @@ for evt in range(0, nEvt):
 ###~~~~~~~~~~Bs and misc.~~~~~~~~~~###
 #####~~~~~~~~~~~~~~~~~~~~~~~~~~~~#####
 
-        BsP4_Cjp    .SetXYZM  ( ch.Bs_px_cjp[ibs], ch.Bs_py_cjp[ibs], ch.Bs_pz_cjp[ibs], ch.Bs_mass_cjp[ibs])
-        BcP4        .SetXYZM  ( ch.Bc_px[ibs], ch.Bc_py[ibs], ch.Bc_pz[ibs], ch.Bc_mass[ibs])
-
-
         Bs_mass_Cjp[0]          = ch.Bs_mass_cjp[ibs]
         if Bs_mass_Cjp[0]   <   5.32    :continue
-        if Bs_mass_Cjp[0]   >   5.415    :continue
+        if Bs_mass_Cjp[0]   >   5.41    :continue
 
         Bs_pt_Cjp[0]            = BsP4_Cjp.Pt()
 ##        if Bs_pt_Cjp[0] <   10.0    :continue
 ##        Bs_p_Cjp[0]             = BsP4_Cjp.Vect().Mag()
 
         Bs_bcvtxDS2d_Cjp[0] = DetachSignificance2( BsV_Cjp - BcV, BcVE, BsVE_Cjp)
-        if Bs_bcvtxDS2d_Cjp[0] < 3. :continue
+##        if Bs_bcvtxDS2d_Cjp[0] < 3. :continue
 
         Bs_bcvtx_cos2_Cjp[0]        = DirectionCos2 ( BsV_Cjp - BcV, BsP3_Cjp )
         if Bs_bcvtx_cos2_Cjp[0] < 0.9 :
@@ -326,8 +334,6 @@ for evt in range(0, nEvt):
 ###~~~~~~~~~~Pion~~~~~~~~~~###
 #####~~~~~~~~~~~~~~~~~~~~#####
 
-        pionP4_0c  .SetXYZM(ch.pion_px_0c[ibs], ch.pion_py_0c[ibs], ch.pion_pz_0c[ibs], PDG_PION_MASS)
-
         pion_pt_0c[0] = pionP4_0c.Pt()
         pion_track_normchi2[0] = ch.pion_track_normchi2[ibs]
         pion_Hits[0] = ch.pion_Hits[ibs]
@@ -350,7 +356,7 @@ for evt in range(0, nEvt):
         Bc_pt[0]            = BcP4.Pt()
 
         Bc_pvDS2d[0] = DetachSignificance2( BcV - PV, PV, BcVE)
-        if Bc_pvDS2d[0] < 3. :continue
+##        if Bc_pvDS2d[0] < 3. :continue
 
         Bc_pvcos2[0]        = DirectionCos2 ( BcV - PV, BcP3 )
         if Bc_pvcos2[0] < 0.9 :
