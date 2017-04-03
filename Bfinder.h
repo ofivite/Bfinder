@@ -139,6 +139,10 @@ private:
   std::vector<float>    *Bc_px               , *Bc_py             , *Bc_pz;
   std::vector<float>    *Bc_DecayVtxX        , *Bc_DecayVtxY      , *Bc_DecayVtxZ;
   std::vector<float>    *Bc_DecayVtxXE       , *Bc_DecayVtxYE     , *Bc_DecayVtxZE;
+  std::vector<float>    *Bc_DecayVtx_vtxfit_X        , *Bc_DecayVtx_vtxfit_Y      , *Bc_DecayVtx_vtxfit_Z;
+  std::vector<float>    *Bc_DecayVtx_vtxfit_XE       , *Bc_DecayVtx_vtxfit_YE     , *Bc_DecayVtx_vtxfit_ZE;
+  std::vector<float>    *Bc_DecayVtx_vtxfit_XYE       , *Bc_DecayVtx_vtxfit_XZE     , *Bc_DecayVtx_vtxfit_YZE;
+  std::vector<float>    *Bc_DecayVtx_vtxfit_CL;
 
   std::vector<float>    *Bs_mass_cjp;
   std::vector<float>    *Bs_px_cjp           , *Bs_py_cjp         , *Bs_pz_cjp;

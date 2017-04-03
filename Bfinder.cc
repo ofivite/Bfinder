@@ -99,6 +99,12 @@ Bfinder::Bfinder(const edm::ParameterSet& iConfig)
  Bc_DecayVtxX(0),    Bc_DecayVtxY(0),   Bc_DecayVtxZ(0),
  Bc_DecayVtxXE(0),   Bc_DecayVtxYE(0),  Bc_DecayVtxZE(0),
 
+ Bc_DecayVtx_vtxfit_X(0),   Bc_DecayVtx_vtxfit_Y(0),  Bc_DecayVtx_vtxfit_Z(0),
+ Bc_DecayVtx_vtxfit_XE(0),   Bc_DecayVtx_vtxfit_YE(0),  Bc_DecayVtx_vtxfit_ZE(0),
+ Bc_DecayVtx_vtxfit_XYE(0),   Bc_DecayVtx_vtxfit_XZE(0),  Bc_DecayVtx_vtxfit_YZE(0),
+ Bc_DecayVtx_vtxfit_CL(0),
+
+
  Bs_mass_cjp(0),
  Bs_px_cjp(0),           Bs_py_cjp(0),          Bs_pz_cjp(0),
  Bs_DecayVtxX(0),    Bs_DecayVtxY(0),   Bs_DecayVtxZ(0),
@@ -1067,9 +1073,20 @@ for(vector<pat::GenericParticle>::const_iterator iKaonM = thePATTrackHandle->beg
                           Bc_DecayVtxYE     ->push_back(BcDecayVertexCjp->error().cyy());
                           Bc_DecayVtxZE     ->push_back(BcDecayVertexCjp->error().czz());
 
+                          Bc_DecayVtx_vtxfit_X ->push_back(    BcVtx.x() );
+                          Bc_DecayVtx_vtxfit_Y ->push_back(    BcVtx.y() );
+                          Bc_DecayVtx_vtxfit_Z ->push_back(    BcVtx.z() );
+                          Bc_DecayVtx_vtxfit_XE->push_back(    BcVtx.covariance(0, 0) );
+                          Bc_DecayVtx_vtxfit_YE->push_back(    BcVtx.covariance(1, 1) );
+                          Bc_DecayVtx_vtxfit_ZE->push_back(    BcVtx.covariance(2, 2) );
+                          Bc_DecayVtx_vtxfit_XYE->push_back(   BcVtx.covariance(0, 1) );
+                          Bc_DecayVtx_vtxfit_XZE->push_back(   BcVtx.covariance(0, 2) );
+                          Bc_DecayVtx_vtxfit_YZE->push_back(   BcVtx.covariance(1, 2) );
+                          Bc_DecayVtx_vtxfit_CL->push_back(    ChiSquaredProbability((double)(BcVtx.chi2()),(double)(BcVtx.ndof())) );
+
+
 
                           Bs_mass_cjp           ->push_back(Bs_mass_cjp_tmp);
-
                           Bs_px_cjp             ->push_back(BsCandCjp->currentState().globalMomentum().x());
                           Bs_py_cjp             ->push_back(BsCandCjp->currentState().globalMomentum().y());
                           Bs_pz_cjp             ->push_back(BsCandCjp->currentState().globalMomentum().z());
@@ -1281,6 +1298,11 @@ for(vector<pat::GenericParticle>::const_iterator iKaonM = thePATTrackHandle->beg
       Bc_DecayVtxX->clear();    Bc_DecayVtxY->clear();   Bc_DecayVtxZ->clear();
       Bc_DecayVtxXE->clear();   Bc_DecayVtxYE->clear();  Bc_DecayVtxZE->clear();
 
+      Bc_DecayVtx_vtxfit_X->clear();   Bc_DecayVtx_vtxfit_Y->clear();  Bc_DecayVtx_vtxfit_Z->clear();
+      Bc_DecayVtx_vtxfit_XE->clear();   Bc_DecayVtx_vtxfit_YE->clear();  Bc_DecayVtx_vtxfit_ZE->clear();
+      Bc_DecayVtx_vtxfit_XYE->clear();   Bc_DecayVtx_vtxfit_XZE->clear();  Bc_DecayVtx_vtxfit_YZE->clear();
+      Bc_DecayVtx_vtxfit_CL->clear();
+
       Bs_mass_cjp->clear();
       Bs_px_cjp->clear();           Bs_py_cjp->clear();          Bs_pz_cjp->clear();
       Bs_DecayVtxX->clear();    Bs_DecayVtxY->clear();   Bs_DecayVtxZ->clear();
@@ -1393,6 +1415,17 @@ for(vector<pat::GenericParticle>::const_iterator iKaonM = thePATTrackHandle->beg
      tree_->Branch("Bc_DecayVtxXE"      , &Bc_DecayVtxXE         );
      tree_->Branch("Bc_DecayVtxYE"      , &Bc_DecayVtxYE         );
      tree_->Branch("Bc_DecayVtxZE"      , &Bc_DecayVtxZE         );
+
+     tree_->Branch("Bc_DecayVtx_vtxfit_X"       , &Bc_DecayVtx_vtxfit_X          );
+     tree_->Branch("Bc_DecayVtx_vtxfit_Y"       , &Bc_DecayVtx_vtxfit_Y          );
+     tree_->Branch("Bc_DecayVtx_vtxfit_Z"       , &Bc_DecayVtx_vtxfit_Z          );
+     tree_->Branch("Bc_DecayVtx_vtxfit_XE"       , &Bc_DecayVtx_vtxfit_XE          );
+     tree_->Branch("Bc_DecayVtx_vtxfit_YE"       , &Bc_DecayVtx_vtxfit_YE          );
+     tree_->Branch("Bc_DecayVtx_vtxfit_ZE"       , &Bc_DecayVtx_vtxfit_ZE         );
+     tree_->Branch("Bc_DecayVtx_vtxfit_XYE"       , &Bc_DecayVtx_vtxfit_XYE          );
+     tree_->Branch("Bc_DecayVtx_vtxfit_XZE"       , &Bc_DecayVtx_vtxfit_XZE          );
+     tree_->Branch("Bc_DecayVtx_vtxfit_YZE"       , &Bc_DecayVtx_vtxfit_YZE          );
+     tree_->Branch("Bc_DecayVtx_vtxfit_CL"      , &Bc_DecayVtx_vtxfit_CL         );
 
      tree_->Branch("Bs_mass_cjp"            , &Bs_mass_cjp               );
      tree_->Branch("Bs_px_cjp"              , &Bs_px_cjp                 );
