@@ -80,7 +80,7 @@ _MY_VARS_ = [
 "Bc_pvcos2",
 "Bc_Eta", "Bc_Phi",
 
-'BcVertex_isValid', "Bc_vtxprob", 'BcVtx_Chi2_kinfit', 'BcVtx_Chi2_vtxfit',
+'BcVertex_isValid', "Bc_vtxprob", 'BcVtx_Chi2_kinfit', 'BcVtx_Chi2_vtxfit', 'BcVtx_normChi2_vtxfit',
 'PV_refit_prob',
 
 "SAMEEVENT"]
@@ -175,7 +175,7 @@ for evt in range(0, nEvt):
         mup_2DCompatibilityT[0] = ch.mup_2DCompatibilityT[ibs]
 
     	#
-        if (not 'HLT_DoubleMu4_Jpsi_Displaced' in ch.triggersMuPL[ibs]) or (not 'HLT_DoubleMu4_Jpsi_Displaced' in ch.triggersMuML[ibs])  :continue
+  ##      if (not 'HLT_DoubleMu4_Jpsi_Displaced' in ch.triggersMuPL[ibs]) or (not 'HLT_DoubleMu4_Jpsi_Displaced' in ch.triggersMuML[ibs])  :continue
             #
 
 
@@ -187,11 +187,21 @@ for evt in range(0, nEvt):
         MU1P4_cjp   .SetXYZM(ch.B_mu_px1_cjp[ibs], ch.B_mu_py1_cjp[ibs], ch.B_mu_pz1_cjp[ibs], PDG_MUON_MASS)
         MU2P4_cjp   .SetXYZM(ch.B_mu_px2_cjp[ibs], ch.B_mu_py2_cjp[ibs], ch.B_mu_pz2_cjp[ibs], PDG_MUON_MASS)
         MUMUP4_cjp = MU1P4_cjp + MU2P4_cjp
+
+        PV          = TVector3( ch.PV_bestBang_RF_X[ibs],   ch.PV_bestBang_RF_Y[ibs],   ch.PV_bestBang_RF_Z[ibs]    )
+        PVE         = TVector3( sqrt(ch.PV_bestBang_RF_XE[ibs]),  sqrt(ch.PV_bestBang_RF_YE[ibs]),  sqrt(ch.PV_bestBang_RF_ZE[ibs])  )
+
+        BcV    = TVector3(ch.Bc_DecayVtxX[ibs],  ch.Bc_DecayVtxY[ibs],  ch.Bc_DecayVtxZ[ibs]   )
+        BcVE   = TVector3( sqrt(ch.Bc_DecayVtxXE[ibs]), sqrt(ch.Bc_DecayVtxYE[ibs]), sqrt(ch.Bc_DecayVtxZE[ibs])  )
+        BcP3   = BcP4.Vect()
+
+        BsV_Cjp     = TVector3(ch.Bs_DecayVtxX[ibs],  ch.Bs_DecayVtxY[ibs],  ch.Bs_DecayVtxZ[ibs]   )
+        BsVE_Cjp    = TVector3( sqrt(ch.Bs_DecayVtxXE[ibs]), sqrt(ch.Bs_DecayVtxYE[ibs]), sqrt(ch.Bs_DecayVtxZE[ibs])  )
+        BsP3_Cjp    = BsP4_Cjp.Vect()
+
         JPV     = TVector3( ch.B_J_DecayVtxX[ibs],  ch.B_J_DecayVtxY[ibs],  ch.B_J_DecayVtxZ[ibs]   )
         JPVE    = TVector3( sqrt(ch.B_J_DecayVtxXE[ibs]), sqrt(ch.B_J_DecayVtxYE[ibs]), sqrt(ch.B_J_DecayVtxZE[ibs])  )
         JPP3    = TVector3( ch.B_J_px[ibs],         ch.B_J_py[ibs],         ch.B_J_pz[ibs])
-        PV          = TVector3( ch.PV_bestBang_RF_X[ibs],   ch.PV_bestBang_RF_Y[ibs],   ch.PV_bestBang_RF_Z[ibs]    )
-        PVE         = TVector3( sqrt(ch.PV_bestBang_RF_XE[ibs]),  sqrt(ch.PV_bestBang_RF_YE[ibs]),  sqrt(ch.PV_bestBang_RF_ZE[ibs])  )
 
         if MU1P4_cjp.Pt() < 4.0 or MU2P4_cjp.Pt() < 4.0:
             H_cuts.Fill(11)
@@ -209,11 +219,11 @@ for evt in range(0, nEvt):
 
         if DirectionCos2 ( JPV - BcV, JPP3 ) < 0.9:
             H_cuts.Fill(14)
-            continue
+  ##          continue
 
-        if DetachSignificance2( JPV - Bc, BcVE, JPVE) < 3.0:
+        if DetachSignificance2( JPV - BcV, BcVE, JPVE) < 3.0:
             H_cuts.Fill(15)
-            continue
+  ##          continue
         if abs(MUMUP4_cjp.Eta()) > 2.2  :continue
 
     ##        JP_Eta_cjp[0] = MUMUP4_cjp.Eta()
@@ -264,7 +274,6 @@ for evt in range(0, nEvt):
     ###~~~~~~~~~~Phi~~~~~~~~~~###
     #####~~~~~~~~~~~~~~~~~~~~~#####
 
-    	phi_Bsdecay_weight[0] = ch.phi_Bsdecay_weight[ibs]
     	Phi_VtxProb[0] = ch.B_Phi_Prob[ibs]
 
     	phi_mass_0c[0] = (kaonP_P4_0c + kaonM_P4_0c).M()
@@ -282,20 +291,13 @@ for evt in range(0, nEvt):
         BsP4_Cjp    .SetXYZM  ( ch.Bs_px_cjp[ibs], ch.Bs_py_cjp[ibs], ch.Bs_pz_cjp[ibs], ch.Bs_mass_cjp[ibs])
         BcP4        .SetXYZM  ( ch.Bc_px[ibs], ch.Bc_py[ibs], ch.Bc_pz[ibs], ch.Bc_mass[ibs])
 
-        BsV_Cjp     = TVector3(ch.Bs_DecayVtxX[ibs],  ch.Bs_DecayVtxY[ibs],  ch.Bs_DecayVtxZ[ibs]   )
-        BsVE_Cjp    = TVector3( sqrt(ch.Bs_DecayVtxXE[ibs]), sqrt(ch.Bs_DecayVtxYE[ibs]), sqrt(ch.Bs_DecayVtxZE[ibs])  )
-        BsP3_Cjp    = BsP4_Cjp.Vect()
-
-        BcV    = TVector3(ch.Bc_DecayVtxX[ibs],  ch.Bc_DecayVtxY[ibs],  ch.Bc_DecayVtxZ[ibs]   )
-        BcVE   = TVector3( sqrt(ch.Bc_DecayVtxXE[ibs]), sqrt(ch.Bc_DecayVtxYE[ibs]), sqrt(ch.Bc_DecayVtxZE[ibs])  )
-        BcP3   = BcP4.Vect()
 
         Bs_mass_Cjp[0]          = ch.Bs_mass_cjp[ibs]
         if Bs_mass_Cjp[0]   <   5.32    :continue
         if Bs_mass_Cjp[0]   >   5.415    :continue
 
         Bs_pt_Cjp[0]            = BsP4_Cjp.Pt()
-        if Bs_pt_Cjp[0] <   10.0    :continue
+##        if Bs_pt_Cjp[0] <   10.0    :continue
 ##        Bs_p_Cjp[0]             = BsP4_Cjp.Vect().Mag()
 
         Bs_bcvtxDS2d_Cjp[0] = DetachSignificance2( BsV_Cjp - BcV, BcVE, BsVE_Cjp)
@@ -308,7 +310,7 @@ for evt in range(0, nEvt):
 
         Bs_pv_cos2_Cjp[0] = DirectionCos2(BsV_Cjp - PV, BsP3_Cjp)
 
-        Bs_vtxprob_Cjp[0]       = ch.Bc_Prob[ibs]
+        Bs_vtxprob_Cjp[0]       = ch.Bs_Prob[ibs]
         if Bs_vtxprob_Cjp[0] < 0.01 :
             H_cuts.Fill(10)
             continue
@@ -318,7 +320,7 @@ for evt in range(0, nEvt):
         Bs_Phi_cjp[0]            = BsP4_Cjp.Phi()
         Bs_Eta_cjp[0]            = BsP4_Cjp.Eta()
 
-        Bsvtx_Chi2[0] = ch.Bs_Chi2[ibs]; Bs_Bcdecay_weight[0] = ch.Bs_Bcdecay_weight[ibs];
+        BsVtx_Chi2[0] = ch.Bs_Chi2[ibs]; Bs_Bcdecay_weight[0] = ch.Bs_Bcdecay_weight[ibs];
 
 #####~~~~~~~~~~~~~~~~~~~~#####
 ###~~~~~~~~~~Pion~~~~~~~~~~###
@@ -332,8 +334,8 @@ for evt in range(0, nEvt):
         pion_PHits[0] = ch.pion_PHits[ibs]
         pion_NTrackerLayers[0] = ch.pion_NTrackerLayers[ibs]
         pion_NPixelLayers[0] = ch.pion_NPixelLayers[ibs]
-        pion_dxy_Bsdecay[0] = ch.pion_dxy_Bsdecay[ibs]
-        pion_dz_Bsdecay[0] = ch.pion_dz_Bsdecay[ibs]
+        pion_dxy_Bcdecay[0] = ch.pion_dxy_Bcdecay[ibs]
+        pion_dz_Bcdecay[0] = ch.pion_dz_Bcdecay[ibs]
         pion_Bcdecay_weight[0] = ch.pion_Bcdecay_weight[ibs]
 
 
@@ -342,12 +344,10 @@ for evt in range(0, nEvt):
 #####~~~~~~~~~~~~~~~~~~~~~~~~~~~~#####
 
         Bc_mass[0]          = ch.Bc_mass[ibs]
-        if Bs_mass_Cjp[0]   <   5.975    :continue
-        if Bs_mass_Cjp[0]   >   6.575    :continue
+        if Bc_mass[0]   <   5.975    :continue
+        if Bc_mass[0]   >   6.575    :continue
 
         Bc_pt[0]            = BcP4.Pt()
-##        if Bs_pt_Cjp[0] <   10.0    :continue
-##        Bs_p_Cjp[0]             = BsP4_Cjp.Vect().Mag()
 
         Bc_pvDS2d[0] = DetachSignificance2( BcV - PV, PV, BcVE)
         if Bc_pvDS2d[0] < 3. :continue
@@ -367,7 +367,6 @@ for evt in range(0, nEvt):
         Bc_Phi[0]            = BcP4.Phi()
         Bc_Eta[0]            = BcP4.Eta()
 
-        Bcvtx_Chi2[0] = ch.Bs_Chi2[ibs];
         BcVertex_isValid[0] = ch.BcVertex_isValid[ibs]
         BcVtx_Chi2_kinfit[0] = ch.Bc_Chi2[ibs];   BcVtx_Chi2_vtxfit[0] = ch.BcVertex_Chi[ibs]; BcVtx_normChi2_vtxfit[0] = ch.BcVertex_normChi[ibs];
 
