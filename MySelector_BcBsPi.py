@@ -175,7 +175,7 @@ for evt in range(0, nEvt):
         mup_2DCompatibilityT[0] = ch.mup_2DCompatibilityT[ibs]
 
     	#
-        if (not 'HLT_DoubleMu4_Jpsi_Displaced' in ch.triggersMuPL[ibs]) or (not 'HLT_DoubleMu4_Jpsi_Displaced' in ch.triggersMuML[ibs])  :continue
+##        if (not 'HLT_DoubleMu4_Jpsi_Displaced' in ch.triggersMuPL[ibs]) or (not 'HLT_DoubleMu4_Jpsi_Displaced' in ch.triggersMuML[ibs])  :continue
             #
 
 
