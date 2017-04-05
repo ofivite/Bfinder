@@ -2,10 +2,10 @@ from ROOT import *; import glob, numpy as n; from array import array
 from variables import *
 isMC = 0
 
-_fileOUT = 'BcBspi_v1_notall.root'
+_fileOUT = 'BcBspi_MC_signal.root'
 
 MyFileNamesMC = glob.glob( MCpath(1) + "*.root")
-MyFileNamesDA = glob.glob("/afs/cern.ch/work/o/ofilatov/CMSSW_5_3_24/src/XbFrame/Xb_frame/crab_projects_Bfinder_BcBspi_v1/crab_Bfinder_*/results/*.root")
+MyFileNamesDA = glob.glob("/afs/cern.ch/work/o/ofilatov/CMSSW_5_3_24/src/XbFrame/Xb_frame/crab_projects_MC/crab_BcBsPi_MC_v2/results/*.root")
 
 ##__aa = 0;    __bb = 100
 __aa = 0;  __bb =  len(MyFileNamesDA);
@@ -74,6 +74,7 @@ _MY_VARS_ = [
 'pion_track_normchi2', 'pion_Hits',  'pion_PHits',
 'pion_dxy_Bcdecay', 'pion_dz_Bcdecay', 'pion_NTrackerLayers',  'pion_NPixelLayers',
 'pion_Bcdecay_weight',
+'deltaR_piBs',
 #-----------
 "Bc_mass",
 "Bc_pt", "Bc_pvDS2d",
@@ -343,7 +344,7 @@ for evt in range(0, nEvt):
         pion_dxy_Bcdecay[0] = ch.pion_dxy_Bcdecay[ibs]
         pion_dz_Bcdecay[0] = ch.pion_dz_Bcdecay[ibs]
         pion_Bcdecay_weight[0] = ch.pion_Bcdecay_weight[ibs]
-
+	deltaR_piBs[0] = pionP4_0c.DeltaR(BsP4_Cjp)
 
 #####~~~~~~~~~~~~~~~~~~~~~~~~~~~~#####
 ###~~~~~~~~~~Bc and misc.~~~~~~~~~~###
