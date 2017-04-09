@@ -802,8 +802,8 @@ for(vector<pat::GenericParticle>::const_iterator iKaonM = thePATTrackHandle->beg
 
 
 	                       VirtualKinematicParticleFactory vFactory;
-                         float Bs_dof  = BsDecayVertexCjp->degreesOfFreedom();
-                         float Bs_fit_chi2 = BsDecayVertexCjp->chiSquared();
+//                         float Bs_dof  = BsDecayVertexCjp->degreesOfFreedom();
+//                         float Bs_fit_chi2 = BsDecayVertexCjp->chiSquared();
 
                          TransientTrack Bs_TT = BsCandCjp->refittedTransientTrack();
                          if (!Bs_TT.isValid()) continue;
