@@ -64,7 +64,7 @@ _MY_VARS_ = [
 
 #-----~-----
 "Bs_mass_Cjp",
-"Bs_pt_Cjp", "Bs_bcvtxDS2d_Cjp",
+"Bs_pt_Cjp", "Bs_bcvtxDS2d_Cjp", 'Bs_pvDS2d_Cjp',
 "Bs_bcvtx_cos2_Cjp", 'Bs_pv_cos2_Cjp',
 "Bs_Eta_cjp", "Bs_Phi_cjp",
 
@@ -310,6 +310,7 @@ for evt in range(0, nEvt):
 ##        Bs_p_Cjp[0]             = BsP4_Cjp.Vect().Mag()
 
         Bs_bcvtxDS2d_Cjp[0] = DetachSignificance2( BsV_Cjp - BcV, BcVE, BsVE_Cjp)
+        Bs_pvDS2d_Cjp[0] = DetachSignificance2( BsV_Cjp - PV, PVE, BsVE_Cjp)
 ##        if Bs_bcvtxDS2d_Cjp[0] < 3. :continue
 
         Bs_bcvtx_cos2_Cjp[0]        = DirectionCos2 ( BsV_Cjp - BcV, BsP3_Cjp )
@@ -356,7 +357,7 @@ for evt in range(0, nEvt):
 
         Bc_pt[0]            = BcP4.Pt()
 
-        Bc_pvDS2d[0] = DetachSignificance2( BcV - PV, PV, BcVE)
+        Bc_pvDS2d[0] = DetachSignificance2( BcV - PV, PVE, BcVE)
 ##        if Bc_pvDS2d[0] < 3. :continue
 
         Bc_pvcos2[0]        = DirectionCos2 ( BcV - PV, BcP3 )
