@@ -2,10 +2,10 @@ from ROOT import *; import glob, numpy as n; from array import array
 from variables import *
 isMC = 0
 
-_fileOUT = 'BcBspi_MC_signal.root'
+_fileOUT = 'BcBspi_v1.root'
 
 MyFileNamesMC = glob.glob( MCpath(1) + "*.root")
-MyFileNamesDA = glob.glob("/afs/cern.ch/work/o/ofilatov/CMSSW_5_3_24/src/XbFrame/Xb_frame/crab_projects_MC/crab_BcBsPi_MC_v2/results/*.root")
+MyFileNamesDA = glob.glob("/afs/cern.ch/work/o/ofilatov/CMSSW_5_3_24/src/XbFrame/Xb_frame/crab_projects_Bfinder_BcBspi_v1/crab_Bfinder*/results/*.root")
 
 ##__aa = 0;    __bb = 100
 __aa = 0;  __bb =  len(MyFileNamesDA);
@@ -64,8 +64,8 @@ _MY_VARS_ = [
 
 #-----~-----
 "Bs_mass_Cjp",
-"Bs_pt_Cjp", "Bs_bcvtxDS2d_Cjp", 'Bs_pvDS2d_Cjp',
-"Bs_bcvtx_cos2_Cjp", 'Bs_pv_cos2_Cjp',
+"Bs_pt_Cjp", "Bs_bcvtxDS2d_Cjp", "Bs_bcvtxDS2d_vtxfit", 'Bs_pvDS2d_Cjp',
+"Bs_bcvtx_cos2_Cjp", 'Bs_bcvtx_cos2_vtxfit', 'Bs_pv_cos2_Cjp',
 "Bs_Eta_cjp", "Bs_Phi_cjp",
 
 'Bs_Bcdecay_weight', "Bs_vtxprob_Cjp", 'BsVtx_Chi2',
@@ -77,12 +77,19 @@ _MY_VARS_ = [
 'deltaR_piBs',
 #-----------
 "Bc_mass",
-"Bc_pt", "Bc_pvDS2d",
-"Bc_pvcos2",
+"Bc_pt", "Bc_pvDS2d", "Bc_pvDS2d_vtxfit",
+"Bc_pvcos2", "Bc_pvcos2_vtxfit",
 "Bc_Eta", "Bc_Phi",
 
+'Bc_DecayVtxX', 'Bc_DecayVtxY', 'Bc_DecayVtxZ',
+'Bc_DecayVtxXE', 'Bc_DecayVtxYE', 'Bc_DecayVtxZE',
+
+'Bc_DecayVtx_vtxfit_X', 'Bc_DecayVtx_vtxfit_Y', 'Bc_DecayVtx_vtxfit_Z',
+'Bc_DecayVtx_vtxfit_XE', 'Bc_DecayVtx_vtxfit_YE', 'Bc_DecayVtx_vtxfit_ZE',
+
+
 'BcVertex_isValid', "Bc_vtxprob", 'BcVtx_Chi2_kinfit', 'BcVtx_Chi2_vtxfit', 'BcVtx_normChi2_vtxfit',
-'PV_refit_prob',
+'PV_refit_prob', 'PV_bestBang_RF_X',
 
 "SAMEEVENT"]
 _MC_VARS = ["MC_mu", "MC_k1"];
@@ -212,6 +219,8 @@ for evt in range(0, nEvt):
 
         BcV    = TVector3(ch.Bc_DecayVtxX[ibs],  ch.Bc_DecayVtxY[ibs],  ch.Bc_DecayVtxZ[ibs]   )
         BcVE   = TVector3( sqrt(ch.Bc_DecayVtxXE[ibs]), sqrt(ch.Bc_DecayVtxYE[ibs]), sqrt(ch.Bc_DecayVtxZE[ibs])  )
+        BcV_vtxfit     = TVector3(ch.Bc_DecayVtx_vtxfit_X[ibs],  ch.Bc_DecayVtx_vtxfit_Y[ibs],  ch.Bc_DecayVtx_vtxfit_Z[ibs]   )
+        BcVE_vtxfit    = TVector3( sqrt(ch.Bc_DecayVtx_vtxfit_XE[ibs]), sqrt(ch.Bc_DecayVtx_vtxfit_YE[ibs]), sqrt(ch.Bc_DecayVtx_vtxfit_ZE[ibs])  )
         BcP3   = BcP4.Vect()
 
 
@@ -310,10 +319,13 @@ for evt in range(0, nEvt):
 ##        Bs_p_Cjp[0]             = BsP4_Cjp.Vect().Mag()
 
         Bs_bcvtxDS2d_Cjp[0] = DetachSignificance2( BsV_Cjp - BcV, BcVE, BsVE_Cjp)
+        Bs_bcvtxDS2d_vtxfit[0] = DetachSignificance2( BsV_Cjp - BcV_vtxfit, BcVE_vtxfit, BsVE_Cjp)
+
         Bs_pvDS2d_Cjp[0] = DetachSignificance2( BsV_Cjp - PV, PVE, BsVE_Cjp)
 ##        if Bs_bcvtxDS2d_Cjp[0] < 3. :continue
 
         Bs_bcvtx_cos2_Cjp[0]        = DirectionCos2 ( BsV_Cjp - BcV, BsP3_Cjp )
+        Bs_bcvtx_cos2_vtxfit[0]        = DirectionCos2 ( BsV_Cjp - BcV_vtxfit, BsP3_Cjp )
         if Bs_bcvtx_cos2_Cjp[0] < 0.9 :
             H_cuts.Fill(9)
             continue
@@ -358,9 +370,11 @@ for evt in range(0, nEvt):
         Bc_pt[0]            = BcP4.Pt()
 
         Bc_pvDS2d[0] = DetachSignificance2( BcV - PV, PVE, BcVE)
+        Bc_pvDS2d_vtxfit[0] = DetachSignificance2( BcV_vtxfit - PV, PVE, BcVE_vtxfit)
 ##        if Bc_pvDS2d[0] < 3. :continue
 
         Bc_pvcos2[0]        = DirectionCos2 ( BcV - PV, BcP3 )
+        Bc_pvcos2_vtxfit[0]        = DirectionCos2 ( BcV_vtxfit - PV, BcP3 )
         if Bc_pvcos2[0] < 0.9 :
             H_cuts.Fill(9)
             continue
@@ -378,7 +392,24 @@ for evt in range(0, nEvt):
         BcVertex_isValid[0] = ch.BcVertex_isValid[ibs]
         BcVtx_Chi2_kinfit[0] = ch.Bc_Chi2[ibs];   BcVtx_Chi2_vtxfit[0] = ch.BcVertex_Chi[ibs]; BcVtx_normChi2_vtxfit[0] = ch.BcVertex_normChi[ibs];
 
+
+        Bc_DecayVtxX[0] = ch.Bc_DecayVtxX[ibs]
+        Bc_DecayVtxY[0] = ch.Bc_DecayVtxY[ibs]
+        Bc_DecayVtxZ[0] = ch.Bc_DecayVtxZ[ibs]
+        Bc_DecayVtxXE[0] = ch.Bc_DecayVtxXE[ibs]
+        Bc_DecayVtxYE[0] = ch.Bc_DecayVtxYE[ibs]
+        Bc_DecayVtxZE[0] = ch.Bc_DecayVtxZE[ibs]
+
+        Bc_DecayVtx_vtxfit_X[0] = ch.Bc_DecayVtx_vtxfit_X[ibs]
+        Bc_DecayVtx_vtxfit_Y[0] = ch.Bc_DecayVtx_vtxfit_Y[ibs]
+        Bc_DecayVtx_vtxfit_Z[0] = ch.Bc_DecayVtx_vtxfit_Z[ibs]
+        Bc_DecayVtx_vtxfit_XE[0] = ch.Bc_DecayVtx_vtxfit_XE[ibs]
+        Bc_DecayVtx_vtxfit_YE[0] = ch.Bc_DecayVtx_vtxfit_YE[ibs]
+        Bc_DecayVtx_vtxfit_ZE[0] = ch.Bc_DecayVtx_vtxfit_ZE[ibs]
+
+
         PV_refit_prob[0] = ch.PV_bestBang_RF_CL[ibs]
+        PV_bestBang_RF_X[0] = ch.PV_bestBang_RF_X[ibs]
 #---------------------------------------------------
 
         _mctr = 0
