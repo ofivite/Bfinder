@@ -23,6 +23,7 @@ H_cuts = TH1F("H_cuts", "H_cuts", 40, 0, 20)
 
 ###  declaration and connecting to the branches of my new variables {{{1
 NOUT, NOUT_evt, BBB, ibs = [int(0) for i in range(4)];
+##PV, PVE, JPV, JPVE, JPP3, BsV_Cjp, BsP3_Cjp, BsVE_Cjp, BcV, BcVE, BcV_vtxfit, BcVE_vtxfit, BcP3, _TV3zero = [TVector3() for i in range(14)]
 PV, PVE, JPV, JPVE, JPP3, BsV_Cjp, BsP3_Cjp, BsVE_Cjp, BcV, BcVE, BcP3, _TV3zero = [TVector3() for i in range(12)]
 BsP4_Cjp, kaonP_P4_cjp, kaonM_P4_cjp, kaonP_P4_0c, kaonM_P4_0c, MU1P4_cjp, MU2P4_cjp, pionP4_0c, BcP4 = [TLorentzVector() for i in range(9)];
 _TV3zero  = TVector3(0,0,0)
@@ -219,8 +220,8 @@ for evt in range(0, nEvt):
 
         BcV    = TVector3(ch.Bc_DecayVtxX[ibs],  ch.Bc_DecayVtxY[ibs],  ch.Bc_DecayVtxZ[ibs]   )
         BcVE   = TVector3( sqrt(ch.Bc_DecayVtxXE[ibs]), sqrt(ch.Bc_DecayVtxYE[ibs]), sqrt(ch.Bc_DecayVtxZE[ibs])  )
-        BcV_vtxfit     = TVector3(ch.Bc_DecayVtx_vtxfit_X[ibs],  ch.Bc_DecayVtx_vtxfit_Y[ibs],  ch.Bc_DecayVtx_vtxfit_Z[ibs]   )
-        BcVE_vtxfit    = TVector3( sqrt(ch.Bc_DecayVtx_vtxfit_XE[ibs]), sqrt(ch.Bc_DecayVtx_vtxfit_YE[ibs]), sqrt(ch.Bc_DecayVtx_vtxfit_ZE[ibs])  )
+##        BcV_vtxfit     = TVector3(ch.Bc_DecayVtx_vtxfit_X[ibs],  ch.Bc_DecayVtx_vtxfit_Y[ibs],  ch.Bc_DecayVtx_vtxfit_Z[ibs]   )
+##        BcVE_vtxfit    = TVector3( sqrt(ch.Bc_DecayVtx_vtxfit_XE[ibs]), sqrt(ch.Bc_DecayVtx_vtxfit_YE[ibs]), sqrt(ch.Bc_DecayVtx_vtxfit_ZE[ibs])  )
         BcP3   = BcP4.Vect()
 
 
@@ -319,13 +320,13 @@ for evt in range(0, nEvt):
 ##        Bs_p_Cjp[0]             = BsP4_Cjp.Vect().Mag()
 
         Bs_bcvtxDS2d_Cjp[0] = DetachSignificance2( BsV_Cjp - BcV, BcVE, BsVE_Cjp)
-        Bs_bcvtxDS2d_vtxfit[0] = DetachSignificance2( BsV_Cjp - BcV_vtxfit, BcVE_vtxfit, BsVE_Cjp)
+##        Bs_bcvtxDS2d_vtxfit[0] = DetachSignificance2( BsV_Cjp - BcV_vtxfit, BcVE_vtxfit, BsVE_Cjp)
 
         Bs_pvDS2d_Cjp[0] = DetachSignificance2( BsV_Cjp - PV, PVE, BsVE_Cjp)
 ##        if Bs_bcvtxDS2d_Cjp[0] < 3. :continue
 
         Bs_bcvtx_cos2_Cjp[0]        = DirectionCos2 ( BsV_Cjp - BcV, BsP3_Cjp )
-        Bs_bcvtx_cos2_vtxfit[0]        = DirectionCos2 ( BsV_Cjp - BcV_vtxfit, BsP3_Cjp )
+##        Bs_bcvtx_cos2_vtxfit[0]        = DirectionCos2 ( BsV_Cjp - BcV_vtxfit, BsP3_Cjp )
         if Bs_bcvtx_cos2_Cjp[0] < 0.9 :
             H_cuts.Fill(9)
             continue
@@ -370,11 +371,11 @@ for evt in range(0, nEvt):
         Bc_pt[0]            = BcP4.Pt()
 
         Bc_pvDS2d[0] = DetachSignificance2( BcV - PV, PVE, BcVE)
-        Bc_pvDS2d_vtxfit[0] = DetachSignificance2( BcV_vtxfit - PV, PVE, BcVE_vtxfit)
+##        Bc_pvDS2d_vtxfit[0] = DetachSignificance2( BcV_vtxfit - PV, PVE, BcVE_vtxfit)
 ##        if Bc_pvDS2d[0] < 3. :continue
 
         Bc_pvcos2[0]        = DirectionCos2 ( BcV - PV, BcP3 )
-        Bc_pvcos2_vtxfit[0]        = DirectionCos2 ( BcV_vtxfit - PV, BcP3 )
+##        Bc_pvcos2_vtxfit[0]        = DirectionCos2 ( BcV_vtxfit - PV, BcP3 )
         if Bc_pvcos2[0] < 0.9 :
             H_cuts.Fill(9)
             continue
@@ -400,12 +401,12 @@ for evt in range(0, nEvt):
         Bc_DecayVtxYE[0] = ch.Bc_DecayVtxYE[ibs]
         Bc_DecayVtxZE[0] = ch.Bc_DecayVtxZE[ibs]
 
-        Bc_DecayVtx_vtxfit_X[0] = ch.Bc_DecayVtx_vtxfit_X[ibs]
-        Bc_DecayVtx_vtxfit_Y[0] = ch.Bc_DecayVtx_vtxfit_Y[ibs]
-        Bc_DecayVtx_vtxfit_Z[0] = ch.Bc_DecayVtx_vtxfit_Z[ibs]
-        Bc_DecayVtx_vtxfit_XE[0] = ch.Bc_DecayVtx_vtxfit_XE[ibs]
-        Bc_DecayVtx_vtxfit_YE[0] = ch.Bc_DecayVtx_vtxfit_YE[ibs]
-        Bc_DecayVtx_vtxfit_ZE[0] = ch.Bc_DecayVtx_vtxfit_ZE[ibs]
+##        Bc_DecayVtx_vtxfit_X[0] = ch.Bc_DecayVtx_vtxfit_X[ibs]
+##        Bc_DecayVtx_vtxfit_Y[0] = ch.Bc_DecayVtx_vtxfit_Y[ibs]
+##        Bc_DecayVtx_vtxfit_Z[0] = ch.Bc_DecayVtx_vtxfit_Z[ibs]
+##        Bc_DecayVtx_vtxfit_XE[0] = ch.Bc_DecayVtx_vtxfit_XE[ibs]
+##        Bc_DecayVtx_vtxfit_YE[0] = ch.Bc_DecayVtx_vtxfit_YE[ibs]
+##        Bc_DecayVtx_vtxfit_ZE[0] = ch.Bc_DecayVtx_vtxfit_ZE[ibs]
 
 
         PV_refit_prob[0] = ch.PV_bestBang_RF_CL[ibs]
