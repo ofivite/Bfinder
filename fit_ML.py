@@ -1,9 +1,9 @@
 from ROOT import *
 
 
-mass_min = 6.; mass_max = 6.6; nbins = 40
+mass_min = 6.275 - 0.2; mass_max = 6.275 + 0.2; nbins = 40
 Bc_mass = RooRealVar('Bc_mass', 'm(B_{c}), GeV', mass_min, mass_max)
-f1 = TFile('~/BcBspi_MC_signal.root')
+f1 = TFile('~/BcBspi_MC_signal_modif.root')
 tree = f1.Get('mytree')
 ##f2 = TFile('~/Study/Machine Learning/PP scrypts/Bs_forest.root')
 ##hist_2 = f2.Get('mass_linreg')
@@ -38,12 +38,13 @@ exp_par.setPlotLabel('#lambda')
 fr.setPlotLabel('fr')
 
 model = RooAddPdf('model', 'model', RooArgList(gauss_1, gauss_2, backgr), RooArgList(N_gauss_1, N_gauss_2, N_backgr))
+##model = RooAddPdf('model', 'model', RooArgList(gauss_1, backgr), RooArgList(N_gauss, N_backgr))
 
-### ML data
+### ML dataset
 mean_gauss.setConstant(1)
 model.fitTo(data_1)
 
-##mean_gauss.setConstant(0)
+mean_gauss.setConstant(0)
 model.fitTo(data_1)
 model.fitTo(data_1)
 
