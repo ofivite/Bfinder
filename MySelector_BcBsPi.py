@@ -1,13 +1,14 @@
 from ROOT import *; import glob, numpy as n; from array import array
+##from math import sqrt
 from variables import *
 isMC = 0
 
-_fileOUT = 'BcBspi_v1.root'
+_fileOUT = 'BcBspi_v1_.root'
 
 MyFileNamesMC = glob.glob( MCpath(1) + "*.root")
 MyFileNamesDA = glob.glob("/afs/cern.ch/work/o/ofilatov/CMSSW_5_3_24/src/XbFrame/Xb_frame/crab_projects_Bfinder_BcBspi_v1/crab_Bfinder*/results/*.root")
 
-##__aa = 0;    __bb = 100
+##__aa = 0;    __bb = 10
 __aa = 0;  __bb =  len(MyFileNamesDA);
 MyFileNames = (MyFileNamesMC if isMC else MyFileNamesDA[__aa: __bb]); ch = TChain('mkcands/ntuple');
 
@@ -65,7 +66,7 @@ _MY_VARS_ = [
 
 #-----~-----
 "Bs_mass_Cjp",
-"Bs_pt_Cjp", "Bs_bcvtxDS2d_Cjp", "Bs_bcvtxDS2d_vtxfit", 'Bs_pvDS2d_Cjp',
+"Bs_pt_Cjp", "Bs_bcvtxDS2d_Cjp", "Bs_bcvtxDS2d_vtxfit", 'Bs_pvDS2d_Cjp', 'Bs_pv_detach_2D',
 "Bs_bcvtx_cos2_Cjp", 'Bs_bcvtx_cos2_vtxfit', 'Bs_pv_cos2_Cjp',
 "Bs_Eta_cjp", "Bs_Phi_cjp",
 
@@ -77,8 +78,8 @@ _MY_VARS_ = [
 'pion_Bcdecay_weight',
 'deltaR_piBs',
 #-----------
-"Bc_mass",
-"Bc_pt", "Bc_pvDS2d", "Bc_pvDS2d_vtxfit",
+"Bc_mass", 'Bc_mass_delta',
+"Bc_pt", "Bc_pvDS2d", "Bc_pvDS2d_vtxfit", 'Bc_pv_detach_2D',
 "Bc_pvcos2", "Bc_pvcos2_vtxfit",
 "Bc_Eta", "Bc_Phi",
 
@@ -323,6 +324,7 @@ for evt in range(0, nEvt):
 ##        Bs_bcvtxDS2d_vtxfit[0] = DetachSignificance2( BsV_Cjp - BcV_vtxfit, BcVE_vtxfit, BsVE_Cjp)
 
         Bs_pvDS2d_Cjp[0] = DetachSignificance2( BsV_Cjp - PV, PVE, BsVE_Cjp)
+        Bs_pv_detach_2D[0] =  sqrt( (BsV_Cjp - PV).X()**2 + (BsV_Cjp - PV).Y()**2)
 ##        if Bs_bcvtxDS2d_Cjp[0] < 3. :continue
 
         Bs_bcvtx_cos2_Cjp[0]        = DirectionCos2 ( BsV_Cjp - BcV, BsP3_Cjp )
@@ -365,6 +367,7 @@ for evt in range(0, nEvt):
 #####~~~~~~~~~~~~~~~~~~~~~~~~~~~~#####
 
         Bc_mass[0]          = ch.Bc_mass[ibs]
+        Bc_mass_delta[0]    = ch.Bc_mass[ibs] - ch.Bs_mass_cjp[ibs] + PDG_BS_MASS
         if Bc_mass[0]   <   5.975    :continue
         if Bc_mass[0]   >   6.575    :continue
 
@@ -372,6 +375,7 @@ for evt in range(0, nEvt):
 
         Bc_pvDS2d[0] = DetachSignificance2( BcV - PV, PVE, BcVE)
 ##        Bc_pvDS2d_vtxfit[0] = DetachSignificance2( BcV_vtxfit - PV, PVE, BcVE_vtxfit)
+        Bc_pv_detach_2D[0] =  sqrt( (BcV - PV).X()**2 + (BcV - PV).Y()**2)
 ##        if Bc_pvDS2d[0] < 3. :continue
 
         Bc_pvcos2[0]        = DirectionCos2 ( BcV - PV, BcP3 )
