@@ -45,3 +45,30 @@ Bs_pi_Set = RooArgSet(pi_phiSet, BsSet)
 
 
 BcSet = RooArgSet(Bs_pi_Set, Bc_Set)
+
+
+### --- Model
+mean_gauss = RooRealVar ("mean_1", "mean_1", 6.27606, 6.27606 - 0.00020, 6.27606 + 0.00020) # 6.27588 +- 0.00021 for one
+sigma_1= RooRealVar ("sigma_1", "sigma_1", 0.013, 0.013 - 0.00053, 0.013 + 0.00053) #0.01578 +- 0.00017 - for one, 0.013 +- 0.00053 - for two gaussians 
+sigma_2= RooRealVar ("sigma_2", "sigma_2", 0.026, 0.0259 - 0.0024, 0.0259 + 0.0024) #this is for two gaussians
+exp_par = RooRealVar('exp_par', 'exp_par', -3, -10, -0.000000001)
+
+N_gauss = RooRealVar('N_gauss', 'N_gauss', 100, 0, 700)
+fr = RooRealVar('fr', 'fr', 0.761 , 0.761 - 0.063, 0.761 + 0.063)
+N_gauss_1 = RooFormulaVar('N_gauss_1', 'N_gauss * fr', RooArgList(N_gauss, fr))
+N_gauss_2 = RooFormulaVar('N_gauss_2', 'N_gauss * (1-fr)', RooArgList(N_gauss, fr))
+N_backgr = RooRealVar('N_backgr', 'N_backgr', 600, 0, 2000)
+
+gauss_1 = RooGaussian('gauss_1', 'gauss_1', var, mean_gauss, sigma_1)
+gauss_2 = RooGaussian('gauss_2', 'gauss_2', var, mean_gauss, sigma_2)
+backgr = RooExponential('backgr', 'backgr', var, exp_par)
+##backgr = RooPolynomial('backgr', 'backgr', var, RooArgList())
+
+N_gauss.setPlotLabel('N_{sig}')
+mean_gauss.setPlotLabel('m(B_{c})')
+sigma_1.setPlotLabel('#sigma_{1}')
+sigma_2.setPlotLabel('#sigma_{2}')
+N_backgr.setPlotLabel('N_{bkg}')
+exp_par.setPlotLabel('#lambda')
+fr.setPlotLabel('fr')
+

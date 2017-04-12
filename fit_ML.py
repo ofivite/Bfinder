@@ -3,7 +3,9 @@ from RooVarSpace import *
 
 mass_min = 6.275 - 0.2; mass_max = 6.275 + 0.2; nbins = 40
 ##Bc_mass = RooRealVar('Bc_mass', 'm(B_{c}), GeV', mass_min, mass_max)
-f1 = TFile('~/BcBspi_MC_signal_modif.root')
+##f1 = TFile('~/BcBspi_MC_signal_modif.root')
+##tree = f1.Get('mytree')
+f1 = TFile('~/Study/Machine Learning/PP scrypts/BcJpsiPi_MC_signal.root')
 tree = f1.Get('mytree')
 ##f2 = TFile('~/Study/Machine Learning/PP scrypts/Bs_forest.root')
 ##hist_2 = f2.Get('mass_linreg')
@@ -49,16 +51,19 @@ cuts = ('1 > 0'
 
 )
 
-data_1 = RooDataSet('data_1', 'data_1', tree, RooArgSet(BcSet), cuts)
-##data_1 = RooDataSet('data_1', 'data_1', tree, RooArgSet(Bc_mass))
-##data_2 = RooDataHist('data_2', 'data_2', RooArgList(Bs_mass_Cjp), hist_2)
+Bc_mass_Cjp = RooRealVar('Bc_mass_Cjp', 'Bc_mass_Cjp', 6., 6.6)
 
-frame_1 = Bc_mass.frame(RooFit.Title(""), RooFit.Bins(nbins))
-##frame_2 = Bs_mass_Cjp.frame(RooFit.Title("Random Forest"), RooFit.Bins(50))
+var = Bc_mass_Cjp
+##data_1 = RooDataSet('data_1', 'data_1', tree, RooArgSet(BcSet), cuts)
+data_1 = RooDataSet('data_1', 'data_1', tree, RooArgSet(var))
+##data_2 = RooDataHist('data_2', 'data_2', RooArgList(var), hist_2)
+
+frame_1 = var.frame(RooFit.Title(""), RooFit.Bins(nbins))
+##frame_2 = var.frame(RooFit.Title("Random Forest"), RooFit.Bins(50))
 
 mean_gauss = RooRealVar ("mean_1", "mean_1", 6.275, 6.1, 6.4)
-sigma_1= RooRealVar ("sigma_1", "sigma_1", 0.01, 0.001, 0.03)
-sigma_2= RooRealVar ("sigma_2", "sigma_2", 0.01, 0.001, 0.03)
+sigma_1= RooRealVar ("sigma_1", "sigma_1", 0.01, 0.001, 0.05)
+sigma_2= RooRealVar ("sigma_2", "sigma_2", 0.01, 0.001, 0.05)
 exp_par = RooRealVar('exp_par', 'exp_par', -3, -10, -0.000000001)
 
 N_gauss = RooRealVar('N_gauss', 'N_gauss', 10000, 0, 70000)
@@ -67,10 +72,10 @@ N_gauss_1 = RooFormulaVar('N_gauss_1', 'N_gauss * fr', RooArgList(N_gauss, fr))
 N_gauss_2 = RooFormulaVar('N_gauss_2', 'N_gauss * (1-fr)', RooArgList(N_gauss, fr))
 N_backgr = RooRealVar('N_backgr', 'N_backgr', 60000, 0, 200000)
 
-gauss_1 = RooGaussian('gauss_1', 'gauss_1', Bc_mass, mean_gauss, sigma_1)
-gauss_2 = RooGaussian('gauss_2', 'gauss_2', Bc_mass, mean_gauss, sigma_2)
-##backgr = RooExponential('backgr', 'backgr', Bs_mass_Cjp, exp_par)
-backgr = RooPolynomial('backgr', 'backgr', Bc_mass, RooArgList())
+gauss_1 = RooGaussian('gauss_1', 'gauss_1', var, mean_gauss, sigma_1)
+gauss_2 = RooGaussian('gauss_2', 'gauss_2', var, mean_gauss, sigma_2)
+##backgr = RooExponential('backgr', 'backgr', var, exp_par)
+backgr = RooPolynomial('backgr', 'backgr', var, RooArgList())
 
 N_gauss.setPlotLabel('N_{sig}')
 mean_gauss.setPlotLabel('m(B_{c})')
