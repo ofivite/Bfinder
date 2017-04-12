@@ -1,13 +1,56 @@
 from ROOT import *
-
+from RooVarSpace import *
 
 mass_min = 6.275 - 0.2; mass_max = 6.275 + 0.2; nbins = 40
-Bc_mass = RooRealVar('Bc_mass', 'm(B_{c}), GeV', mass_min, mass_max)
+##Bc_mass = RooRealVar('Bc_mass', 'm(B_{c}), GeV', mass_min, mass_max)
 f1 = TFile('~/BcBspi_MC_signal_modif.root')
 tree = f1.Get('mytree')
 ##f2 = TFile('~/Study/Machine Learning/PP scrypts/Bs_forest.root')
 ##hist_2 = f2.Get('mass_linreg')
-data_1 = RooDataSet('data_1', 'data_1', tree, RooArgSet(Bc_mass))
+
+
+cuts = ('1 > 0'
+    + '&&' + 'Bc_pvcos2       > 0.999'           #  0.9 in MySel
+    + '&&' + 'Bc_vtxprob      > 0.05'           #  0.01 in MySel
+    + '&&' + 'Bc_pvDS2d       > 3'              #  no
+##    + '&&' + 'Bc_pv_detach_2D > 0.02'              #  no
+##    + '&&' + 'Bc_pt           > 10'             #  no
+
+
+    + '&&' + 'Bs_bcvtx_cos2_Cjp        > 0.999'           #  0.9 in MySel
+##    + '&&' + 'Bs_pv_cos2_Cjp        < 0.9999999'           #  0.9 in MySel
+    + '&&' + 'Bs_vtxprob_Cjp           > 0.05'         #  0.01 in MySel
+    
+##    + '&&' + 'Bs_bcvtxDS2d_Cjp         > 5'              #  no
+    + '&&' + 'Bs_pvDS2d_Cjp         > 3'              #  no
+##    + '&&' + 'Bs_pv_detach_2D         > Bc_pv_detach_2D + 0.02'          #!!!  'Bs_pv_detach_2D         > Bc_pv_detach_2D + 0.02' with 'Bc_pvDS2d       > 3'
+##    + '&&' + 'Bs_pt_Cjp                > 10'             #  no        
+
+
+##    + '&&' + 'phi_pt_0c                > 1'    # -         #  no        
+##    + '&&' + 'deltaR_KpKm              < 0.5'  # -           #  no,
+##    + '&&' + 'kaonP_pt_0c > 1. && kaonM_pt_0c > 1.'
+
+
+##    + '&&' + 'phi_mass_0c  > 1.01 && phi_mass_0c < 1.03'  #  1.01 and 1.03 for 0c !!
+    + '&&' + 'Bs_mass_Cjp   > (5.366 - 0.03) && Bs_mass_Cjp < (5.366 + 0.03)'                             #  5.32 and 5.41        
+    + '&&' + 'Bc_mass       >' + str(mass_min) + ' && Bc_mass < ' + str(mass_max)                             #  5.32 and 5.41        
+    + '&&' + 'Bc_mass_delta       >' + str(mass_min) + ' && Bc_mass_delta < ' + str(mass_max)                             #  5.32 and 5.41        
+
+    + '&&' + 'pion_pt_0c            > 1.'            #   
+##    + '&&' + 'pion_Bcdecay_weight   > 0.95'            #
+##    + '&&' + 'deltaR_piBs   < .8'            #        deltaR_piBs
+             
+##    + '&&' + 'pion_track_normchi2   < 2'            # -  
+##    + '&&' + 'pion_Hits   >= 7'            #   
+##    + '&&' + 'pion_PHits   >= 3'            #   
+##    + '&&' + 'pion_NTrackerLayers   >= 10'            #   
+##    + '&&' + 'pion_NPixelLayers   >= 1'            #   
+
+)
+
+data_1 = RooDataSet('data_1', 'data_1', tree, RooArgSet(BcSet), cuts)
+##data_1 = RooDataSet('data_1', 'data_1', tree, RooArgSet(Bc_mass))
 ##data_2 = RooDataHist('data_2', 'data_2', RooArgList(Bs_mass_Cjp), hist_2)
 
 frame_1 = Bc_mass.frame(RooFit.Title(""), RooFit.Bins(nbins))
@@ -37,8 +80,8 @@ N_backgr.setPlotLabel('N_{bkg}')
 exp_par.setPlotLabel('#lambda')
 fr.setPlotLabel('fr')
 
-model = RooAddPdf('model', 'model', RooArgList(gauss_1, gauss_2, backgr), RooArgList(N_gauss_1, N_gauss_2, N_backgr))
-##model = RooAddPdf('model', 'model', RooArgList(gauss_1, backgr), RooArgList(N_gauss, N_backgr))
+##model = RooAddPdf('model', 'model', RooArgList(gauss_1, gauss_2, backgr), RooArgList(N_gauss_1, N_gauss_2, N_backgr))
+model = RooAddPdf('model', 'model', RooArgList(gauss_1, backgr), RooArgList(N_gauss, N_backgr))
 
 ### ML dataset
 mean_gauss.setConstant(1)
