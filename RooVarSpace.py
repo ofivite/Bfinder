@@ -23,6 +23,20 @@ Bs_Bcdecay_weight = RooRealVar('Bs_Bcdecay_weight', 'weight2', 0., 1.)
 Bs_pvDS2d_Cjp = RooRealVar('Bs_pvDS2d_Cjp', 'Bs_pvDS2d_Cjp', 0., 100.)
 BsSet = RooArgSet(Bs_mass_Cjp, Bs_bcvtxDS2d_Cjp, Bs_bcvtx_cos2_Cjp, Bs_vtxprob_Cjp, Bs_pv_cos2_Cjp, Bs_pt_Cjp, Bs_pvDS2d_Cjp, Bs_pv_detach_2D)
 
+
+mup_isGlobalMuon = RooRealVar('mup_isGlobalMuon', 'mup_isGlobalMuon', 0., 1.)
+mum_isGlobalMuon = RooRealVar('mum_isGlobalMuon', 'mum_isGlobalMuon', 0., 1.)
+areSoft = RooRealVar('areSoft', 'areSoft', 0., 1.)
+mup_LastStationOptimizedLowPtT = RooRealVar('mup_LastStationOptimizedLowPtT', 'mup_LastStationOptimizedLowPtT', 0., 1.)
+mum_LastStationOptimizedLowPtT = RooRealVar('mum_LastStationOptimizedLowPtT', 'mum_LastStationOptimizedLowPtT', 0., 1.)
+mup_2DCompatibilityT = RooRealVar('mup_2DCompatibilityT', 'mup_2DCompatibilityT', 0., 1.)
+mum_2DCompatibilityT = RooRealVar('mum_2DCompatibilityT', 'mum_2DCompatibilityT', 0., 1.)
+mup_isTrackerMuon = RooRealVar('mup_isTrackerMuon', 'mup_isTrackerMuon', 0., 1.)
+mum_isTrackerMuon = RooRealVar('mum_isTrackerMuon', 'mum_isTrackerMuon', 0., 1.)
+muonSet = RooArgSet(mup_isGlobalMuon, mup_isTrackerMuon, mum_isGlobalMuon, mum_isTrackerMuon, mup_LastStationOptimizedLowPtT, mum_LastStationOptimizedLowPtT,
+                    mup_2DCompatibilityT, mum_2DCompatibilityT, areSoft)
+
+
 pion_pt_0c = RooRealVar('pion_pt_0c', 'pi pt', 0., 10.)
 pion_Bcdecay_weight = RooRealVar('pion_Bcdecay_weight', 'weight', 0., 1.)
 pion_Hits = RooRealVar('pion_Hits', 'hits', 0, 50)
@@ -31,7 +45,8 @@ pion_NTrackerLayers = RooRealVar('pion_NTrackerLayers', 'pion_NTrackerLayers', 0
 pion_NPixelLayers = RooRealVar('pion_NPixelLayers', 'pion_NPixelLayers', 0, 10)
 deltaR_piBs = RooRealVar('deltaR_piBs', 'deltaR_piBs', 0., 5.)
 pion_track_normchi2 = RooRealVar('pion_track_normchi2', 'pion_track_normchi2', 0., 10.)
-piSet = RooArgSet(pion_pt_0c, pion_Bcdecay_weight, pion_Hits, pion_track_normchi2, pion_PHits, pion_NTrackerLayers, pion_NPixelLayers)
+pion_dxy_Bcdecay = RooRealVar('pion_dxy_Bcdecay', 'pion_dxy_Bcdecay', -10., 10.)
+piSet = RooArgSet(pion_pt_0c, pion_Bcdecay_weight, pion_Hits, pion_track_normchi2, pion_PHits, pion_NTrackerLayers, pion_NPixelLayers, pion_dxy_Bcdecay)
 
 phi_mass_0c = RooRealVar('phi_mass_0c', 'pi phi_mass_0c', 1., 1.05)
 phi_pt_0c = RooRealVar('phi_pt_0c', 'pi phi_pt_0c', 0., 50.)
@@ -42,10 +57,11 @@ phiSet = RooArgSet (phi_pt_0c, deltaR_KpKm, deltaR_piBs, kaonP_pt_0c, kaonM_pt_0
 
 pi_phiSet = RooArgSet(piSet, phiSet)
 Bs_pi_Set = RooArgSet(pi_phiSet, BsSet)
+Bs_pi_muSet = RooArgSet(muonSet, Bs_pi_Set)
 
 
-BcSet = RooArgSet(Bs_pi_Set, Bc_Set)
-
+BcSet = RooArgSet(Bs_pi_muSet, Bc_Set)
+var = Bc_mass
 
 ### --- Model
 mean_gauss = RooRealVar ("mean_1", "mean_1", 6.27606, 6.27606 - 0.00020, 6.27606 + 0.00020) # 6.27588 +- 0.00021 for one
