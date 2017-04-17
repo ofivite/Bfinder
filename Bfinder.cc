@@ -398,7 +398,7 @@ void Bfinder::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
     std::string alltnames = triggersL;
     //Bool_t checkflag = false;
-    std::string::size_type trigger1 = alltnames.find("HLT_DoubleMu4_Jpsi_Displaced",0);
+    std::string::size_type trigger1 = alltnames.find("HLT_DoubleMu3p5_LowMass_Displaced",0);
 
     if(trigger1==std::string::npos)
       {
@@ -571,6 +571,38 @@ void Bfinder::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       double MUMU_mass_c0 = MUMUparticle->currentState().mass();
       if ( MUMU_mass_c0 < PDG_JPSI_MASS - 0.15 ) continue;
       if ( MUMU_mass_c0 > PDG_JPSI_MASS + 0.15 ) continue;
+
+
+      // Get Matching Muon to HLT
+      std::string ListTriggMuP_tmp="";
+      std::string ListTriggMuM_tmp="";
+
+      if(iMuon1->charge()== 1) MatchMuonWithTriggers(*iMuon1, TrigTable, ListTriggMuP_tmp);
+      if(iMuon1->charge()==-1) MatchMuonWithTriggers(*iMuon1, TrigTable, ListTriggMuM_tmp);
+      if(iMuon2->charge()== 1) MatchMuonWithTriggers(*iMuon2, TrigTable, ListTriggMuP_tmp);
+      if(iMuon2->charge()==-1) MatchMuonWithTriggers(*iMuon2, TrigTable, ListTriggMuM_tmp);
+
+      // *** *************** MUON MACHINT HERE ********** ****************************
+
+      std::string::size_type triggerMupOS = ListTriggMuP_tmp.find("HLT_DoubleMu3p5_LowMass_Displaced",0);
+      std::string::size_type triggerMuNeg = ListTriggMuM_tmp.find("HLT_DoubleMu3p5_LowMass_Displaced",0);
+
+      if(triggerMupOS==std::string::npos || triggerMuNeg==std::string::npos )
+        {
+          continue;
+        }
+
+      // ******************************* end muon machint *******************************
+
+      int nMuonP = sprintf(triggersMuP,"%s",ListTriggMuP_tmp.c_str());
+      int nMuonM = sprintf(triggersMuM,"%s",ListTriggMuM_tmp.c_str());
+
+      nMuonPTrgL = nMuonP;
+      nMuonMTrgL = nMuonM;
+      triggersMuPL ->push_back(triggersMuP);
+      triggersMuML ->push_back(triggersMuM);
+
+
 /*
 RefCountedKinematicTree
 
@@ -809,8 +841,8 @@ for(vector<pat::GenericParticle>::const_iterator iKaonM = thePATTrackHandle->beg
                          if (!Bs_TT.isValid()) continue;
 
                          vector<RefCountedKinematicParticle> vFitMCParticlesBc;
-                         vFitMCParticlesBc.push_back(pFactory.particle(Bs_TT, Bs_mass_cjp_tmp, chi, ndf, PM_muon_sigma)); 
-                         //vFitMCParticlesBc.push_back(BsCandCjp);
+                         //vFitMCParticlesBc.push_back(pFactory.particle(Bs_TT, Bs_mass_cjp_tmp, chi, ndf, PM_muon_sigma));
+                         vFitMCParticlesBc.push_back(BsCandCjp);
                          //vFitMCParticlesBc.push_back(vFactory.particle(BsCandCjp->currentState(), Bs_fit_chi2, Bs_dof, BsCandCjp));
                          //vFitMCParticlesBc.push_back(pFactory.particle(bCandMC->refittedTransientTrack(),bs_mass,chi,ndf,bs_sigma));
                          vFitMCParticlesBc.push_back(pFactory.particle(pionTT, PM_PDG_PION_MASS, chi,ndf, PM_pion_sigma));
@@ -1023,24 +1055,6 @@ for(vector<pat::GenericParticle>::const_iterator iKaonM = thePATTrackHandle->beg
                  event =  event1;
 
                } // end nB==0
-
-
-               // Get Matching Muon to HLT
-               std::string ListTriggMuP_tmp="";
-               std::string ListTriggMuM_tmp="";
-
-               if(iMuon1->charge()== 1) MatchMuonWithTriggers(*iMuon1, TrigTable, ListTriggMuP_tmp);
-               if(iMuon1->charge()==-1) MatchMuonWithTriggers(*iMuon1, TrigTable, ListTriggMuM_tmp);
-               if(iMuon2->charge()== 1) MatchMuonWithTriggers(*iMuon2, TrigTable, ListTriggMuP_tmp);
-               if(iMuon2->charge()==-1) MatchMuonWithTriggers(*iMuon2, TrigTable, ListTriggMuM_tmp);
-
-               int nMuonP = sprintf(triggersMuP,"%s",ListTriggMuP_tmp.c_str());
-               int nMuonM = sprintf(triggersMuM,"%s",ListTriggMuM_tmp.c_str());
-
-               nMuonPTrgL = nMuonP;
-               nMuonMTrgL = nMuonM;
-               triggersMuPL ->push_back(triggersMuP);
-               triggersMuML ->push_back(triggersMuM);
 
 
                // Get List for L1/L2 triggers matching to Muon
