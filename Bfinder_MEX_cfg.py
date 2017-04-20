@@ -14,9 +14,9 @@ process.source = cms.Source("PoolSource",
 			    skipEvents = cms.untracked.uint32(0),
 			    fileNames = cms.untracked.vstring(
 
-'/store/data/Run2012D/MuOnia/AOD/22Jan2013-v1/10000/004C60F9-188F-E211-B43F-001E6849D384.root'
-#'/store/data/Run2012A/MuOnia/AOD/22Jan2013-v1/30000/000D2FF5-EE82-E211-BEBA-0026189438A5.root'
-#'/store/data/Run2012A/MuOnia/AOD/22Jan2013-v1/30000/000F9808-D483-E211-975C-003048FFD7BE.root'      
+'/store/data/Run2012A/MuOnia/AOD/22Jan2013-v1/30000/000D2FF5-EE82-E211-BEBA-0026189438A5.root'
+#'/store/data/Run2012A/MuOnia/AOD/22Jan2013-v1/30000/000F9808-D483-E211-975C-003048FFD7BE.root'
+#'/store/data/Run2012D/MuOnia/AOD/22Jan2013-v1/10000/004C60F9-188F-E211-B43F-001E6849D384.root'       
 	)
 )
 
@@ -46,8 +46,8 @@ makeTrackCandidates(process,					    #	      patAODTrackCands
 	label='TrackCands',		      # output collection will be 'allLayer0TrackCands', 'allLayer1TrackCands', 'selectedLayer1TrackCands'
 	tracks=cms.InputTag('generalTracks'), # input track collection
 	particleType='pi+',		      # particle type (for assigning a mass)
-	preselection='pt > 0.4',	      # preselection cut on candidates. Only methods of 'reco::Candidate' are available
-	selection='pt > 0.4',		      # Selection on PAT Layer 1 objects ('selectedLayer1TrackCands')
+	preselection='pt > 0.5',	      # preselection cut on candidates. Only methods of 'reco::Candidate' are available
+	selection='pt > 0.5',		      # Selection on PAT Layer 1 objects ('selectedLayer1TrackCands')
 	isolation={},			      # Isolations to use ('source':deltaR; set to {} for None)
 	isoDeposits=[],
 	mcAs = None,			      # Replicate MC match as the one used for Muons
