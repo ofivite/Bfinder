@@ -834,16 +834,16 @@ for(vector<pat::GenericParticle>::const_iterator iKaonM = thePATTrackHandle->beg
 
 
 	                       VirtualKinematicParticleFactory vFactory;
-//                         float Bs_dof  = BsDecayVertexCjp->degreesOfFreedom();
-//                         float Bs_fit_chi2 = BsDecayVertexCjp->chiSquared();
+                         float Bs_dof  = BsDecayVertexCjp->degreesOfFreedom();
+                         float Bs_fit_chi2 = BsDecayVertexCjp->chiSquared();
 
                          TransientTrack Bs_TT = BsCandCjp->refittedTransientTrack();
                          if (!Bs_TT.isValid()) continue;
 
                          vector<RefCountedKinematicParticle> vFitMCParticlesBc;
                          //vFitMCParticlesBc.push_back(pFactory.particle(Bs_TT, Bs_mass_cjp_tmp, chi, ndf, PM_muon_sigma));
-                         vFitMCParticlesBc.push_back(BsCandCjp);
-                         //vFitMCParticlesBc.push_back(vFactory.particle(BsCandCjp->currentState(), Bs_fit_chi2, Bs_dof, BsCandCjp));
+                         //vFitMCParticlesBc.push_back(BsCandCjp);
+                         vFitMCParticlesBc.push_back(vFactory.particle(BsCandCjp->currentState(), Bs_fit_chi2, Bs_dof, BsCandCjp));
                          //vFitMCParticlesBc.push_back(pFactory.particle(bCandMC->refittedTransientTrack(),bs_mass,chi,ndf,bs_sigma));
                          vFitMCParticlesBc.push_back(pFactory.particle(pionTT, PM_PDG_PION_MASS, chi,ndf, PM_pion_sigma));
 
