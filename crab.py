@@ -22,7 +22,7 @@ config.Data.outputDatasetTag = 'CRAB3_Bfinder'
 config.Data.outLFNDirBase = '/store/user/'+getUsernameFromSiteDB()+'/Bfinder/'
 
 config.section_("Site")
-config.Site.storageSite = 'T2_RU_IHEP'
+config.Site.storageSite = 'T2_RU_JINR'
 
 if __name__ == '__main__':
     print 'multisubmit.\nunitsPerJob ~ 4 for maximum splitting\nHave you done scram b -j8?!'
