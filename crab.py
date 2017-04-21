@@ -32,8 +32,8 @@ if __name__ == '__main__':
     #from copy import deepcopy
     global_lumi_mask_2012 = 'https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions12/8TeV/Reprocessing/Cert_190456-208686_8TeV_22Jan2013ReReco_Collisions12_JSON_MuonPhys.txt'
     dset = ''
-    task = 'Bc_v2'
-    units_per_job = 90
+    task = 'Bc_v2_parked'
+    units_per_job = 40
     run_range=''
     # print 'aaa', sys.argv, len(sys.argv)
     
@@ -60,7 +60,7 @@ if __name__ == '__main__':
     
     # print 'Bfinder_' + task + '_parked_' + dset[-1]
     #
-    config.General.requestName = 'Bfinder_' + task + '_parked_' + dset[-1]
+    config.General.requestName = 'Bfinder_' + task + dset[-1]
     config.General.workArea = 'crab_projects_Bfinder_' + task
     config.Data.inputDataset = dset + '-22Jan2013-v1/AOD'
     #
