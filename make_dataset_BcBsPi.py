@@ -5,13 +5,17 @@ from math import sqrt
 import math
 
 
-f = TFile('~/BcBspi_v1_a067.root') 
-##f = TFile('~/BcBspi_v1_refTTfit_notall.root')   
+f = TFile('~/Bc_v2_parked_notall_44886df.root') 
+##f = TFile('~/BcBspi_v1_a067.root')   
 tree = f.Get('mytree')
 
-## Change it also in RooVarSpace !
-mass_min = 6.275 - 0.2; mass_max = 6.275 + 0.2; nbins = 40
+PDG_BC_MASS   = 6.2751
+PDG_BS_MASS   = 5.36679
+PDG_PHI_MASS  = 1.019455
+PDG_JPSI_MASS = 3.096916
 
+## Change it also in RooVarSpace !
+## ------ mass_min = PDG_BC_MASS - 0.3; mass_max = PDG_BC_MASS + 0.3; nbins = 50
 
 cuts = ('1 > 0'
 
@@ -19,61 +23,72 @@ cuts = ('1 > 0'
     ###------ Bc ------###
     #--------------------#
      
-    + '&&' + 'Bc_pvcos2       > 0.999'           #  0.9 in MySel
-    + '&&' + 'Bc_vtxprob      > 0.05'           #  0.01 in MySel
-    + '&&' + 'Bc_pvDS2d       > 3'              #  no
-##    + '&&' + 'Bc_pv_detach_2D > 0.03'              #  no
-##    + '&&' + 'Bc_pt           > 10'             #  no
+    + '&&' + 'Bc_pvcos2_vtxfit       > 0.999'   #b# 0.999 #m# 0.9
+    + '&&' + 'Bc_vtxprob      > 0.05'           #b# 0.05 #m# 0.01
+    + '&&' + 'Bc_pvDS2d_vtxfit       > 3'       #b# 3 #m# none
+##    + '&&' + 'Bc_pv_detach_2D_vtxfit > 0.03'
+##    + '&&' + 'Bc_pt           > 10'           #b#  #m# none
 
     #--------------------#
     ###------ Bs ------###
     #--------------------#
  
-    + '&&' + 'Bs_bcvtx_cos2_Cjp        > 0.999'           #  0.9 in MySel
-##    + '&&' + 'Bs_pv_cos2_Cjp        < 0.9999999'           #  0.9 in MySel
-    + '&&' + 'Bs_vtxprob_Cjp           > 0.05'         #  0.01 in MySel
-##    + '&&' + 'Bs_bcvtxDS2d_Cjp         > 5'              #  no
-##    + '&&' + 'Bs_pvDS2d_Cjp         > 3'              #  no
-    + '&&' + 'Bs_pv_detach_2D         > Bc_pv_detach_2D '          #!!!  'Bs_pv_detach_2D         > Bc_pv_detach_2D + 0.02' with 'Bc_pvDS2d       > 3'
+    + '&&' + 'Bs_bcvtx_cos2_vtxfit        > 0.999'   #b#  #m# 0.9
+##    + '&&' + 'Bs_pv_cos2_Cjp        < 0.9999999'
+    + '&&' + 'Bs_vtxprob_Cjp           > 0.05'    #b#  #m# 0.01
+##    + '&&' + 'Bs_bcvtxDS2d_vtxfit         > 5'  
+##    + '&&' + 'Bs_pvDS2d_Cjp         > 10'    
+    + '&&' + 'Bs_pv_detach_2D         > Bc_pv_detach_2D_vtxfit' #b# +0.02
 ##    + '&&' + 'Bs_Bcdecay_weight   > 0.9'            #
-##    + '&&' + 'Bs_pt_Cjp                > 10'             #  no        
+    + '&&' + 'Bs_pt_Cjp                > 10'  #b#  #m# none        
 
     #---------------------#
     ###------ Phi ------###
     #---------------------#
 
-##    + '&&' + 'phi_pt_0c                > 1'    # -         #  no        
-##    + '&&' + 'deltaR_KpKm              < 0.5'  # -           #  no,
-##    + '&&' + 'kaonP_pt_0c > 1. && kaonM_pt_0c > 1.'
+    + '&&' + 'phi_pt_0c                > 2.'    #b# 2 #m# none     
+##    + '&&' + 'deltaR_KpKm              < 0.5'  # -
+##    + '&&' + 'kaonP_pt_0c > .7 && kaonM_pt_0c > .7' #b# ? #m# 0.7
 
     #------------------------#
     ###------ Masses ------###
     #------------------------#
 
-##    + '&&' + 'phi_mass_0c  > 1.01 && phi_mass_0c < 1.03'  #  1.01 and 1.03 for 0c !!
-    + '&&' + 'Bs_mass_Cjp   > (5.366 - 0.03) && Bs_mass_Cjp < (5.366 + 0.03)'                             #  5.32 and 5.41        
-    + '&&' + 'Bc_mass       >' + str(mass_min) + ' && Bc_mass < ' + str(mass_max)                             #  5.32 and 5.41        
-    + '&&' + 'Bc_mass_delta       >' + str(mass_min) + ' && Bc_mass_delta < ' + str(mass_max)                             #  5.32 and 5.41        
+    + '&&' + 'JPsi_mass_C0   > (' + str(PDG_JPSI_MASS) + ' - 0.15) && JPsi_mass_C0 < (' + str(PDG_JPSI_MASS) + ' + 0.15)' #b# ? #m# 0.15                                 
+    + '&&' + 'phi_mass_0c   > (' + str(PDG_PHI_MASS) + ' - 0.015) && phi_mass_0c < (' + str(PDG_PHI_MASS) + ' + 0.015)' #b# ? #m# 0.015                                 
+    + '&&' + 'Bs_mass_Cjp   > (' + str(PDG_BS_MASS) + ' - 0.03) && Bs_mass_Cjp < (' + str(PDG_BS_MASS) + ' + 0.03)'   #b# ? #m# 0.050                           #  5.32 and 5.41        
+    + '&&' + 'Bc_mass       >' + str(mass_min) + ' && Bc_mass < ' + str(mass_max)                             #b# ? #m# 0.5        
+##    + '&&' + 'Bc_mass_delta       >' + str(mass_min) + ' && Bc_mass_delta < ' + str(mass_max)             
 
-    #-----------------------#
-    ###------ Muons ------###
-    #-----------------------#
+    #--------------------------------#
+    ###------ Muons and J/psi------###
+    #--------------------------------#
 
 ##    + '&&' + 'mup_isGlobalMuon == 1 && mum_isGlobalMuon == 1' # +
 ##    + '&&' + 'mup_isTrackerMuon == 1 && mum_isTrackerMuon == 1' # -
 ##    + '&&' + 'mup_isTrackerMuon == 1 && mum_isTrackerMuon == 1 && mup_LastStationOptimizedLowPtT == 1 && mum_LastStationOptimizedLowPtT == 1'
 ##    + '&&' + 'mup_isTrackerMuon == 1 && mum_isTrackerMuon == 1 && mup_2DCompatibilityT == 1 && mum_2DCompatibilityT == 1'
         
-##    + '&&' + 'areMyGlobal == 1' # -
-##    + '&&' + 'areSoft == 1'
+##    + '&&' + 'areMyGlobal == 1' 
+##    + '&&' + 'areTight_HM == 1' 
+##    + '&&' + 'areSoft == 1' #+
 
+    + '&&' + 'mu1_pt_cjp > 4. && mu2_pt_cjp > 4.' #b# 4 #m# 3.5
+        
+    + '&&' + 'JPsi_pt_C0 > 10' #b# 10 #m# 5.5 #t# 6.9 ?
+    + '&&' + 'JPsi_VtxProb > 0.05' #b# 0.05 #m# 0.01
+        
+##    + '&&' + 'JPsi_pvcos2_C0 > .99'
+##    + '&&' + 'JPsi_pv_DS_2D_C0 > 10.'
+        
+        
     #----------------------#
     ###------ Pion ------###
     #----------------------#
 
-    + '&&' + 'pion_pt_0c            > 1.'            #   
-##    + '&&' + 'pion_Bcdecay_weight   > 0.95'   #+  (95)        
-##    + '&&' + 'deltaR_piBs   < .8'            #        deltaR_piBs
+    + '&&' + 'pion_pt_0c            > 1.'   #b# 1 #m# none  
+##    + '&&' + 'pion_Bcdecay_weight   > 0.9'   #+  (95)        
+##    + '&&' + 'deltaR_piBs   < 1.'            #        
              
 ##    + '&&' + 'pion_track_normchi2   < 2'            # -  
 ##    + '&&' + 'pion_Hits   >= 7'            #   
