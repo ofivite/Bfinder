@@ -1,7 +1,7 @@
 from ROOT import *
 
 PDG_BC_MASS = 6.2751
-mass_min = PDG_BC_MASS - 0.3; mass_max = PDG_BC_MASS + 0.3; nbins = 40
+mass_min = PDG_BC_MASS - 0.25; mass_max = PDG_BC_MASS + 0.25; nbins = 50
 
 Bc_mass = RooRealVar('Bc_mass', 'm(B_{c}), GeV', mass_min, mass_max)
 Bc_mass_delta = RooRealVar('Bc_mass_delta', 'm(B_{c}) - m(B_{s}^{0}) + m_{PDG}(B_{s}^{0}), GeV', mass_min, mass_max)
@@ -68,10 +68,13 @@ piSet = RooArgSet(pion_pt_0c, pion_Bcdecay_weight, pion_Hits, pion_track_normchi
 
 phi_mass_0c = RooRealVar('phi_mass_0c', 'pi phi_mass_0c', 1., 1.05)
 phi_pt_0c = RooRealVar('phi_pt_0c', 'pi phi_pt_0c', 0., 100.)
+Phi_VtxProb = RooRealVar('Phi_VtxProb', 'pi Phi_VtxProb', 0., 1.) 
 deltaR_KpKm = RooRealVar('deltaR_KpKm', 'deltaR_KpKm', 0., 10.)
 kaonP_pt_0c = RooRealVar('kaonP_pt_0c', 'kaonP_pt_0c', 0., 100.)
 kaonM_pt_0c = RooRealVar('kaonM_pt_0c', 'kaonM_pt_0c', 0., 100.)
-phiSet = RooArgSet (phi_pt_0c, deltaR_KpKm, deltaR_piBs, kaonP_pt_0c, kaonM_pt_0c, phi_mass_0c)
+kaonP_dxy_Bsdecay = RooRealVar('kaonP_dxy_Bsdecay', 'kaonP_dxy_Bsdecay', -10., 10.)
+kaonM_dxy_Bsdecay = RooRealVar('kaonM_dxy_Bsdecay', 'kaonM_dxy_Bsdecay', -10., 10.)
+phiSet = RooArgSet (phi_pt_0c, deltaR_KpKm, deltaR_piBs, kaonP_pt_0c, kaonM_pt_0c, phi_mass_0c, Phi_VtxProb, kaonP_dxy_Bsdecay, kaonM_dxy_Bsdecay)
 
 pi_phiSet = RooArgSet(piSet, phiSet)
 Bs_pi_Set = RooArgSet(pi_phiSet, BsSet)

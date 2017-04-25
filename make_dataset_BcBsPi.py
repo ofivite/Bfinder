@@ -5,7 +5,8 @@ from math import sqrt
 import math
 
 
-f = TFile('~/Bc_v2_parked_notall_44886df.root') 
+f = TFile('~/Bc_v2_parked_wo90_44886df.root') 
+##f = TFile('~/Bc_v2_parked_notall_44886df.root') 
 ##f = TFile('~/BcBspi_v1_a067.root')   
 tree = f.Get('mytree')
 
@@ -34,27 +35,30 @@ cuts = ('1 > 0'
     #--------------------#
  
     + '&&' + 'Bs_bcvtx_cos2_vtxfit        > 0.999'   #b#  #m# 0.9
-##    + '&&' + 'Bs_pv_cos2_Cjp        < 0.9999999'
+##    + '&&' + 'Bs_pv_cos2_Cjp        < 0.9999'
     + '&&' + 'Bs_vtxprob_Cjp           > 0.05'    #b#  #m# 0.01
 ##    + '&&' + 'Bs_bcvtxDS2d_vtxfit         > 5'  
-##    + '&&' + 'Bs_pvDS2d_Cjp         > 10'    
+##    + '&&' + 'Bs_pvDS2d_Cjp         > 10' #b# 10   
     + '&&' + 'Bs_pv_detach_2D         > Bc_pv_detach_2D_vtxfit' #b# +0.02
-##    + '&&' + 'Bs_Bcdecay_weight   > 0.9'            #
-    + '&&' + 'Bs_pt_Cjp                > 10'  #b#  #m# none        
+##    + '&&' + 'Bs_Bcdecay_weight   > 0.95'            #
+##    + '&&' + 'Bs_pt_Cjp                > 10'  #b#  #m# none        
 
     #---------------------#
     ###------ Phi ------###
     #---------------------#
 
-    + '&&' + 'phi_pt_0c                > 2.'    #b# 2 #m# none     
-##    + '&&' + 'deltaR_KpKm              < 0.5'  # -
+    + '&&' + 'phi_pt_0c      > 2.'    #b# 2 #m# none
+##    + '&&' + 'Phi_VtxProb    > 0.05'    #b#  #m# none    
+##    + '&&' + 'deltaR_KpKm    < 0.5'  # -
 ##    + '&&' + 'kaonP_pt_0c > .7 && kaonM_pt_0c > .7' #b# ? #m# 0.7
+##    + '&&' + 'kaonP_dxy_Bsdecay  < 0.05 && kaonM_dxy_Bsdecay  < 0.015'
+ 
 
     #------------------------#
     ###------ Masses ------###
     #------------------------#
 
-    + '&&' + 'JPsi_mass_C0   > (' + str(PDG_JPSI_MASS) + ' - 0.15) && JPsi_mass_C0 < (' + str(PDG_JPSI_MASS) + ' + 0.15)' #b# ? #m# 0.15                                 
+    + '&&' + 'JPsi_mass_C0   > (' + str(PDG_JPSI_MASS) + ' - 0.1) && JPsi_mass_C0 < (' + str(PDG_JPSI_MASS) + ' + 0.1)' #b# ? #m# 0.15                                 
     + '&&' + 'phi_mass_0c   > (' + str(PDG_PHI_MASS) + ' - 0.015) && phi_mass_0c < (' + str(PDG_PHI_MASS) + ' + 0.015)' #b# ? #m# 0.015                                 
     + '&&' + 'Bs_mass_Cjp   > (' + str(PDG_BS_MASS) + ' - 0.03) && Bs_mass_Cjp < (' + str(PDG_BS_MASS) + ' + 0.03)'   #b# ? #m# 0.050                           #  5.32 and 5.41        
     + '&&' + 'Bc_mass       >' + str(mass_min) + ' && Bc_mass < ' + str(mass_max)                             #b# ? #m# 0.5        
@@ -73,10 +77,10 @@ cuts = ('1 > 0'
 ##    + '&&' + 'areTight_HM == 1' 
 ##    + '&&' + 'areSoft == 1' #+
 
-    + '&&' + 'mu1_pt_cjp > 4. && mu2_pt_cjp > 4.' #b# 4 #m# 3.5
+##    + '&&' + 'mu1_pt_cjp > 4. && mu2_pt_cjp > 4.' #b# 4 #m# 3.5
         
-    + '&&' + 'JPsi_pt_C0 > 10' #b# 10 #m# 5.5 #t# 6.9 ?
-    + '&&' + 'JPsi_VtxProb > 0.05' #b# 0.05 #m# 0.01
+##    + '&&' + 'JPsi_pt_C0 > 10' #b# 10 #m# 5.5 #t# 6.9 ?
+##    + '&&' + 'JPsi_VtxProb > 0.05' #b# 0.05 #m# 0.01
         
 ##    + '&&' + 'JPsi_pvcos2_C0 > .99'
 ##    + '&&' + 'JPsi_pv_DS_2D_C0 > 10.'
@@ -87,8 +91,8 @@ cuts = ('1 > 0'
     #----------------------#
 
     + '&&' + 'pion_pt_0c            > 1.'   #b# 1 #m# none  
-##    + '&&' + 'pion_Bcdecay_weight   > 0.9'   #+  (95)        
-##    + '&&' + 'deltaR_piBs   < 1.'            #        
+##    + '&&' + 'pion_Bcdecay_weight   > 0.95'   #+  (95)        
+##    + '&&' + 'deltaR_piBs   < .5'            #        
              
 ##    + '&&' + 'pion_track_normchi2   < 2'            # -  
 ##    + '&&' + 'pion_Hits   >= 7'            #   
