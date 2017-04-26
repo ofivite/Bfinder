@@ -64,20 +64,20 @@
 #include "TFile.h"
 #include "TTree.h"
 
-double PDG_MUON_MASS       =   0.10565837; 
-double PDG_PION_MASS       =   0.13957018; 
-double PDG_KAON_MASS       =   0.493677; 
-double PDG_KSHORT_MASS     =   0.497614; 
-double PDG_KS_MASS         =   0.497614; 
-double PDG_KSTAR_MASS      =   0.89594; 
-double PDG_PHI_MASS        =   1.019455; 
-double PDG_JPSI_MASS       =   3.096916; 
-double PDG_PSI2S_MASS      =   3.686109; 
-double PDG_BU_MASS         =   5.27929; 
-double PDG_B0_MASS         =   5.27961; 
-double PDG_BS_MASS         =   5.36679; 
-double PDG_BC_MASS         =   6.2751; 
-double PDG_LB_MASS         =   5.61951; 
+double PDG_MUON_MASS       =   0.10565837;
+double PDG_PION_MASS       =   0.13957018;
+double PDG_KAON_MASS       =   0.493677;
+double PDG_KSHORT_MASS     =   0.497614;
+double PDG_KS_MASS         =   0.497614;
+double PDG_KSTAR_MASS      =   0.89594;
+double PDG_PHI_MASS        =   1.019455;
+double PDG_JPSI_MASS       =   3.096916;
+double PDG_PSI2S_MASS      =   3.686109;
+double PDG_BU_MASS         =   5.27929;
+double PDG_B0_MASS         =   5.27961;
+double PDG_BS_MASS         =   5.36679;
+double PDG_BC_MASS         =   6.2751;
+double PDG_LB_MASS         =   5.61951;
 double PDG_C               =   29979245800.; // in cm/c
 //
 // class decleration
@@ -91,9 +91,9 @@ public:
 
 //   void fillPsi(const reco::Candidate& genpsi); // not used
 //   void fillV0(const reco::Candidate& genv0); // not used
-  bool const HasGoodME11(reco::Muon const& muon, double const dxdzCut) const; // used at some time but not written into tuple 
-  
-  
+  bool const HasGoodME11(reco::Muon const& muon, double const dxdzCut) const; // used at some time but not written into tuple
+
+
 private:
   virtual void beginJob() ;
   virtual void analyze(const edm::Event&, const edm::EventSetup&);
@@ -102,32 +102,35 @@ private:
   void MatchMuonWithTriggers(const pat::Muon &iMuon, const std::vector<std::string>& TrigList, std::string &TrigListNameTmp);
   void CheckHLTTriggers(const std::vector<std::string>& TrigList);
   void MatchMuonWithL1L2(const pat::Muon &iMuon, const std::vector<std::string>& TrigListL1L2, std::string &TrigListNameL1L2Tmp);
-    
+
 
 //   void printout(const RefCountedKinematicVertex& myVertex) const; // not used
 //   void printout(const RefCountedKinematicParticle& myParticle) const; // not used
 //   void printout(const RefCountedKinematicTree& myTree) const; // not used
 
-//   int PdgIDatTruthLevel(reco::TrackRef Track, edm::Handle<reco::GenParticleCollection> genParticles, int &ParentID); // not used 
-    
+//   int PdgIDatTruthLevel(reco::TrackRef Track, edm::Handle<reco::GenParticleCollection> genParticles, int &ParentID); // not used
+
   float Myctau(const RefCountedKinematicParticle &CandMC, const RefCountedKinematicVertex &DecayVertexMC, //not used
-	       const GlobalPoint &PVPtmp, const GlobalError &PVEtmp,float mass_tmp, 
+	       const GlobalPoint &PVPtmp, const GlobalError &PVEtmp,float mass_tmp,
 	       float &ctau2Dtmp, float &ctauEtemp, float &ctauE2Dtemp );
-    
+
     // ----------member data ---------------------------
   std::string hlTriggerResults_;
   std::string vtxSample;
   std::string genParticles_;
   std::string muonType;
   std::string muonTypeForPAT;
+  std::string photonCollectionProducer_;
+  std::string photonCollection_;
+
   bool doMC_;
   TTree*      tree_;
   int mupCategory;
   int mumCategory;
   int mupME1Clean;
   int mumME1Clean;
-  
- 
+
+
   unsigned int             nB;
   unsigned int             nMu;
   unsigned int             nVtx;
@@ -146,8 +149,8 @@ private:
 
   std::vector<float>    *B_pion_px_cjp         , *B_pion_py_cjp       , *B_pion_pz_cjp;
   std::vector<float>    *B_pion_charge     , *pion_track_normchi2  , *pion_Hits,  *pion_PHits;
-  std::vector<float>    *pion_dxy_Bcdecay, *pion_dz_Bcdecay, *pion_NTrackerLayers,  *pion_NPixelLayers, *pi_Bcdecay_weight;   
-   
+  std::vector<float>    *pion_dxy_Bcdecay, *pion_dz_Bcdecay, *pion_NTrackerLayers,  *pion_NPixelLayers, *pi_Bcdecay_weight;
+
 
   std::vector<float>    *B_mu_px1_cjp       , *B_mu_py1_cjp     , *B_mu_pz1_cjp;
   std::vector<float>    *B_mu_px2_cjp       , *B_mu_py2_cjp     , *B_mu_pz2_cjp;
@@ -168,14 +171,15 @@ private:
   std::vector<float>    *mum_normChi2       , *mumdxy        , *mumdz;
   std::vector<int>      *mumCat             , *mumAngT       , *mumNHits  , *mumNPHits;
   std::vector<bool>     *mum_isGlobalMuon   , *mum_isTight;
-  std::vector<int>      *mum_NMuonHits, *mum_NMuonStations, *mum_NTrackerLayers, *mum_NPixelLayers; 
+  std::vector<int>      *mum_NMuonHits, *mum_NMuonStations, *mum_NTrackerLayers, *mum_NPixelLayers;
   std::vector<float>    *mum_relIso;
 
   std::vector<float>    *mup_normChi2       , *mupdxy        , *mupdz;
   std::vector<int>      *mupCat             , *mupAngT       , *mupNHits  , *mupNPHits;
   std::vector<bool>     *mup_isGlobalMuon   , *mup_isTight;
-  std::vector<int>      *mup_NMuonHits, *mup_NMuonStations, *mup_NTrackerLayers, *mup_NPixelLayers; 
+  std::vector<int>      *mup_NMuonHits, *mup_NMuonStations, *mup_NTrackerLayers, *mup_NPixelLayers;
   std::vector<float>    *mup_relIso;
+  std::vector<float>    *phoEta;
 ///////////////////////
 
   int                   muAcc, muTrig, weight;
@@ -184,7 +188,7 @@ private:
 
   char triggersMuP[10000],     triggersMuM[10000] ;
   char triggersL1L2_MuP[10000],triggersL1L2_MuM[10000];
-  
+
   char triggersL1[10000];
   int  nTrgL, nTrgL1L,  nMuonTrgL,  nMuonPTrgL,        nMuonMTrgL;
   int  ntriggersL1L2_MuP, ntriggersL1L2_MuM;
