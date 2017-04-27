@@ -7,17 +7,18 @@ from PhysicsTools.PatAlgos.patTemplate_cfg import *
 
 
 #process.maxEvents = cms.untracked.PSet(  input = cms.untracked.int32(-1), SkipEvent = cms.untracked.vstring('ProductNotFound') )
-process.maxEvents = cms.untracked.PSet(  input = cms.untracked.int32(10), SkipEvent = cms.untracked.vstring('ProductNotFound') )
+process.maxEvents = cms.untracked.PSet(  input = cms.untracked.int32(100), SkipEvent = cms.untracked.vstring('ProductNotFound') )
 
 process.source = cms.Source("PoolSource",
 			    duplicateCheckMode = cms.untracked.string('noDuplicateCheck'),
 			    skipEvents = cms.untracked.uint32(0),
 			    fileNames = cms.untracked.vstring(
 
-'/store/data/Run2012C/MuOniaParked/AOD/22Jan2013-v1/20000/00839611-2576-E211-B384-E41F13181568.root'
+'/store/data/Run2012B/MuOniaParked/AOD/22Jan2013-v1/20000/16E502D6-7068-E211-B692-001A645C1EC4.root'
+#'/store/data/Run2012C/MuOniaParked/AOD/22Jan2013-v1/20000/00839611-2576-E211-B384-E41F13181568.root'
 #'/store/data/Run2012A/MuOnia/AOD/22Jan2013-v1/30000/000D2FF5-EE82-E211-BEBA-0026189438A5.root'
 #'/store/data/Run2012A/MuOnia/AOD/22Jan2013-v1/30000/000F9808-D483-E211-975C-003048FFD7BE.root'
-#'/store/data/Run2012D/MuOnia/AOD/22Jan2013-v1/10000/004C60F9-188F-E211-B43F-001E6849D384.root'       
+#'/store/data/Run2012D/MuOnia/AOD/22Jan2013-v1/10000/004C60F9-188F-E211-B43F-001E6849D384.root'
 	)
 )
 
@@ -27,7 +28,7 @@ process.load("Configuration.Geometry.GeometryIdeal_cff")
 #process.load("Configuration.StandardSequences.Geometry_cff")
 process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_cff")
 #process.GlobalTag.globaltag = cms.string('START311_V2::All')
-# process.GlobalTag.globaltag = cms.string('FT_R_53_V18::All') ## their 
+# process.GlobalTag.globaltag = cms.string('FT_R_53_V18::All') ## their
 process.GlobalTag.globaltag = cms.string( 'FT53_V21A_AN6::All') ## our for 2012ABC
 process.load("Configuration.StandardSequences.MagneticField_cff")
 process.load("Configuration.StandardSequences.Reconstruction_cff")
@@ -100,7 +101,7 @@ process.muonMatchHLTTrackMu.maxDPtRel = 10.0
 ### ==== Apply some final selection (none by default) ====
 process.patMuons = cms.EDFilter("PATMuonSelector",
     src = cms.InputTag("patMuonsWithTrigger"),
-    cut = cms.string(""), 
+    cut = cms.string(""),
 )
 
 # this is for filtering on L1 technical trigger bit
