@@ -120,9 +120,6 @@ private:
   std::string genParticles_;
   std::string muonType;
   std::string muonTypeForPAT;
-  std::string photonCollectionProducer_;
-  std::string photonCollection_;
-
   bool doMC_;
   TTree*      tree_;
   int mupCategory;
@@ -138,24 +135,51 @@ private:
   std::vector<std::string>         *triggersMuPL        , *triggersMuML;
   std::vector<std::string>         *triggersL1L2_MuPL   , *triggersL1L2_MuML;
 
-  std::vector<float>    *B_mass_cjp;
-  std::vector<float>    *B_px_cjp               , *B_py_cjp             , *B_pz_cjp;
-  std::vector<float>    *B_DecayVtxX        , *B_DecayVtxY      , *B_DecayVtxZ;
-  std::vector<float>    *B_DecayVtxXE       , *B_DecayVtxYE     , *B_DecayVtxZE;
+  std::vector<float>    *Bc_mass;
+  std::vector<float>    *Bc_px               , *Bc_py             , *Bc_pz;
+  std::vector<float>    *Bc_DecayVtxX        , *Bc_DecayVtxY      , *Bc_DecayVtxZ;
+  std::vector<float>    *Bc_DecayVtxXE       , *Bc_DecayVtxYE     , *Bc_DecayVtxZE;
+  std::vector<float>    *Bc_DecayVtx_vtxfit_X        , *Bc_DecayVtx_vtxfit_Y      , *Bc_DecayVtx_vtxfit_Z;
+  std::vector<float>    *Bc_DecayVtx_vtxfit_XE       , *Bc_DecayVtx_vtxfit_YE     , *Bc_DecayVtx_vtxfit_ZE;
+  std::vector<float>    *Bc_DecayVtx_vtxfit_XYE       , *Bc_DecayVtx_vtxfit_XZE     , *Bc_DecayVtx_vtxfit_YZE;
+  std::vector<float>    *Bc_DecayVtx_vtxfit_CL;
 
-  std::vector<float>    *B_J_mass           , *B_J_px           , *B_J_py       , *B_J_pz;
+  std::vector<float>    *Bs_mass_cjp;
+  std::vector<float>    *Bs_px_cjp           , *Bs_py_cjp         , *Bs_pz_cjp;
+  std::vector<float>    *Bs_DecayVtxX        , *Bs_DecayVtxY      , *Bs_DecayVtxZ;
+  std::vector<float>    *Bs_DecayVtxXE       , *Bs_DecayVtxYE     , *Bs_DecayVtxZE;
+
+  std::vector<float>    *pion_px_0c         , *pion_py_0c       , *pion_pz_0c;
+  std::vector<float>    *pion_track_normchi2;
+  std::vector<int>      *pion_Hits,  *pion_PHits;
+  std::vector<float>    *pion_dxy_Bcdecay, *pion_dz_Bcdecay;
+  std::vector<int>      *pion_NTrackerLayers,  *pion_NPixelLayers;
+
+  std::vector<float>    *B_J_mass;
+  std::vector<float>    *B_J_px             , *B_J_py             , *B_J_pz;
   std::vector<float>    *B_J_DecayVtxX      , *B_J_DecayVtxY    , *B_J_DecayVtxZ;
   std::vector<float>    *B_J_DecayVtxXE     , *B_J_DecayVtxYE   , *B_J_DecayVtxZE;
 
-  std::vector<float>    *B_pion_px_cjp         , *B_pion_py_cjp       , *B_pion_pz_cjp;
-  std::vector<float>    *B_pion_charge     , *pion_track_normchi2  , *pion_Hits,  *pion_PHits;
-  std::vector<float>    *pion_dxy_Bcdecay, *pion_dz_Bcdecay, *pion_NTrackerLayers,  *pion_NPixelLayers, *pi_Bcdecay_weight;
-
-
   std::vector<float>    *B_mu_px1_cjp       , *B_mu_py1_cjp     , *B_mu_pz1_cjp;
   std::vector<float>    *B_mu_px2_cjp       , *B_mu_py2_cjp     , *B_mu_pz2_cjp;
+  std::vector<float>    *Bc_Prob            , *Bc_Chi2,
+                        *Bs_Prob            , *Bs_Chi2,
+                        *B_J_Prob	         	, *B_Phi_Prob;
 
-  std::vector<float>    *B_Prob             , *B_J_Prob;
+  std::vector<float>    *kaonP_px_0c        , *kaonP_py_0c       , *kaonP_pz_0c;
+  std::vector<float>    *kaonP_px_cjp         , *kaonP_py_cjp       , *kaonP_pz_cjp;
+  std::vector<float>    *kaonP_track_normchi2;
+  std::vector<int>      *kaonP_Hits,  *kaonP_PHits;
+  std::vector<float>    *kaonP_dxy_Bsdecay, *kaonP_dz_Bsdecay;
+  std::vector<int>      *kaonP_NTrackerLayers,  *kaonP_NPixelLayers;
+
+  std::vector<float>    *kaonM_px_0c         , *kaonM_py_0c       , *kaonM_pz_0c;
+  std::vector<float>    *kaonM_px_cjp         , *kaonM_py_cjp       , *kaonM_pz_cjp;
+  std::vector<float>    *kaonM_track_normchi2;
+  std::vector<int>      *kaonM_Hits,  *kaonM_PHits;
+  std::vector<float>    *kaonM_dxy_Bsdecay, *kaonM_dz_Bsdecay;
+  std::vector<int>      *kaonM_NTrackerLayers,  *kaonM_NPixelLayers;
+
 
   std::vector<float>    *PV_bestBang_X      , *PV_bestBang_Y    , *PV_bestBang_Z;
   std::vector<float>    *PV_bestBang_XE     , *PV_bestBang_YE   , *PV_bestBang_ZE;
@@ -168,18 +192,25 @@ private:
   std::vector<float>    *PV_bestBang_RF_CL;
   std::vector<int>      *PV_bestBang_RF_NTrkDif;
 
-  std::vector<float>    *mum_normChi2       , *mumdxy        , *mumdz;
+  std::vector<float>    *mum_normChi2       , *mum_dxy_Bsdecay        , *mum_dz_Bsdecay;
   std::vector<int>      *mumCat             , *mumAngT       , *mumNHits  , *mumNPHits;
-  std::vector<bool>     *mum_isGlobalMuon   , *mum_isTight;
+  std::vector<int>      *mum_isGlobalMuon   , *mum_isTrackerMuon, *mum_isTight,
+                        *mum_LastStationOptimizedLowPtT, *mum_LastStationT, *mum_OneStationT,
+                        *mum_LastStationAngT, *mum_OneStationAngT, *mum_2DCompatibilityT;
   std::vector<int>      *mum_NMuonHits, *mum_NMuonStations, *mum_NTrackerLayers, *mum_NPixelLayers;
   std::vector<float>    *mum_relIso;
 
-  std::vector<float>    *mup_normChi2       , *mupdxy        , *mupdz;
+  std::vector<float>    *mup_normChi2       , *mup_dxy_Bsdecay        , *mup_dz_Bsdecay;
   std::vector<int>      *mupCat             , *mupAngT       , *mupNHits  , *mupNPHits;
-  std::vector<bool>     *mup_isGlobalMuon   , *mup_isTight;
+  std::vector<int>      *mup_isGlobalMuon   , *mup_isTrackerMuon, *mup_isTight,
+                        *mup_LastStationOptimizedLowPtT, *mup_LastStationT, *mup_OneStationT,
+                        *mup_LastStationAngT, *mup_OneStationAngT, *mup_2DCompatibilityT;
   std::vector<int>      *mup_NMuonHits, *mup_NMuonStations, *mup_NTrackerLayers, *mup_NPixelLayers;
   std::vector<float>    *mup_relIso;
-  std::vector<float>    *phoEta;
+
+  std::vector<bool>     *BcVertex_isValid;
+  std::vector<float>    *BcVertex_Chi, *BcVertex_normChi, *Bs_Bcdecay_weight, *pion_Bcdecay_weight;
+
 ///////////////////////
 
   int                   muAcc, muTrig, weight;

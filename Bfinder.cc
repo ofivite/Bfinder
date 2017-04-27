@@ -58,8 +58,6 @@
 #include "RecoVertex/VertexPrimitives/interface/BasicSingleVertexState.h"
 #include "RecoVertex/VertexPrimitives/interface/VertexState.h"
 
-#include "DataFormats/EgammaCandidates/interface/Photon.h"
-
 #include "TFile.h"
 #include "TTree.h"
 
@@ -96,48 +94,73 @@ Bfinder::Bfinder(const edm::ParameterSet& iConfig)
    triggersMuPL(0), triggersMuML(0),
    triggersL1L2_MuPL(0), triggersL1L2_MuML(0),
 
-   B_mass_cjp(0),
-   B_px_cjp(0),           B_py_cjp(0),          B_pz_cjp(0),
-   B_DecayVtxX(0),    B_DecayVtxY(0),   B_DecayVtxZ(0),
-   B_DecayVtxXE(0),   B_DecayVtxYE(0),  B_DecayVtxZE(0),
+ Bc_mass(0),
+ Bc_px(0),           Bc_py(0),          Bc_pz(0),
+ Bc_DecayVtxX(0),    Bc_DecayVtxY(0),   Bc_DecayVtxZ(0),
+ Bc_DecayVtxXE(0),   Bc_DecayVtxYE(0),  Bc_DecayVtxZE(0),
+
+ Bc_DecayVtx_vtxfit_X(0),   Bc_DecayVtx_vtxfit_Y(0),  Bc_DecayVtx_vtxfit_Z(0),
+ Bc_DecayVtx_vtxfit_XE(0),   Bc_DecayVtx_vtxfit_YE(0),  Bc_DecayVtx_vtxfit_ZE(0),
+ Bc_DecayVtx_vtxfit_XYE(0),   Bc_DecayVtx_vtxfit_XZE(0),  Bc_DecayVtx_vtxfit_YZE(0),
+ Bc_DecayVtx_vtxfit_CL(0),
 
 
-   B_J_mass(0),       B_J_px(0),            B_J_py(0),        B_J_pz(0),
-   B_J_DecayVtxX(0),  B_J_DecayVtxY(0),     B_J_DecayVtxZ(0),
-   B_J_DecayVtxXE(0), B_J_DecayVtxYE(0),    B_J_DecayVtxZE(0),
+ Bs_mass_cjp(0),
+ Bs_px_cjp(0),           Bs_py_cjp(0),          Bs_pz_cjp(0),
+ Bs_DecayVtxX(0),    Bs_DecayVtxY(0),   Bs_DecayVtxZ(0),
+ Bs_DecayVtxXE(0),   Bs_DecayVtxYE(0),  Bs_DecayVtxZE(0),
 
-   B_pion_px_cjp(0),   B_pion_py_cjp(0),  B_pion_pz_cjp(0),
-   B_pion_charge(0),   pion_track_normchi2(0),     pion_Hits(0),  pion_PHits(0),
-   pion_dxy_Bcdecay(0), pion_dz_Bcdecay(0), pion_NTrackerLayers(0),  pion_NPixelLayers(0), pi_Bcdecay_weight(0),
+ pion_px_0c(0),       pion_py_0c(0),  pion_pz_0c(0),
+ pion_track_normchi2(0),     pion_Hits(0),  pion_PHits(0),
+ pion_dxy_Bcdecay(0), pion_dz_Bcdecay(0), pion_NTrackerLayers(0),  pion_NPixelLayers(0),
 
-   B_mu_px1_cjp(0),   B_mu_py1_cjp(0),  B_mu_pz1_cjp(0),
-   B_mu_px2_cjp(0),   B_mu_py2_cjp(0),  B_mu_pz2_cjp(0),
+ B_J_mass(0),       B_J_px(0),            B_J_py(0),        B_J_pz(0),
+ B_J_DecayVtxX(0),  B_J_DecayVtxY(0),     B_J_DecayVtxZ(0),
+ B_J_DecayVtxXE(0), B_J_DecayVtxYE(0),    B_J_DecayVtxZE(0),
 
-   B_Prob(0), B_J_Prob(0),
+ B_mu_px1_cjp(0),   B_mu_py1_cjp(0),  B_mu_pz1_cjp(0),
+ B_mu_px2_cjp(0),   B_mu_py2_cjp(0),  B_mu_pz2_cjp(0),
 
-   PV_bestBang_X(0),      PV_bestBang_Y(0),     PV_bestBang_Z(0),
-   PV_bestBang_XE(0),     PV_bestBang_YE(0),    PV_bestBang_ZE(0),
-   PV_bestBang_XYE(0),    PV_bestBang_XZE(0),   PV_bestBang_YZE(0),
-   PV_bestBang_CL(0),
+ Bc_Prob(0), Bc_Chi2(0), Bs_Prob(0), Bs_Chi2(0), B_J_Prob(0), B_Phi_Prob(0),
 
-   PV_bestBang_RF_X(0),   PV_bestBang_RF_Y(0),  PV_bestBang_RF_Z(0),
-   PV_bestBang_RF_XE(0),  PV_bestBang_RF_YE(0), PV_bestBang_RF_ZE(0),
-   PV_bestBang_RF_XYE(0), PV_bestBang_RF_XZE(0),PV_bestBang_RF_YZE(0),
-   PV_bestBang_RF_CL(0),  PV_bestBang_RF_NTrkDif(0),
+ kaonP_px_0c(0),       kaonP_py_0c(0),  kaonP_pz_0c(0),
+ kaonP_px_cjp(0),       kaonP_py_cjp(0),  kaonP_pz_cjp(0),
+ kaonP_track_normchi2(0),     kaonP_Hits(0),  kaonP_PHits(0),
+ kaonP_dxy_Bsdecay(0), kaonP_dz_Bsdecay(0), kaonP_NTrackerLayers(0),  kaonP_NPixelLayers(0),
 
-   mum_normChi2(0),  mumdxy(0),    mumdz(0)    , mumCat(0) , mumAngT(0)    , mumNHits(0)   , mumNPHits(0),
-   mum_isGlobalMuon(0), mum_isTight(0), mum_NMuonHits(0), mum_NMuonStations(0), mum_NTrackerLayers(0), mum_NPixelLayers(0), mum_relIso(0),
+ kaonM_px_0c(0),       kaonM_py_0c(0),  kaonM_pz_0c(0),
+ kaonM_px_cjp(0),       kaonM_py_cjp(0),  kaonM_pz_cjp(0),
+ kaonM_track_normchi2(0),     kaonM_Hits(0),  kaonM_PHits(0),
+ kaonM_dxy_Bsdecay(0), kaonM_dz_Bsdecay(0), kaonM_NTrackerLayers(0),  kaonM_NPixelLayers(0),
 
-   mup_normChi2(0),  mupdxy(0),    mupdz(0)    , mupCat(0) , mupAngT(0)    , mupNHits(0)   , mupNPHits(0),
-   mup_isGlobalMuon(0), mup_isTight(0), mup_NMuonHits(0), mup_NMuonStations(0), mup_NTrackerLayers(0), mup_NPixelLayers(0), mup_relIso(0),
-   phoEta(0),
-   run(0), event(0)
+
+ PV_bestBang_X(0),      PV_bestBang_Y(0),     PV_bestBang_Z(0),
+ PV_bestBang_XE(0),     PV_bestBang_YE(0),    PV_bestBang_ZE(0),
+ PV_bestBang_XYE(0),    PV_bestBang_XZE(0),   PV_bestBang_YZE(0),
+ PV_bestBang_CL(0),
+
+ PV_bestBang_RF_X(0),   PV_bestBang_RF_Y(0),  PV_bestBang_RF_Z(0),
+ PV_bestBang_RF_XE(0),  PV_bestBang_RF_YE(0), PV_bestBang_RF_ZE(0),
+ PV_bestBang_RF_XYE(0), PV_bestBang_RF_XZE(0),PV_bestBang_RF_YZE(0),
+ PV_bestBang_RF_CL(0),  PV_bestBang_RF_NTrkDif(0),
+
+ mum_normChi2(0),  mum_dxy_Bsdecay(0),    mum_dz_Bsdecay(0)    , mumCat(0) , mumAngT(0)    , mumNHits(0)   , mumNPHits(0),
+ mum_isGlobalMuon(0), mum_isTrackerMuon(0), mum_isTight(0),
+ mum_LastStationOptimizedLowPtT(0), mum_LastStationT(0), mum_OneStationT(0),
+ mum_LastStationAngT(0), mum_OneStationAngT(0), mum_2DCompatibilityT(0),
+ mum_NMuonHits(0), mum_NMuonStations(0), mum_NTrackerLayers(0), mum_NPixelLayers(0), mum_relIso(0),
+
+ mup_normChi2(0),  mup_dxy_Bsdecay(0),    mup_dz_Bsdecay(0)    , mupCat(0) , mupAngT(0)    , mupNHits(0)   , mupNPHits(0),
+ mup_isGlobalMuon(0), mup_isTrackerMuon(0), mup_isTight(0),
+ mup_LastStationOptimizedLowPtT(0), mup_LastStationT(0), mup_OneStationT(0),
+ mup_LastStationAngT(0), mup_OneStationAngT(0), mup_2DCompatibilityT(0),
+ mup_NMuonHits(0), mup_NMuonStations(0), mup_NTrackerLayers(0), mup_NPixelLayers(0), mup_relIso(0),
+
+ BcVertex_isValid(0), BcVertex_Chi(0), BcVertex_normChi(0), Bs_Bcdecay_weight(0), pion_Bcdecay_weight(0),
+ run(0), event(0)
 
 {
    //now do what ever initialization is needed
-//   photonCollectionProducer_ = iConfig.getParameter<std::string>("phoProducer");
-//   photonCollection_ = iConfig.getParameter<std::string>("photonCollection");
-
 }
 
 
@@ -326,12 +349,6 @@ void Bfinder::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   Handle< vector<pat::Muon> > thePATMuonHandle;
   iEvent.getByLabel(muonType, thePATMuonHandle);
 
-  Handle< reco::PhotonCollection > photonHandle;
-  iEvent.getByLabel("photons", photonHandle);
-//  iEvent.getByLabel(photonCollectionProducer_, photonCollection_ , photonHandle);
-//  const reco::PhotonCollection photonCollection = *(photonHandle.product());
-
-
   //get genParticles
   // Handle<GenParticleCollection> genParticles;
 //   if (doMC_)
@@ -381,9 +398,8 @@ void Bfinder::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
     std::string alltnames = triggersL;
     //Bool_t checkflag = false;
-    std::string::size_type trigger1 = alltnames.find("HLT_DoubleMu4_Jpsi_Displaced",0);
 //    std::string::size_type trigger1 = alltnames.find("HLT_DoubleMu3p5_LowMass_Displaced",0);
-
+    std::string::size_type trigger1 = alltnames.find("HLT_DoubleMu4_Jpsi_Displaced",0);
     if(trigger1==std::string::npos)
       {
 	//checkflag=true;return;
@@ -523,8 +539,11 @@ void Bfinder::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 	  //Let's check the vertex and mass
       ParticleMass PM_PDG_MUON_MASS = PDG_MUON_MASS;
       ParticleMass PM_PDG_JPSI_MASS = PDG_JPSI_MASS;
+      ParticleMass PM_PDG_KAON_MASS = PDG_KAON_MASS;
       ParticleMass PM_PDG_PION_MASS = PDG_PION_MASS;
       float PM_muon_sigma = PM_PDG_MUON_MASS*1.e-6;
+      float PM_kaon_sigma = PM_PDG_KAON_MASS*1.e-6;
+      float PM_pion_sigma = PM_PDG_PION_MASS*1.e-6;
       float chi = 0.;
       float ndf = 0.;
 
@@ -553,34 +572,35 @@ void Bfinder::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       if ( MUMU_mass_c0 < PDG_JPSI_MASS - 0.15 ) continue;
       if ( MUMU_mass_c0 > PDG_JPSI_MASS + 0.15 ) continue;
 
+
       // Get Matching Muon to HLT
-         std::string ListTriggMuP_tmp="";
-         std::string ListTriggMuM_tmp="";
+      std::string ListTriggMuP_tmp="";
+      std::string ListTriggMuM_tmp="";
 
-         if(iMuon1->charge()== 1) MatchMuonWithTriggers(*iMuon1, TrigTable, ListTriggMuP_tmp);
-         if(iMuon1->charge()==-1) MatchMuonWithTriggers(*iMuon1, TrigTable, ListTriggMuM_tmp);
-         if(iMuon2->charge()== 1) MatchMuonWithTriggers(*iMuon2, TrigTable, ListTriggMuP_tmp);
-         if(iMuon2->charge()==-1) MatchMuonWithTriggers(*iMuon2, TrigTable, ListTriggMuM_tmp);
+      if(iMuon1->charge()== 1) MatchMuonWithTriggers(*iMuon1, TrigTable, ListTriggMuP_tmp);
+      if(iMuon1->charge()==-1) MatchMuonWithTriggers(*iMuon1, TrigTable, ListTriggMuM_tmp);
+      if(iMuon2->charge()== 1) MatchMuonWithTriggers(*iMuon2, TrigTable, ListTriggMuP_tmp);
+      if(iMuon2->charge()==-1) MatchMuonWithTriggers(*iMuon2, TrigTable, ListTriggMuM_tmp);
 
-         // *** *************** MUON MACHINT HERE ********** ****************************
+      // *** *************** MUON MACHINT HERE ********** ****************************
 
-         std::string::size_type triggerMupOS = ListTriggMuP_tmp.find("HLT_DoubleMu3p5_LowMass_Displaced",0);
-         std::string::size_type triggerMuNeg = ListTriggMuM_tmp.find("HLT_DoubleMu3p5_LowMass_Displaced",0);
+      std::string::size_type triggerMupOS = ListTriggMuP_tmp.find("HLT_DoubleMu3p5_LowMass_Displaced",0);
+      std::string::size_type triggerMuNeg = ListTriggMuM_tmp.find("HLT_DoubleMu3p5_LowMass_Displaced",0);
 
-         if(triggerMupOS==std::string::npos || triggerMuNeg==std::string::npos )
-           {
-             continue;
-           }
+      if(triggerMupOS==std::string::npos || triggerMuNeg==std::string::npos )
+        {
+ //         continue;
+        }
 
-         // ******************************* end muon machint *******************************
+      // ******************************* end muon machint *******************************
 
-         int nMuonP = sprintf(triggersMuP,"%s",ListTriggMuP_tmp.c_str());
-         int nMuonM = sprintf(triggersMuM,"%s",ListTriggMuM_tmp.c_str());
+      int nMuonP = sprintf(triggersMuP,"%s",ListTriggMuP_tmp.c_str());
+      int nMuonM = sprintf(triggersMuM,"%s",ListTriggMuM_tmp.c_str());
 
-         nMuonPTrgL = nMuonP;
-         nMuonMTrgL = nMuonM;
-         triggersMuPL ->push_back(triggersMuP);
-         triggersMuML ->push_back(triggersMuM);
+      nMuonPTrgL = nMuonP;
+      nMuonMTrgL = nMuonM;
+      triggersMuPL ->push_back(triggersMuP);
+      triggersMuML ->push_back(triggersMuM);
 
 
 /*
@@ -620,28 +640,30 @@ RefCountedKinematicTree
 // 	   int PId1=0; int PId2=0;
 
 
-	   pat::GenericParticle patTrack1;
-// 	   pat::GenericParticle patTrack2;
+	   pat::GenericParticle patTrack_Kp;
+ 	   pat::GenericParticle patTrack_Km;
+     pat::GenericParticle patTrack_Pi;
 
-	   for(vector<pat::GenericParticle>::const_iterator iTrack1 = thePATTrackHandle->begin(); iTrack1 != thePATTrackHandle->end(); ++iTrack1 )
+	   for(vector<pat::GenericParticle>::const_iterator iKaonP = thePATTrackHandle->begin(); iKaonP != thePATTrackHandle->end(); ++iKaonP )
 	     {
 
-// 	       int ngenT1 = 0;//PdgIDatTruthLevel(iTrack1->track(), genParticles, PId1);
-	       patTrack1 = *iTrack1;
-	       if(iTrack1->pt()<2.0) continue;
-           if (fabs(iTrack1->eta())>2.5) continue;
+// 	       int ngenT1 = 0;//PdgIDatTruthLevel(iKaonP->track(), genParticles, PId1);
+	       patTrack_Kp = *iKaonP;
 
-	       if(!(patTrack1.track()->quality(reco::TrackBase::highPurity))) continue;
+        if(iKaonP->pt() < 0.7 || iKaonP->charge() != 1 || fabs(iKaonP->eta()) > 2.5) continue;
+
+
+	       if(!(patTrack_Kp.track()->quality(reco::TrackBase::highPurity))) continue;
 
                bool matchflag = false;
-               const reco::CandidatePtrVector & mu1P_overlaps = patTrack1.overlaps(muonTypeForPAT);
-               if ( mu1P_overlaps.size() > 0 ) //std::cout << "patTrack1 overlaps with a muon." << endl;
+               const reco::CandidatePtrVector & mu1P_overlaps = patTrack_Kp.overlaps(muonTypeForPAT);
+               if ( mu1P_overlaps.size() > 0 ) //std::cout << "patTrack_Kp overlaps with a muon." << endl;
                for (size_t i = 0; i < mu1P_overlaps.size(); ++i) {
                  const pat::Muon *mu = dynamic_cast<const pat::Muon *>(&*mu1P_overlaps[i]);
                  if (mu) {
                    // check here that muon match isn't the same as a muon used in the reco...
                    if (mu==patMuonP || mu==patMuonM)  {
-                       //std::cout << "match between patTrack1 and patMuonP/patMuonM" << endl;
+                       //std::cout << "match between patTrack_Kp and patMuonP/patMuonM" << endl;
                        matchflag=true;
                    }
                  }
@@ -649,67 +671,209 @@ RefCountedKinematicTree
 
                if(matchflag) continue;
 
-               TransientTrack pion1TT(patTrack1.track(), &(*bFieldHandle) );
+               TransientTrack kaonPTT(patTrack_Kp.track(), &(*bFieldHandle) );
+               if(!kaonPTT.isValid()) continue;
 
-               TLorentzVector p4k1_0c, p4mumuk_0c;
-               p4k1_0c.SetXYZM(iTrack1->px(),iTrack1->py(),iTrack1->pz(), PDG_PION_MASS);
+/////
+for(vector<pat::GenericParticle>::const_iterator iKaonM = thePATTrackHandle->begin(); iKaonM != thePATTrackHandle->end(); ++iKaonM )
+  {
+   if(iKaonP == iKaonM) continue;
+// 	       int ngenT1 = 0;//PdgIDatTruthLevel(iKaonP->track(), genParticles, PId1);
+   patTrack_Km = *iKaonM;
+   if(iKaonM->pt() < 0.7 || iKaonM->charge() != -1 || fabs(iKaonP->eta()) > 2.5) continue;
 
-               p4mumuk_0c = p4mu1_0c + p4mu2_0c + p4k1_0c;
-               if(p4mumuk_0c.M() > 7.0) continue;
-               if(p4mumuk_0c.M() < 5.5) continue;
+
+    if(!(patTrack_Km.track()->quality(reco::TrackBase::highPurity))) continue;
+
+          bool matchflag = false;
+          const reco::CandidatePtrVector & mu2P_overlaps = patTrack_Km.overlaps(muonTypeForPAT);
+          if ( mu2P_overlaps.size() > 0 ) //std::cout << "patTrack_Kp overlaps with a muon." << endl;
+          for (size_t i = 0; i < mu2P_overlaps.size(); ++i) {
+            const pat::Muon *mu = dynamic_cast<const pat::Muon *>(&*mu2P_overlaps[i]);
+            if (mu) {
+              // check here that muon match isn't the same as a muon used in the reco...
+              if (mu==patMuonP || mu==patMuonM)  {
+                  //std::cout << "match between patTrack_Kp and patMuonP/patMuonM" << endl;
+                  matchflag=true;
+              }
+            }
+          }
+
+          if(matchflag) continue;
+
+          TransientTrack kaonMTT(patTrack_Km.track(), &(*bFieldHandle) );
+          if(!kaonMTT.isValid()) continue;
+
+
+               TLorentzVector p4kaonP_0c, p4kaonM_0c, p4phi_0c, p4jpsi_0c;
+               p4kaonP_0c.SetXYZM(iKaonP->px(),iKaonP->py(),iKaonP->pz(), PDG_KAON_MASS);
+               p4kaonM_0c.SetXYZM(iKaonM->px(),iKaonM->py(),iKaonM->pz(), PDG_KAON_MASS);
+
+               p4phi_0c = p4kaonP_0c + p4kaonM_0c;
+               p4jpsi_0c = p4mu1_0c + p4mu2_0c;
+               if(p4phi_0c.M() > PDG_PHI_MASS + 0.1) continue;
+               if(p4phi_0c.M() < PDG_PHI_MASS - 0.1) continue;
+
+                std::vector<RefCountedKinematicParticle> phiParticles;
+                phiParticles.push_back(pFactory.particle(kaonPTT, PM_PDG_KAON_MASS, chi,ndf, PM_kaon_sigma));
+                phiParticles.push_back(pFactory.particle(kaonMTT, PM_PDG_KAON_MASS, chi,ndf, PM_kaon_sigma));
+
+                KinematicParticleVertexFitter   phifitter;
+                RefCountedKinematicTree         phiTree;
+                phiTree = phifitter.fit(phiParticles);
+                if (!phiTree->isValid()) continue;
+
+                phiTree->movePointerToTheTop();
+                RefCountedKinematicParticle PHIparticle       = phiTree->currentParticle();
+                RefCountedKinematicVertex   PHIvtx            = phiTree->currentDecayVertex();
+                if (!PHIvtx->vertexIsValid())  continue;
+                double phi_Prob_tmp = TMath::Prob(PHIvtx->chiSquared(), PHIvtx->degreesOfFreedom());
+                if(phi_Prob_tmp < 0.01) continue;
+
+                double PHI_mass_c0 = PHIparticle->currentState().mass();
+                if ( PHI_mass_c0 < PDG_PHI_MASS - 0.05 ) continue;
+                if ( PHI_mass_c0 > PDG_PHI_MASS + 0.05 ) continue;
+
+
 
                //Now we are ready to combine!
+               if(fabs((p4jpsi_0c + p4phi_0c).M() - PDG_BS_MASS) > 0.6) continue;
 
-               std::vector<RefCountedKinematicParticle> B_candidate_init;
+               std::vector<RefCountedKinematicParticle> Bs_candidate_init;
 
-               B_candidate_init.push_back(pFactory.particle(muon1TT, PM_PDG_MUON_MASS, chi,ndf, PM_muon_sigma));
-               B_candidate_init.push_back(pFactory.particle(muon2TT, PM_PDG_MUON_MASS, chi,ndf, PM_muon_sigma));
-               B_candidate_init.push_back(pFactory.particle(pion1TT, PM_PDG_PION_MASS, chi,ndf, PM_muon_sigma));
-               RefCountedKinematicTree xbVFT, vertexFitTree;
+               Bs_candidate_init.push_back(pFactory.particle(muon1TT, PM_PDG_MUON_MASS, chi,ndf, PM_muon_sigma));
+               Bs_candidate_init.push_back(pFactory.particle(muon2TT, PM_PDG_MUON_MASS, chi,ndf, PM_muon_sigma));
+               Bs_candidate_init.push_back(pFactory.particle(kaonPTT, PM_PDG_KAON_MASS, chi,ndf, PM_kaon_sigma));
+               Bs_candidate_init.push_back(pFactory.particle(kaonMTT, PM_PDG_KAON_MASS, chi,ndf, PM_kaon_sigma));
+               RefCountedKinematicTree xbVFT, BsFitTree;
 
-               std::vector<RefCountedKinematicParticle> B_candidate = B_candidate_init;
+               std::vector<RefCountedKinematicParticle> Bs_candidate = Bs_candidate_init;
                KinematicParticleVertexFitter pFitter; //KinematicParticleVertexFitter
-               xbVFT = pFitter.fit(B_candidate);
+               xbVFT = pFitter.fit(Bs_candidate);
 
                if (!xbVFT->isValid()) continue;
                xbVFT->movePointerToTheTop();
 
-
     ///////////////////////////////  BS VERTEX FIT /////////////////////////////////////////
                //J/Psi mass constraint
 
-               B_candidate = B_candidate_init;
+               Bs_candidate = Bs_candidate_init;
                MultiTrackKinematicConstraint *ConstraintJpsiMass = new TwoTrackMassKinematicConstraint(PM_PDG_JPSI_MASS);
+
                KinematicConstrainedVertexFitter kcvFitter; //KinematicParticleVertexFitter
-               vertexFitTree = kcvFitter.fit(B_candidate, ConstraintJpsiMass);
+               BsFitTree = kcvFitter.fit(Bs_candidate, ConstraintJpsiMass);
 
-               if (!vertexFitTree->isValid()) continue;
+               if (!BsFitTree->isValid()) continue;
 
-               vertexFitTree->movePointerToTheTop();
-               RefCountedKinematicParticle bCandCjp = vertexFitTree->currentParticle();
-               RefCountedKinematicVertex bDecayVertexCjp = vertexFitTree->currentDecayVertex();
-               if (!bDecayVertexCjp->vertexIsValid())  continue;
+               BsFitTree->movePointerToTheTop();
+               RefCountedKinematicParticle BsCandCjp = BsFitTree->currentParticle();
+               RefCountedKinematicVertex BsDecayVertexCjp = BsFitTree->currentDecayVertex();
+               if (!BsDecayVertexCjp->vertexIsValid())  continue;
 
-               double B_mass_cjp_tmp = bCandCjp->currentState().mass();
-               if(B_mass_cjp_tmp < 6.0) continue;
-               if(B_mass_cjp_tmp > 6.6) continue;
+               double Bs_mass_cjp_tmp = BsCandCjp->currentState().mass();
+
+               if(Bs_mass_cjp_tmp < 5.2) continue;
+               if(Bs_mass_cjp_tmp > 5.5) continue;
                //
-               if(bDecayVertexCjp->chiSquared()<0) continue;
-               double B_Prob_tmp   = TMath::Prob(bDecayVertexCjp->chiSquared(), (int) bDecayVertexCjp->degreesOfFreedom());
-               if(B_Prob_tmp < 0.01) continue;
-
-               // get children from final B fit
-
-               vertexFitTree->movePointerToTheFirstChild();
-               RefCountedKinematicParticle mu1CandMC    = vertexFitTree->currentParticle();
-               vertexFitTree->movePointerToTheNextChild();
-               RefCountedKinematicParticle mu2CandMC    = vertexFitTree->currentParticle();
-               vertexFitTree->movePointerToTheNextChild();
-               RefCountedKinematicParticle T1CandMC     = vertexFitTree->currentParticle();
+               if(BsDecayVertexCjp->chiSquared()<0) continue;
+               double Bs_Prob_tmp   = TMath::Prob(BsDecayVertexCjp->chiSquared(), (int) BsDecayVertexCjp->degreesOfFreedom());
+               if(Bs_Prob_tmp < 0.01) continue;
 
 
-               ROOT::Math::XYZPoint bDecayPoint( (*bDecayVertexCjp).position().x(), (*bDecayVertexCjp).position().y(), (*bDecayVertexCjp).position().z() );
- 	       GlobalPoint BcGP = GlobalPoint( (*bDecayVertexCjp).position().x(), (*bDecayVertexCjp).position().y(), (*bDecayVertexCjp).position().z() );
+ //	             GlobalPoint BsGP = GlobalPoint( (*BsDecayVertexCjp).position().x(), (*BsDecayVertexCjp).position().y(), (*BsDecayVertexCjp).position().z() );
+               ROOT::Math::XYZPoint BsDecayPoint( (*BsDecayVertexCjp).position().x(), (*BsDecayVertexCjp).position().y(), (*BsDecayVertexCjp).position().z() );
+
+	 // get children from final B fit
+
+               BsFitTree->movePointerToTheFirstChild();
+               RefCountedKinematicParticle mu1CandMC    = BsFitTree->currentParticle();
+               BsFitTree->movePointerToTheNextChild();
+               RefCountedKinematicParticle mu2CandMC    = BsFitTree->currentParticle();
+               BsFitTree->movePointerToTheNextChild();
+               RefCountedKinematicParticle KpCandMC     = BsFitTree->currentParticle();
+               BsFitTree->movePointerToTheNextChild();
+               RefCountedKinematicParticle KmCandMC     = BsFitTree->currentParticle();
+
+
+// let's add pion
+               for(vector<pat::GenericParticle>::const_iterator iPion = thePATTrackHandle->begin(); iPion != thePATTrackHandle->end(); ++iPion )
+                 {
+                  if( (iKaonP == iPion) || (iKaonM == iPion)) continue;
+               // 	       int ngenT1 = 0;//PdgIDatTruthLevel(iKaonP->track(), genParticles, PId1);
+                  patTrack_Pi = *iPion;
+                  if(iPion->pt() < 0.4 || fabs(iPion->eta()) > 2.5) continue;
+
+
+                   if(!(patTrack_Pi.track()->quality(reco::TrackBase::highPurity))) continue;
+
+                         bool matchflag = false;
+                         const reco::CandidatePtrVector & mu3P_overlaps = patTrack_Pi.overlaps(muonTypeForPAT);
+                         if ( mu3P_overlaps.size() > 0 ) //std::cout << "patTrack_Kp overlaps with a muon." << endl;
+                         for (size_t i = 0; i < mu3P_overlaps.size(); ++i) {
+                           const pat::Muon *mu = dynamic_cast<const pat::Muon *>(&*mu3P_overlaps[i]);
+                           if (mu) {
+                             // check here that muon match isn't the same as a muon used in the reco...
+                             if (mu==patMuonP || mu==patMuonM)  {
+                                 //std::cout << "match between patTrack_Kp and patMuonP/patMuonM" << endl;
+                                 matchflag=true;
+                             }
+                           }
+                         }
+
+                         if(matchflag) continue;
+
+                         TransientTrack pionTT(patTrack_Pi.track(), &(*bFieldHandle) );
+                         if(!pionTT.isValid()) continue;
+
+                         TLorentzVector p4pion_0c, p4Bs, p4Bc_0c;
+                         p4pion_0c.SetXYZM(iPion->px(),iPion->py(),iPion->pz(), PDG_PION_MASS);
+                         p4Bs.SetXYZM(BsCandCjp->currentState().globalMomentum().x(),BsCandCjp->currentState().globalMomentum().y(),BsCandCjp->currentState().globalMomentum().z(), BsCandCjp->currentState().mass());
+
+                         p4Bc_0c = p4pion_0c + p4Bs;
+                         if(fabs(p4Bc_0c.M() - PDG_BC_MASS > 0.6)) continue;
+
+
+	                       VirtualKinematicParticleFactory vFactory;
+                         float Bs_dof  = BsDecayVertexCjp->degreesOfFreedom();
+                         float Bs_fit_chi2 = BsDecayVertexCjp->chiSquared();
+
+                         TransientTrack Bs_TT = BsCandCjp->refittedTransientTrack();
+                         if (!Bs_TT.isValid()) continue;
+
+                         vector<RefCountedKinematicParticle> vFitMCParticlesBc;
+                         //vFitMCParticlesBc.push_back(pFactory.particle(Bs_TT, Bs_mass_cjp_tmp, chi, ndf, PM_muon_sigma));
+                         //vFitMCParticlesBc.push_back(BsCandCjp);
+                         vFitMCParticlesBc.push_back(vFactory.particle(BsCandCjp->currentState(), Bs_fit_chi2, Bs_dof, BsCandCjp));
+                         //vFitMCParticlesBc.push_back(pFactory.particle(bCandMC->refittedTransientTrack(),bs_mass,chi,ndf,bs_sigma));
+                         vFitMCParticlesBc.push_back(pFactory.particle(pionTT, PM_PDG_PION_MASS, chi,ndf, PM_pion_sigma));
+
+                         KinematicParticleVertexFitter kcvFitterBc;
+                  		   RefCountedKinematicTree vertexFitTreeBc = kcvFitterBc.fit(vFitMCParticlesBc);
+                  		   if (!vertexFitTreeBc->isValid()) {
+                  		     std::cout << "caught an exception in the B vertex fit with MC" << std::endl;
+                  		     continue;
+                  		   }
+
+                  		   //std::cout << "por si otro" << std::endl;
+
+                  		   vertexFitTreeBc->movePointerToTheTop();
+                  		   RefCountedKinematicParticle BcCandCjp = vertexFitTreeBc->currentParticle();
+                  		   RefCountedKinematicVertex BcDecayVertexCjp = vertexFitTreeBc->currentDecayVertex();
+                  		   if (!BcDecayVertexCjp->vertexIsValid()){
+                  		     //std::cout << "B MC fit vertex is not valid" << endl;
+                  		     continue;
+                  		   }
+
+                         double Bc_mass_cjp_tmp = BcCandCjp->currentState().mass();
+
+                         if(fabs(Bc_mass_cjp_tmp - PDG_BC_MASS) > 0.3) continue;
+                         if(BcDecayVertexCjp->chiSquared()<0) continue;
+                         double Bc_Prob_tmp   = TMath::Prob(BcDecayVertexCjp->chiSquared(), (int) BcDecayVertexCjp->degreesOfFreedom());
+                         if(Bc_Prob_tmp < 0.01) continue;
+
+                         ROOT::Math::XYZPoint BcDecayPoint( (*BcDecayVertexCjp).position().x(), (*BcDecayVertexCjp).position().y(), (*BcDecayVertexCjp).position().z() );
+           	             GlobalPoint BcGP = GlobalPoint( (*BcDecayVertexCjp).position().x(), (*BcDecayVertexCjp).position().y(), (*BcDecayVertexCjp).position().z() );
+
 
 
         // {{{ GET THE BEST PV BY CHOSING THE BEST POINTING ANGLE AND REMOVE BS TRACKS FROM ITS FIT
@@ -734,10 +898,10 @@ RefCountedKinematicTree
                {
                     const Vertex &PVtxBeSp = (*recVtxes)[i];
 
-                    Double_t dx = (*bDecayVertexCjp).position().x() - PVtxBeSp.x();
-                    Double_t dy = (*bDecayVertexCjp).position().y() - PVtxBeSp.y();
-                    Double_t dz = (*bDecayVertexCjp).position().z() - PVtxBeSp.z();
-                    Double_t cosAlphaXYZ = ( bCandCjp->currentState().globalMomentum().x() * dx + bCandCjp->currentState().globalMomentum().y()*dy + bCandCjp->currentState().globalMomentum().z()*dz  )/( sqrt(dx*dx+dy*dy+dz*dz)* bCandCjp->currentState().globalMomentum().mag() );
+                    Double_t dx = (*BcDecayVertexCjp).position().x() - PVtxBeSp.x();
+                    Double_t dy = (*BcDecayVertexCjp).position().y() - PVtxBeSp.y();
+                    Double_t dz = (*BcDecayVertexCjp).position().z() - PVtxBeSp.z();
+                    Double_t cosAlphaXYZ = ( BcCandCjp->currentState().globalMomentum().x() * dx + BcCandCjp->currentState().globalMomentum().y()*dy + BcCandCjp->currentState().globalMomentum().z()*dz  )/( sqrt(dx*dx+dy*dy+dz*dz)* BcCandCjp->currentState().globalMomentum().mag() );
 
                     if(cosAlphaXYZ>lip)
                     {
@@ -770,15 +934,19 @@ RefCountedKinematicTree
                     // compare primary tracks to check for matches with B cand
                     TrackRef trackRef = iTrack->castTo<TrackRef>();
 
-                    // the 4 tracks in the B cand are  patTrack1 glbTrackP glbTrackM
-                    if (  !(   (patTrack1.track()==trackRef)   ||
-                               (trkTrackP==trackRef)           ||
+                    // the 4 tracks in the B cand are  patTrack_Kp glbTrackP glbTrackM
+                    if (  !(   (patTrack_Kp.track()==trackRef)  ||
+                               (patTrack_Km.track()==trackRef)  ||
+                               (patTrack_Pi.track()==trackRef)  ||
+                               (trkTrackP==trackRef)            ||
                                (trkTrackM==trackRef)           ) )
                        {
                            TransientTrack tt(trackRef, &(*bFieldHandle) );
                            vertexTracks.push_back(tt);
                        } //else { std::cout << "found track match with primary" << endl;}
                }
+
+               PV_bestBang_RF_NTrkDif->push_back( bestPV_Bang.tracksSize() - vertexTracks.size() );
 
                // if no tracks in primary or no reco track included in primary then don't do anything
                // if so, then update bctau_temp and bctauMPV_temp
@@ -798,7 +966,7 @@ RefCountedKinematicTree
                   //reco::Vertex recoV = (reco::Vertex)v;
 
                   //GlobalError PVRfE = GlobalError( recoV.error() );
-                  //bctauRf_temp = Myctau(bCandCjp, bDecayVertexCjp, PVRfP, PVRfE, mb, bctau2DRf_temp, bctauRfE_temp, bctau2DRfE_temp);
+                  //bctauRf_temp = Myctau(bCandCjp, BsDecayVertexCjp, PVRfP, PVRfE, mb, bctau2DRf_temp, bctauRfE_temp, bctau2DRfE_temp);
 
                   //set bestVtxRf as new best vertex to fill variables for ntuple
                   bestVtxRf = reco::Vertex(v);
@@ -806,59 +974,36 @@ RefCountedKinematicTree
                }
 
 
+ ///~~~fit 2 tracks from Bc together~~~///
 
-  for( std::vector<reco::Photon>::const_iterator iPho = photonHandle->begin(); iPho != photonHandle->end(); ++iPho)
-    {
-        reco::Photon localPho = reco::Photon(*iPho);
-        phoEta->push_back( localPho.eta() );
+  vector<reco::TransientTrack> BcTracks;
+  BcTracks.push_back(Bs_TT);
+  BcTracks.push_back(pionTT);
 
-        ///~~~fit 3 tracks from Bc together~~~///
-        	vector<reco::TransientTrack> BcTracks;
-        	BcTracks.push_back(muon1TT);
-        	BcTracks.push_back(muon2TT);
-        	BcTracks.push_back(pion1TT);
+   AdaptiveVertexFitter BcVertexFitter;
+   TransientVertex BcTV = BcVertexFitter.vertex(BcTracks, BcGP);
 
-                AdaptiveVertexFitter BcVertexFitter;
-                TransientVertex BcTV = BcVertexFitter.vertex(BcTracks, BcGP);
+    BcVertex_isValid->push_back( BcTV.isValid() );
+    if ( BcTV.isValid() )
+     {
 
-                if ( BcTV.isValid() )
-        	{
+       BcVtx = reco::Vertex(BcTV);
 
-                   BcVtx = reco::Vertex(BcTV);
-        	   pi_Bcdecay_weight->push_back(BcVtx.trackWeight(patTrack1.track()));
-                }
-        	else
-        	{
-        	   pi_Bcdecay_weight->push_back(-1);
-        	}
-
-
-          PV_bestBang_RF_NTrkDif->push_back( bestPV_Bang.tracksSize() - vertexTracks.size() );
-
-    //            PVindex_temp = PV_bestBang_X->size();
-               PV_bestBang_X    ->push_back(  PV_bestBang_X_temp);
-               PV_bestBang_Y    ->push_back(  PV_bestBang_Y_temp);
-               PV_bestBang_Z    ->push_back(  PV_bestBang_Z_temp);
-               PV_bestBang_XE   ->push_back(  PV_bestBang_XE_temp);
-               PV_bestBang_YE   ->push_back(  PV_bestBang_YE_temp);
-               PV_bestBang_ZE   ->push_back(  PV_bestBang_ZE_temp);
-               PV_bestBang_XYE  ->push_back(  PV_bestBang_XYE_temp);
-               PV_bestBang_XZE  ->push_back(  PV_bestBang_XZE_temp);
-               PV_bestBang_YZE  ->push_back(  PV_bestBang_YZE_temp);
-               PV_bestBang_CL   ->push_back(  PV_bestBang_CL_temp);
-
-               PV_bestBang_RF_X ->push_back(    bestVtxRf.x() );
-               PV_bestBang_RF_Y ->push_back(    bestVtxRf.y() );
-               PV_bestBang_RF_Z ->push_back(    bestVtxRf.z() );
-               PV_bestBang_RF_XE->push_back(    bestVtxRf.covariance(0, 0) );
-               PV_bestBang_RF_YE->push_back(    bestVtxRf.covariance(1, 1) );
-               PV_bestBang_RF_ZE->push_back(    bestVtxRf.covariance(2, 2) );
-               PV_bestBang_RF_XYE->push_back(   bestVtxRf.covariance(0, 1) );
-               PV_bestBang_RF_XZE->push_back(   bestVtxRf.covariance(0, 2) );
-               PV_bestBang_RF_YZE->push_back(   bestVtxRf.covariance(1, 2) );
-               PV_bestBang_RF_CL->push_back(    ChiSquaredProbability((double)(bestVtxRf.chi2()),(double)(bestVtxRf.ndof())) );
+        Bs_Bcdecay_weight->push_back(BcVtx.trackWeight(Bs_TT.trackBaseRef()));
+        pion_Bcdecay_weight->push_back(BcVtx.trackWeight(pionTT.trackBaseRef()));
+        BcVertex_Chi->push_back(BcTV.totalChiSquared());
+        BcVertex_normChi->push_back(BcTV.normalisedChiSquared());
+      }
+         else
+          {
+               Bs_Bcdecay_weight->push_back(-1);
+               pion_Bcdecay_weight->push_back(-1);
+               BcVertex_Chi->push_back(-999);
+               BcVertex_normChi->push_back(-999);
+          }
 
                //cout << "PV bestPV_Bang: " <<bestPV_Bang.x()<< " "<<bestPV_Bang.y()<<" "<<bestPV_Bang.z()<< endl;
+            // }}}
 
                GlobalVector mu1CandMC_p = mu1CandMC->currentState().kinematicParameters().momentum();
                GlobalVector mu2CandMC_p = mu2CandMC->currentState().kinematicParameters().momentum();
@@ -872,6 +1017,28 @@ RefCountedKinematicTree
                const reco::Muon *recoMuonP = patMuonP;
 
                // fill candidate variables now
+               //            PVindex_temp = PV_bestBang_X->size();
+                          PV_bestBang_X    ->push_back(  PV_bestBang_X_temp);
+                          PV_bestBang_Y    ->push_back(  PV_bestBang_Y_temp);
+                          PV_bestBang_Z    ->push_back(  PV_bestBang_Z_temp);
+                          PV_bestBang_XE   ->push_back(  PV_bestBang_XE_temp);
+                          PV_bestBang_YE   ->push_back(  PV_bestBang_YE_temp);
+                          PV_bestBang_ZE   ->push_back(  PV_bestBang_ZE_temp);
+                          PV_bestBang_XYE  ->push_back(  PV_bestBang_XYE_temp);
+                          PV_bestBang_XZE  ->push_back(  PV_bestBang_XZE_temp);
+                          PV_bestBang_YZE  ->push_back(  PV_bestBang_YZE_temp);
+                          PV_bestBang_CL   ->push_back(  PV_bestBang_CL_temp);
+                          //
+                          PV_bestBang_RF_X ->push_back(    bestVtxRf.x() );
+                          PV_bestBang_RF_Y ->push_back(    bestVtxRf.y() );
+                          PV_bestBang_RF_Z ->push_back(    bestVtxRf.z() );
+                          PV_bestBang_RF_XE->push_back(    bestVtxRf.covariance(0, 0) );
+                          PV_bestBang_RF_YE->push_back(    bestVtxRf.covariance(1, 1) );
+                          PV_bestBang_RF_ZE->push_back(    bestVtxRf.covariance(2, 2) );
+                          PV_bestBang_RF_XYE->push_back(   bestVtxRf.covariance(0, 1) );
+                          PV_bestBang_RF_XZE->push_back(   bestVtxRf.covariance(0, 2) );
+                          PV_bestBang_RF_YZE->push_back(   bestVtxRf.covariance(1, 2) );
+                          PV_bestBang_RF_CL->push_back(    ChiSquaredProbability((double)(bestVtxRf.chi2()),(double)(bestVtxRf.ndof())) );
 
                // Only save the first time
                if(nB==0){
@@ -889,6 +1056,7 @@ RefCountedKinematicTree
 
                } // end nB==0
 
+
                // Get List for L1/L2 triggers matching to Muon
                std::string ListTriggL1L2_MuP="";
                std::string ListTriggL1L2_MuM="";
@@ -905,367 +1073,552 @@ RefCountedKinematicTree
                ntriggersL1L2_MuP = nL1L2MuP;
                ntriggersL1L2_MuM = nL1L2MuM;
 
+               /////////////////////////////////////////////////////////////////////////////////////////////
+               ////////////////////////////////////////////// HERE INDEX IS [nB] /////////////////////////
+                        //
 
-    /////////////////////////////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////// HERE INDEX IS [nB] /////////////////////////
-               B_mass_cjp           ->push_back(B_mass_cjp_tmp);
-               B_px_cjp             ->push_back(bCandCjp->currentState().globalMomentum().x());
-               B_py_cjp             ->push_back(bCandCjp->currentState().globalMomentum().y());
-               B_pz_cjp             ->push_back(bCandCjp->currentState().globalMomentum().z());
-               B_DecayVtxX      ->push_back(bDecayVertexCjp->position().x());
-               B_DecayVtxY      ->push_back(bDecayVertexCjp->position().y());
-               B_DecayVtxZ      ->push_back(bDecayVertexCjp->position().z());
-               B_DecayVtxXE     ->push_back(bDecayVertexCjp->error().cxx());
-               B_DecayVtxYE     ->push_back(bDecayVertexCjp->error().cyy());
-               B_DecayVtxZE     ->push_back(bDecayVertexCjp->error().czz());
-//                B_DecayVtxXYE->push_back(bDecayVertexCjp->error().cyx());
-//                B_DecayVtxXZE->push_back(bDecayVertexCjp->error().czx());
-//                B_DecayVtxYZE->push_back(bDecayVertexCjp->error().czy());
+                          Bc_mass           ->push_back(Bc_mass_cjp_tmp);
 
+                          Bc_px             ->push_back(BcCandCjp->currentState().globalMomentum().x());
+                          Bc_py             ->push_back(BcCandCjp->currentState().globalMomentum().y());
+                          Bc_pz             ->push_back(BcCandCjp->currentState().globalMomentum().z());
+                          Bc_DecayVtxX      ->push_back(BcDecayVertexCjp->position().x());
+                          Bc_DecayVtxY      ->push_back(BcDecayVertexCjp->position().y());
+                          Bc_DecayVtxZ      ->push_back(BcDecayVertexCjp->position().z());
+                          Bc_DecayVtxXE     ->push_back(BcDecayVertexCjp->error().cxx());
+                          Bc_DecayVtxYE     ->push_back(BcDecayVertexCjp->error().cyy());
+                          Bc_DecayVtxZE     ->push_back(BcDecayVertexCjp->error().czz());
 
-               B_J_mass         ->push_back( MUMU_mass_c0 );
-               B_J_px           ->push_back( MUMUparticle->currentState().globalMomentum().x() );
-               B_J_py           ->push_back( MUMUparticle->currentState().globalMomentum().y() );
-               B_J_pz           ->push_back( MUMUparticle->currentState().globalMomentum().z() );
-               B_J_DecayVtxX    ->push_back( MUMUvtx->position().x() );
-               B_J_DecayVtxY    ->push_back( MUMUvtx->position().y() );
-               B_J_DecayVtxZ    ->push_back( MUMUvtx->position().z() );
-               B_J_DecayVtxXE   ->push_back( MUMUvtx->error().cxx() );
-               B_J_DecayVtxYE   ->push_back( MUMUvtx->error().cyy() );
-               B_J_DecayVtxZE   ->push_back( MUMUvtx->error().czz() );
-
-               B_pion_px_cjp       ->push_back(T1CandMC->currentState().globalMomentum().x());
-               B_pion_py_cjp       ->push_back(T1CandMC->currentState().globalMomentum().y());
-               B_pion_pz_cjp       ->push_back(T1CandMC->currentState().globalMomentum().z());
-               B_pion_charge   ->push_back(iTrack1->charge());
-               pion_track_normchi2  ->push_back(patTrack1.track()->normalizedChi2());
-               pion_Hits       ->push_back(patTrack1.track()->numberOfValidHits() );
-               pion_PHits      ->push_back(patTrack1.track()->hitPattern().numberOfValidPixelHits() );
-               pion_dxy_Bcdecay	->push_back(patTrack1.track()->dxy(bDecayPoint) );
-               pion_dz_Bcdecay		->push_back(patTrack1.track()->dz(bDecayPoint	) );
-	       pion_NTrackerLayers->push_back ( patTrack1.track()->hitPattern().trackerLayersWithMeasurement() );
-	       pion_NPixelLayers->push_back ( patTrack1.track()->hitPattern().pixelLayersWithMeasurement() );
+                          Bc_DecayVtx_vtxfit_X ->push_back(    BcVtx.x() );
+                          Bc_DecayVtx_vtxfit_Y ->push_back(    BcVtx.y() );
+                          Bc_DecayVtx_vtxfit_Z ->push_back(    BcVtx.z() );
+                          Bc_DecayVtx_vtxfit_XE->push_back(    BcVtx.covariance(0, 0) );
+                          Bc_DecayVtx_vtxfit_YE->push_back(    BcVtx.covariance(1, 1) );
+                          Bc_DecayVtx_vtxfit_ZE->push_back(    BcVtx.covariance(2, 2) );
+                          Bc_DecayVtx_vtxfit_XYE->push_back(   BcVtx.covariance(0, 1) );
+                          Bc_DecayVtx_vtxfit_XZE->push_back(   BcVtx.covariance(0, 2) );
+                          Bc_DecayVtx_vtxfit_YZE->push_back(   BcVtx.covariance(1, 2) );
+                          Bc_DecayVtx_vtxfit_CL->push_back(    ChiSquaredProbability((double)(BcVtx.chi2()),(double)(BcVtx.ndof())) );
 
 
-               B_mu_px1_cjp ->push_back(mu1CandMC_p.x());
-               B_mu_py1_cjp ->push_back(mu1CandMC_p.y());
-               B_mu_pz1_cjp ->push_back(mu1CandMC_p.z());
-//                B_J_charge1->push_back(mНУ А как же всем известный АМХ 40 ?)))u1CandMC->currentState().particleCharge()); // noneed
 
-               B_mu_px2_cjp ->push_back(mu2CandMC_p.x());
-               B_mu_py2_cjp ->push_back(mu2CandMC_p.y());
-               B_mu_pz2_cjp ->push_back(mu2CandMC_p.z());
-//                B_J_charge2->push_back(mu2CandMC->currentState().particleCharge());
+                          Bs_mass_cjp           ->push_back(Bs_mass_cjp_tmp);
+                          Bs_px_cjp             ->push_back(BsCandCjp->currentState().globalMomentum().x());
+                          Bs_py_cjp             ->push_back(BsCandCjp->currentState().globalMomentum().y());
+                          Bs_pz_cjp             ->push_back(BsCandCjp->currentState().globalMomentum().z());
+                          Bs_DecayVtxX      ->push_back(BsDecayVertexCjp->position().x());
+                          Bs_DecayVtxY      ->push_back(BsDecayVertexCjp->position().y());
+                          Bs_DecayVtxZ      ->push_back(BsDecayVertexCjp->position().z());
+                          Bs_DecayVtxXE     ->push_back(BsDecayVertexCjp->error().cxx());
+                          Bs_DecayVtxYE     ->push_back(BsDecayVertexCjp->error().cyy());
+                          Bs_DecayVtxZE     ->push_back(BsDecayVertexCjp->error().czz());
+           //                B_DecayVtxXYE->push_back(bDecayVertexCjp->error().cyx());
+           //                B_DecayVtxXZE->push_back(bDecayVertexCjp->error().czx());
+           //                B_DecayVtxYZE->push_back(bDecayVertexCjp->error().czy());
+
+                         pion_px_0c       ->push_back(iPion->px());
+                         pion_py_0c       ->push_back(iPion->py());
+                         pion_pz_0c       ->push_back(iPion->pz());
+                         pion_track_normchi2  ->push_back(patTrack_Pi.track()->normalizedChi2());
+                         pion_Hits       ->push_back(patTrack_Pi.track()->numberOfValidHits() );
+                         pion_PHits      ->push_back(patTrack_Pi.track()->hitPattern().numberOfValidPixelHits() );
+                         pion_dxy_Bcdecay	->push_back(patTrack_Pi.track()->dxy(BcDecayPoint) );
+                         pion_dz_Bcdecay		->push_back(patTrack_Pi.track()->dz(BcDecayPoint	) );
+                         pion_NTrackerLayers->push_back ( patTrack_Pi.track()->hitPattern().trackerLayersWithMeasurement() );
+                         pion_NPixelLayers->push_back ( patTrack_Pi.track()->hitPattern().pixelLayersWithMeasurement() );
+
+                          B_J_mass         ->push_back( MUMU_mass_c0 );
+                          B_J_px           ->push_back( MUMUparticle->currentState().globalMomentum().x() );
+                          B_J_py           ->push_back( MUMUparticle->currentState().globalMomentum().y() );
+                          B_J_pz           ->push_back( MUMUparticle->currentState().globalMomentum().z() );
+                          B_J_DecayVtxX    ->push_back( MUMUvtx->position().x() );
+                          B_J_DecayVtxY    ->push_back( MUMUvtx->position().y() );
+                          B_J_DecayVtxZ    ->push_back( MUMUvtx->position().z() );
+                          B_J_DecayVtxXE   ->push_back( MUMUvtx->error().cxx() );
+                          B_J_DecayVtxYE   ->push_back( MUMUvtx->error().cyy() );
+                          B_J_DecayVtxZE   ->push_back( MUMUvtx->error().czz() );
+
+                          kaonP_px_0c       ->push_back(iKaonP->px());
+                          kaonP_py_0c       ->push_back(iKaonP->py());
+                          kaonP_pz_0c       ->push_back(iKaonP->pz());
+                          kaonP_px_cjp       ->push_back(KpCandMC->currentState().globalMomentum().x());
+                          kaonP_py_cjp       ->push_back(KpCandMC->currentState().globalMomentum().y());
+                          kaonP_pz_cjp       ->push_back(KpCandMC->currentState().globalMomentum().z());
+                          kaonP_track_normchi2  ->push_back(patTrack_Kp.track()->normalizedChi2());
+                          kaonP_Hits       ->push_back(patTrack_Kp.track()->numberOfValidHits() );
+                          kaonP_PHits      ->push_back(patTrack_Kp.track()->hitPattern().numberOfValidPixelHits() );
+                          kaonP_dxy_Bsdecay	->push_back(patTrack_Kp.track()->dxy(BsDecayPoint) );
+                          kaonP_dz_Bsdecay		->push_back(patTrack_Kp.track()->dz(BsDecayPoint) );
+   		                    kaonP_NTrackerLayers->push_back ( patTrack_Kp.track()->hitPattern().trackerLayersWithMeasurement() );
+   		                    kaonP_NPixelLayers->push_back ( patTrack_Kp.track()->hitPattern().pixelLayersWithMeasurement() );
+
+                          kaonM_px_0c       ->push_back(iKaonM->px());
+                          kaonM_py_0c       ->push_back(iKaonM->py());
+                          kaonM_pz_0c       ->push_back(iKaonM->pz());
+                          kaonM_px_cjp       ->push_back(KmCandMC->currentState().globalMomentum().x());
+                          kaonM_py_cjp       ->push_back(KmCandMC->currentState().globalMomentum().y());
+                          kaonM_pz_cjp       ->push_back(KmCandMC->currentState().globalMomentum().z());
+                          kaonM_track_normchi2  ->push_back(patTrack_Km.track()->normalizedChi2());
+                          kaonM_Hits       ->push_back(patTrack_Km.track()->numberOfValidHits() );
+                          kaonM_PHits      ->push_back(patTrack_Km.track()->hitPattern().numberOfValidPixelHits() );
+                          kaonM_dxy_Bsdecay	->push_back(patTrack_Km.track()->dxy(BsDecayPoint) );
+                          kaonM_dz_Bsdecay		->push_back(patTrack_Km.track()->dz(BsDecayPoint	) );
+   		                    kaonM_NTrackerLayers->push_back ( patTrack_Km.track()->hitPattern().trackerLayersWithMeasurement() );
+   		                    kaonM_NPixelLayers->push_back ( patTrack_Km.track()->hitPattern().pixelLayersWithMeasurement() );
+
+                          B_mu_px1_cjp ->push_back(mu1CandMC_p.x());
+                          B_mu_py1_cjp ->push_back(mu1CandMC_p.y());
+                          B_mu_pz1_cjp ->push_back(mu1CandMC_p.z());
+           //                B_J_charge1->push_back(mНУ А как же всем известный АМХ 40 ?)))u1CandMC->currentState().particleCharge()); // noneed
+
+                          B_mu_px2_cjp ->push_back(mu2CandMC_p.x());
+                          B_mu_py2_cjp ->push_back(mu2CandMC_p.y());
+                          B_mu_pz2_cjp ->push_back(mu2CandMC_p.z());
+           //                B_J_charge2->push_back(mu2CandMC->currentState().particleCharge());
+
+                          Bc_Prob    ->push_back(Bc_Prob_tmp);
+                          Bc_Chi2    ->push_back(BcDecayVertexCjp->chiSquared());
+
+                          Bs_Prob    ->push_back(Bs_Prob_tmp);
+                          Bs_Chi2    ->push_back(BsDecayVertexCjp->chiSquared());
+
+                          B_J_Prob  ->push_back(JP_Prob_tmp);
+                          B_Phi_Prob->push_back(phi_Prob_tmp);
+
+   //------------------//
+                  mumCat->push_back( mumCategory );
+   	             mum_isGlobalMuon->push_back ( recoMuonM->isGlobalMuon() );
+                  mum_isTrackerMuon->push_back ( recoMuonM->isTrackerMuon() );
+                  mumAngT->push_back( muon::isGoodMuon(*recoMuonM,muon::TMOneStationTight) ); // este es para poner la condicion si es o no softmuon
+/*                  if ( BsTV.isValid() )
+        	          mum_isTight->push_back ( muon::isTightMuon(*recoMuonM, BsVtx ) );
+                  else
+*/                    mum_isTight->push_back ( -1 );
+                  mum_dxy_Bsdecay->push_back( recoMuonM->muonBestTrack()->dxy(BsDecayPoint) );// el dxy del Muon negatico respetcto del PV con BSc (el de mayor pt)
+                  mum_dz_Bsdecay->push_back( recoMuonM->muonBestTrack()->dz(BsDecayPoint) );
+
+         	       if (!(glbTrackM.isNull()))
+                    {
+   	                mum_normChi2->push_back( glbTrackM->normalizedChi2() );
+   		              mum_NMuonHits->push_back ( glbTrackM->hitPattern().numberOfValidMuonHits() );
+   		             }
+   	             else
+   		             {
+   	 	                mum_normChi2->push_back(-1);
+   		                mum_NMuonHits->push_back(-1);
+   		              }
+
+               		mum_NMuonStations->push_back ( recoMuonM->numberOfMatchedStations() );
+
+               		mum_NTrackerLayers->push_back ( trkTrackM->hitPattern().trackerLayersWithMeasurement() );
+               		mum_NPixelLayers->push_back ( trkTrackM->hitPattern().pixelLayersWithMeasurement() );
+                   mumNPHits->push_back( trkTrackM->hitPattern().numberOfValidPixelHits() );
+                   mumNHits->push_back( trkTrackM->numberOfValidHits() );
+
+               		float mum_chIso  = patMuonM->chargedHadronIso();
+               		float mum_nhIso  = patMuonM->neutralHadronIso();
+               		float mum_phIso  = patMuonM->photonIso();
+               		float mum_puIso  = patMuonM->puChargedHadronIso();
+               		mum_relIso->push_back( (mum_chIso + std::max(0.0, mum_nhIso + mum_phIso - 0.5 * mum_puIso)) / patMuonM->pt() );
+
+                  mum_LastStationOptimizedLowPtT->push_back( muon::isGoodMuon(*recoMuonM,muon::TMLastStationOptimizedLowPtTight) );
+                  mum_LastStationT->push_back( muon::isGoodMuon(*recoMuonM,muon::TMLastStationTight) );
+                  mum_OneStationT->push_back( muon::isGoodMuon(*recoMuonM,muon::TMOneStationTight) );
+                  mum_LastStationAngT->push_back( muon::isGoodMuon(*recoMuonM,muon::TMLastStationAngTight) );
+                  mum_OneStationAngT->push_back( muon::isGoodMuon(*recoMuonM,muon::TMOneStationAngTight) );
+                  mum_2DCompatibilityT->push_back( muon::isGoodMuon(*recoMuonM,muon::TM2DCompatibilityTight) );
 
 
-               B_Prob    ->push_back(B_Prob_tmp);
-               B_J_Prob  ->push_back(JP_Prob_tmp);
-
-//------------------//
-               mumCat->push_back( mumCategory );
-	       mum_isGlobalMuon->push_back ( recoMuonM->isGlobalMuon() );
-               mumAngT->push_back( muon::isGoodMuon(*recoMuonM, muon::TMOneStationTight) ); // este es para poner la condicion si es o no softmuon
-     	       mum_isTight->push_back ( muon::isTightMuon(*recoMuonM, BcVtx ) ); // Might not be correct
-//     	       mum_isTight->push_back (0);
-
-               mumdxy->push_back( recoMuonM->muonBestTrack()->dxy(bDecayPoint) );// el dxy del Muon negatico respetcto del PV con BSc (el de mayor pt)
-               mumdz->push_back( recoMuonM->muonBestTrack()->dz(bDecayPoint) );
-
-      	       if (!(glbTrackM.isNull()))
-               {
-	          mum_normChi2->push_back( glbTrackM->normalizedChi2() );
-		  mum_NMuonHits->push_back ( glbTrackM->hitPattern().numberOfValidMuonHits() );
-		}
-	       else
-		{
-	 	  mum_normChi2->push_back(-1);
-		  mum_NMuonHits->push_back(-1);
-		}
-
-		mum_NMuonStations->push_back ( recoMuonM->numberOfMatchedStations() );
-
-		mum_NTrackerLayers->push_back ( recoMuonM->muonBestTrack()->hitPattern().trackerLayersWithMeasurement() );
-		mum_NPixelLayers->push_back ( recoMuonM->muonBestTrack()->hitPattern().pixelLayersWithMeasurement() );
-                mumNPHits->push_back( recoMuonM->muonBestTrack()->hitPattern().numberOfValidPixelHits() );
-                mumNHits->push_back( recoMuonM->muonBestTrack()->numberOfValidHits() );
-
-		float mum_chIso  = patMuonM->chargedHadronIso();
-		float mum_nhIso  = patMuonM->neutralHadronIso();
-		float mum_phIso  = patMuonM->photonIso();
-		float mum_puIso  = patMuonM->puChargedHadronIso();
-		mum_relIso->push_back( (mum_chIso + std::max(0.0, mum_nhIso + mum_phIso - 0.5 * mum_puIso)) / patMuonM->pt() );
 
 
-//------------------//
-               mupCat->push_back( mupCategory );
-	       mup_isGlobalMuon->push_back ( recoMuonP->isGlobalMuon() );
-               mupAngT->push_back( muon::isGoodMuon(*recoMuonP, muon::TMOneStationTight) ); // este es para poner la condicion si es o no softmuon
-     	       mup_isTight->push_back ( muon::isTightMuon(*recoMuonP, BcVtx) );  // Might not be correct
-//     	       mup_isTight->push_back (0);
+   //------------------//
+                  mupCat->push_back( mupCategory );
+                  mup_isGlobalMuon->push_back ( recoMuonP->isGlobalMuon() );
+                  mup_isTrackerMuon->push_back ( recoMuonP->isTrackerMuon() );
+                  mupAngT->push_back( muon::isGoodMuon(*recoMuonP,muon::TMOneStationTight) ); // este es para poner la condicion si es o no softmuon
+/*                  if ( BsTV.isValid() )
+        	           mup_isTight->push_back ( muon::isTightMuon(*recoMuonP, BsVtx ) );
+                  else
+*/                    mup_isTight->push_back ( -1 );
 
-               mupdxy->push_back( recoMuonP->muonBestTrack()->dxy(bDecayPoint) );// el dxy del Muon negatico respetcto del PV con BSc (el de mayor pt)
-               mupdz->push_back( recoMuonP->muonBestTrack()->dz(bDecayPoint) );
+                  mup_dxy_Bsdecay->push_back( recoMuonP->muonBestTrack()->dxy(BsDecayPoint) );// el dxy del Muon negatico respetcto del PV con BSc (el de mayor pt)
+                  mup_dz_Bsdecay->push_back( recoMuonP->muonBestTrack()->dz(BsDecayPoint) );
 
-      	       if (!(glbTrackP.isNull()))
-               {
-	          mup_normChi2->push_back( glbTrackP->normalizedChi2() );
-		  mup_NMuonHits->push_back ( glbTrackP->hitPattern().numberOfValidMuonHits() );
-		}
-	       else
-		{
-	 	  mup_normChi2->push_back(-1);
-		  mup_NMuonHits->push_back (-1);
-		}
-		mup_NMuonStations->push_back ( recoMuonP->numberOfMatchedStations() );
+         	       if (!(glbTrackP.isNull()))
+                  {
+   	                mup_normChi2->push_back( glbTrackP->normalizedChi2() );
+   		              mup_NMuonHits->push_back ( glbTrackP->hitPattern().numberOfValidMuonHits() );
+   		            }
+   	             else
+   		            {
+   	 	              mup_normChi2->push_back(-1);
+   		              mup_NMuonHits->push_back (-1);
+   		            }
+   		              mup_NMuonStations->push_back ( recoMuonP->numberOfMatchedStations() );
 
-		mup_NTrackerLayers->push_back ( recoMuonP->muonBestTrack()->hitPattern().trackerLayersWithMeasurement() );
-		mup_NPixelLayers->push_back ( recoMuonP->muonBestTrack()->hitPattern().pixelLayersWithMeasurement() );
-                mupNPHits->push_back( recoMuonP->muonBestTrack()->hitPattern().numberOfValidPixelHits() );
-                mupNHits->push_back( recoMuonP->muonBestTrack()->numberOfValidHits() );
+               		mup_NTrackerLayers->push_back ( trkTrackP->hitPattern().trackerLayersWithMeasurement() );
+               		mup_NPixelLayers->push_back ( trkTrackP->hitPattern().pixelLayersWithMeasurement() );
+                   mupNPHits->push_back( trkTrackP->hitPattern().numberOfValidPixelHits() );
+                   mupNHits->push_back( trkTrackP->numberOfValidHits() );
 
-		float mup_chIso  = patMuonP->chargedHadronIso();
-		float mup_nhIso  = patMuonP->neutralHadronIso();
-		float mup_phIso  = patMuonP->photonIso();
-		float mup_puIso  = patMuonP->puChargedHadronIso();
-		mup_relIso->push_back( (mup_chIso + std::max(0.0, mup_nhIso + mup_phIso - 0.5 * mup_puIso)) / patMuonP->pt() );
+               		float mup_chIso  = patMuonP->chargedHadronIso();
+               		float mup_nhIso  = patMuonP->neutralHadronIso();
+               		float mup_phIso  = patMuonP->photonIso();
+               		float mup_puIso  = patMuonP->puChargedHadronIso();
+               		mup_relIso->push_back( (mup_chIso + std::max(0.0, mup_nhIso + mup_phIso - 0.5 * mup_puIso)) / patMuonP->pt() );
 
-               nB++;
+                  mup_LastStationOptimizedLowPtT->push_back( muon::isGoodMuon(*recoMuonP,muon::TMLastStationOptimizedLowPtTight) );
+                  mup_LastStationT->push_back( muon::isGoodMuon(*recoMuonP,muon::TMLastStationTight) );
+                  mup_OneStationT->push_back( muon::isGoodMuon(*recoMuonP,muon::TMOneStationTight) );
+                  mup_LastStationAngT->push_back( muon::isGoodMuon(*recoMuonP,muon::TMLastStationAngTight) );
+                  mup_OneStationAngT->push_back( muon::isGoodMuon(*recoMuonP,muon::TMOneStationAngTight) );
+                  mup_2DCompatibilityT->push_back( muon::isGoodMuon(*recoMuonP,muon::TM2DCompatibilityTight) );
 
-               /////////////////////////////////////////////////
 
-               muonParticles.clear();
-               B_candidate_init.clear();
-               B_candidate.clear();
-	     }
-	}
-    }
-}
+                          nB++;
 
-   //fill the tree and clear the vectors
-   if (nB > 0 )
-     {
+                          /////////////////////////////////////////////////
 
-       //std::cout << "filling tree" << endl;
-       tree_->Fill();
+                          phiParticles.clear();
+                          muonParticles.clear();
+                          Bs_candidate_init.clear();
+                          Bs_candidate.clear();
+                          vFitMCParticlesBc.clear();
+                          BcTracks.clear();
+                          vertexTracks.clear();
+            } // pion
+   	     } // one kaon
+   	} // another kaon
+   } // muon from jpsi
+   }//muon from jpsi
+
+
+      //fill the tree and clear the vectors
+      if (nB > 0 )
+        {
+
+          //std::cout << "filling tree" << endl;
+          tree_->Fill();
+        }
+
+      // {{{ // clearence of the variables
+
+      nB = 0;  nMu = 0;    nVtx = 0;
+
+      //triggersL1L->clear();
+      triggersMuPL->clear(); triggersMuML->clear();
+      triggersL1L2_MuPL->clear(); triggersL1L2_MuML->clear();
+
+      Bc_mass->clear();
+      Bc_px->clear();           Bc_py->clear();          Bc_pz->clear();
+      Bc_DecayVtxX->clear();    Bc_DecayVtxY->clear();   Bc_DecayVtxZ->clear();
+      Bc_DecayVtxXE->clear();   Bc_DecayVtxYE->clear();  Bc_DecayVtxZE->clear();
+
+      Bc_DecayVtx_vtxfit_X->clear();   Bc_DecayVtx_vtxfit_Y->clear();  Bc_DecayVtx_vtxfit_Z->clear();
+      Bc_DecayVtx_vtxfit_XE->clear();   Bc_DecayVtx_vtxfit_YE->clear();  Bc_DecayVtx_vtxfit_ZE->clear();
+      Bc_DecayVtx_vtxfit_XYE->clear();   Bc_DecayVtx_vtxfit_XZE->clear();  Bc_DecayVtx_vtxfit_YZE->clear();
+      Bc_DecayVtx_vtxfit_CL->clear();
+
+      Bs_mass_cjp->clear();
+      Bs_px_cjp->clear();           Bs_py_cjp->clear();          Bs_pz_cjp->clear();
+      Bs_DecayVtxX->clear();    Bs_DecayVtxY->clear();   Bs_DecayVtxZ->clear();
+      Bs_DecayVtxXE->clear();   Bs_DecayVtxYE->clear();  Bs_DecayVtxZE->clear();
+
+      pion_px_0c->clear();     pion_py_0c->clear();    pion_pz_0c->clear();
+      pion_track_normchi2->clear();   pion_Hits->clear();    pion_PHits->clear();
+      pion_dxy_Bcdecay->clear();  pion_dz_Bcdecay->clear(); pion_NTrackerLayers->clear();  pion_NPixelLayers->clear();
+
+      B_J_mass->clear();       B_J_px->clear();            B_J_py->clear();        B_J_pz->clear();
+      B_J_DecayVtxX->clear();  B_J_DecayVtxY->clear();     B_J_DecayVtxZ->clear();
+      B_J_DecayVtxXE->clear(); B_J_DecayVtxYE->clear();    B_J_DecayVtxZE->clear();
+
+
+      B_mu_px1_cjp->clear();   B_mu_py1_cjp->clear();  B_mu_pz1_cjp->clear();
+      B_mu_px2_cjp->clear();   B_mu_py2_cjp->clear();  B_mu_pz2_cjp->clear();
+
+      Bc_Prob->clear(); Bc_Chi2->clear(); Bs_Prob->clear(); Bs_Chi2->clear(); B_J_Prob->clear(); B_Phi_Prob->clear();
+
+      kaonP_px_0c->clear();     kaonP_py_0c->clear();    kaonP_pz_0c->clear();
+      kaonP_px_cjp->clear();     kaonP_py_cjp->clear();    kaonP_pz_cjp->clear();
+      kaonP_track_normchi2->clear();   kaonP_Hits->clear();    kaonP_PHits->clear();
+      kaonP_dxy_Bsdecay->clear();  kaonP_dz_Bsdecay->clear(); kaonP_NTrackerLayers->clear();  kaonP_NPixelLayers->clear();
+
+      kaonM_px_0c->clear();     kaonM_py_0c->clear();    kaonM_pz_0c->clear();
+      kaonM_px_cjp->clear();     kaonM_py_cjp->clear();    kaonM_pz_cjp->clear();
+      kaonM_track_normchi2->clear();   kaonM_Hits->clear();    kaonM_PHits->clear();
+      kaonM_dxy_Bsdecay->clear();  kaonM_dz_Bsdecay->clear(); kaonM_NTrackerLayers->clear();  kaonM_NPixelLayers->clear();
+
+      //
+
+      PV_bestBang_X->clear();      PV_bestBang_Y->clear();     PV_bestBang_Z->clear();
+      PV_bestBang_XE->clear();     PV_bestBang_YE->clear();    PV_bestBang_ZE->clear();
+      PV_bestBang_XYE->clear();    PV_bestBang_XZE->clear();   PV_bestBang_YZE->clear();
+      PV_bestBang_CL->clear();
+
+      PV_bestBang_RF_X->clear();   PV_bestBang_RF_Y->clear();  PV_bestBang_RF_Z->clear();
+      PV_bestBang_RF_XE->clear();  PV_bestBang_RF_YE->clear(); PV_bestBang_RF_ZE->clear();
+      PV_bestBang_RF_XYE->clear(); PV_bestBang_RF_XZE->clear();PV_bestBang_RF_YZE->clear();
+      PV_bestBang_RF_CL->clear();  PV_bestBang_RF_NTrkDif->clear();
+
+      mum_normChi2->clear();  mum_dxy_Bsdecay->clear();    mum_dz_Bsdecay->clear(); mumCat->clear();    mumAngT->clear();   mumNHits->clear();  mumNPHits->clear();
+      mum_isGlobalMuon->clear(); mum_isTrackerMuon->clear(); mum_isTight->clear();
+      mum_LastStationOptimizedLowPtT->clear(); mum_LastStationT->clear(); mum_OneStationT->clear();
+      mum_LastStationAngT->clear(); mum_OneStationAngT->clear(); mum_2DCompatibilityT->clear();
+      mum_NMuonHits->clear(); mum_NMuonStations->clear(); mum_NTrackerLayers->clear(); mum_NPixelLayers->clear(); mum_relIso->clear();
+
+      mup_normChi2->clear();   mup_dxy_Bsdecay->clear();    mup_dz_Bsdecay->clear(); mupCat->clear();    mupAngT->clear();   mupNHits->clear();  mupNPHits->clear();
+      mup_isGlobalMuon->clear(); mup_isTrackerMuon->clear(); mup_isTight->clear();
+      mup_LastStationOptimizedLowPtT->clear(); mup_LastStationT->clear(); mup_OneStationT->clear();
+      mup_LastStationAngT->clear(); mup_OneStationAngT->clear(); mup_2DCompatibilityT->clear();
+      mup_NMuonHits->clear(); mup_NMuonStations->clear(); mup_NTrackerLayers->clear(); mup_NPixelLayers->clear(); mup_relIso->clear();
+
+      BcVertex_isValid->clear(); BcVertex_Chi->clear(); BcVertex_normChi->clear(); Bs_Bcdecay_weight->clear(); pion_Bcdecay_weight->clear();
+
+   }
+
+
+
+   int const Bfinder::getMuCat(reco::Muon const& muon) const{
+     int muCat = 0;
+     if (muon.isGlobalMuon()) {
+       if (muon.isTrackerMuon()) muCat = 1;
+       else muCat = 10;
      }
+     else if (muon.isTrackerMuon()) {
+       if (muon::isGoodMuon(muon, muon::TrackerMuonArbitrated)) {
+         if (muon::isGoodMuon(muon, muon::TMLastStationAngTight)) muCat = 6;
+         else if (muon::isGoodMuon(muon, muon::TMOneStationTight)) muCat = 5;
+         else if (muon::isGoodMuon(muon, muon::TMOneStationLoose)) muCat = 4;
+         else muCat = 3;
+       }
+       else muCat = 2;
+     }
+     else if (muon.isStandAloneMuon()) muCat = 7;
+     else if (muon.isCaloMuon()) muCat = 8;
+     else muCat = 9;
 
-   // {{{ // clearence of the variables
+     if ( !(muon::isGoodMuon(muon, muon::TMOneStationLoose)) && muon::isGoodMuon(muon, muon::TMOneStationTight) )
+       std::cout << "inconsistent muon cat 1" << std::endl;
+     if ( !(muon::isGoodMuon(muon, muon::TMOneStationTight)) && muon::isGoodMuon(muon, muon::TMLastStationAngTight) )
+       std::cout << "inconsistent muon cat 2" << std::endl;
 
-   nB = 0;  nMu = 0;    nVtx = 0;
-
-   //triggersL1L->clear();
-   triggersMuPL->clear(); triggersMuML->clear();
-   triggersL1L2_MuPL->clear(); triggersL1L2_MuML->clear();
-
-   B_mass_cjp->clear();
-   B_px_cjp->clear();           B_py_cjp->clear();          B_pz_cjp->clear();
-   B_DecayVtxX->clear();    B_DecayVtxY->clear();   B_DecayVtxZ->clear();
-   B_DecayVtxXE->clear();   B_DecayVtxYE->clear();  B_DecayVtxZE->clear();
-
-   B_J_mass->clear();       B_J_px->clear();            B_J_py->clear();        B_J_pz->clear();
-   B_J_DecayVtxX->clear();  B_J_DecayVtxY->clear();     B_J_DecayVtxZ->clear();
-   B_J_DecayVtxXE->clear(); B_J_DecayVtxYE->clear();    B_J_DecayVtxZE->clear();
-
-   B_pion_px_cjp->clear();     B_pion_py_cjp->clear();    B_pion_pz_cjp->clear();
-   B_pion_charge->clear(); pion_track_normchi2->clear();   pion_Hits->clear();    pion_PHits->clear();
-   pion_dxy_Bcdecay->clear();  pion_dz_Bcdecay->clear(); pion_NTrackerLayers->clear();  pion_NPixelLayers->clear();
-   pi_Bcdecay_weight->clear();
-
-   B_mu_px1_cjp->clear();   B_mu_py1_cjp->clear();  B_mu_pz1_cjp->clear();
-   B_mu_px2_cjp->clear();   B_mu_py2_cjp->clear();  B_mu_pz2_cjp->clear();
-
-   B_Prob->clear(); B_J_Prob->clear();
-
-   PV_bestBang_X->clear();      PV_bestBang_Y->clear();     PV_bestBang_Z->clear();
-   PV_bestBang_XE->clear();     PV_bestBang_YE->clear();    PV_bestBang_ZE->clear();
-   PV_bestBang_XYE->clear();    PV_bestBang_XZE->clear();   PV_bestBang_YZE->clear();
-   PV_bestBang_CL->clear();
-
-   PV_bestBang_RF_X->clear();   PV_bestBang_RF_Y->clear();  PV_bestBang_RF_Z->clear();
-   PV_bestBang_RF_XE->clear();  PV_bestBang_RF_YE->clear(); PV_bestBang_RF_ZE->clear();
-   PV_bestBang_RF_XYE->clear(); PV_bestBang_RF_XZE->clear();PV_bestBang_RF_YZE->clear();
-   PV_bestBang_RF_CL->clear();  PV_bestBang_RF_NTrkDif->clear();
-
-   mum_normChi2->clear();  mumdxy->clear();    mumdz->clear(); mumCat->clear();    mumAngT->clear();   mumNHits->clear();  mumNPHits->clear();
-   mum_isGlobalMuon->clear(); mum_isTight->clear(); mum_NMuonHits->clear(); mum_NMuonStations->clear(); mum_NTrackerLayers->clear(); mum_NPixelLayers->clear(); mum_relIso->clear();
-
-   mup_normChi2->clear();   mupdxy->clear();    mupdz->clear(); mupCat->clear();    mupAngT->clear();   mupNHits->clear();  mupNPHits->clear();
-   mup_isGlobalMuon->clear(); mup_isTight->clear(); mup_NMuonHits->clear(); mup_NMuonStations->clear(); mup_NTrackerLayers->clear(); mup_NPixelLayers->clear(); mup_relIso->clear();
-   phoEta->clear();
-
-   // }}}
-}
+     return muCat;
+   }
 
 
 
-int const Bfinder::getMuCat(reco::Muon const& muon) const{
-  int muCat = 0;
-  if (muon.isGlobalMuon()) {
-    if (muon.isTrackerMuon()) muCat = 1;
-    else muCat = 10;
-  }
-  else if (muon.isTrackerMuon()) {
-    if (muon::isGoodMuon(muon, muon::TrackerMuonArbitrated)) {
-      if (muon::isGoodMuon(muon, muon::TMLastStationAngTight)) muCat = 6;
-      else if (muon::isGoodMuon(muon, muon::TMOneStationTight)) muCat = 5;
-      else if (muon::isGoodMuon(muon, muon::TMOneStationLoose)) muCat = 4;
-      else muCat = 3;
-    }
-    else muCat = 2;
-  }
-  else if (muon.isStandAloneMuon()) muCat = 7;
-  else if (muon.isCaloMuon()) muCat = 8;
-  else muCat = 9;
+   // ------------ method called once each job just before starting event loop  ------------
 
-  if ( !(muon::isGoodMuon(muon, muon::TMOneStationLoose)) && muon::isGoodMuon(muon, muon::TMOneStationTight) )
-    std::cout << "inconsistent muon cat 1" << std::endl;
-  if ( !(muon::isGoodMuon(muon, muon::TMOneStationTight)) && muon::isGoodMuon(muon, muon::TMLastStationAngTight) )
-    std::cout << "inconsistent muon cat 2" << std::endl;
+   void Bfinder::beginJob()
+   {
 
-  return muCat;
-}
+     std::cout << "Beginning analyzer job with value of doMC = " << doMC_ << std::endl;
+
+     edm::Service<TFileService> fs;
+     tree_ = fs->make<TTree>("ntuple","B ntuple");
+
+     tree_->Branch("nB"                , &nB       , "nB/i"    );
+     tree_->Branch("nMu"               , &nMu      , "nMu/i"   );
+     tree_->Branch("nVtx"              , &nVtx     , "nVtx/i"  );
+
+     tree_->Branch("Bc_mass"            , &Bc_mass               );
+     tree_->Branch("Bc_px"              , &Bc_px                 );
+     tree_->Branch("Bc_py"              , &Bc_py                 );
+     tree_->Branch("Bc_pz"              , &Bc_pz                 );
+     tree_->Branch("Bc_DecayVtxX"       , &Bc_DecayVtxX          );
+     tree_->Branch("Bc_DecayVtxY"       , &Bc_DecayVtxY          );
+     tree_->Branch("Bc_DecayVtxZ"       , &Bc_DecayVtxZ          );
+     tree_->Branch("Bc_DecayVtxXE"      , &Bc_DecayVtxXE         );
+     tree_->Branch("Bc_DecayVtxYE"      , &Bc_DecayVtxYE         );
+     tree_->Branch("Bc_DecayVtxZE"      , &Bc_DecayVtxZE         );
+
+     tree_->Branch("Bc_DecayVtx_vtxfit_X"       , &Bc_DecayVtx_vtxfit_X          );
+     tree_->Branch("Bc_DecayVtx_vtxfit_Y"       , &Bc_DecayVtx_vtxfit_Y          );
+     tree_->Branch("Bc_DecayVtx_vtxfit_Z"       , &Bc_DecayVtx_vtxfit_Z          );
+     tree_->Branch("Bc_DecayVtx_vtxfit_XE"       , &Bc_DecayVtx_vtxfit_XE          );
+     tree_->Branch("Bc_DecayVtx_vtxfit_YE"       , &Bc_DecayVtx_vtxfit_YE          );
+     tree_->Branch("Bc_DecayVtx_vtxfit_ZE"       , &Bc_DecayVtx_vtxfit_ZE         );
+     tree_->Branch("Bc_DecayVtx_vtxfit_XYE"       , &Bc_DecayVtx_vtxfit_XYE          );
+     tree_->Branch("Bc_DecayVtx_vtxfit_XZE"       , &Bc_DecayVtx_vtxfit_XZE          );
+     tree_->Branch("Bc_DecayVtx_vtxfit_YZE"       , &Bc_DecayVtx_vtxfit_YZE          );
+     tree_->Branch("Bc_DecayVtx_vtxfit_CL"      , &Bc_DecayVtx_vtxfit_CL         );
+
+     tree_->Branch("Bs_mass_cjp"            , &Bs_mass_cjp               );
+     tree_->Branch("Bs_px_cjp"              , &Bs_px_cjp                 );
+     tree_->Branch("Bs_py_cjp"              , &Bs_py_cjp                 );
+     tree_->Branch("Bs_pz_cjp"              , &Bs_pz_cjp                 );
+     tree_->Branch("Bs_DecayVtxX"       , &Bs_DecayVtxX          );
+     tree_->Branch("Bs_DecayVtxY"       , &Bs_DecayVtxY          );
+     tree_->Branch("Bs_DecayVtxZ"       , &Bs_DecayVtxZ          );
+     tree_->Branch("Bs_DecayVtxXE"      , &Bs_DecayVtxXE         );
+     tree_->Branch("Bs_DecayVtxYE"      , &Bs_DecayVtxYE         );
+     tree_->Branch("Bs_DecayVtxZE"      , &Bs_DecayVtxZE         );
+
+     tree_->Branch("pion_px_0c"        , &pion_px_0c           );
+     tree_->Branch("pion_py_0c"        , &pion_py_0c           );
+     tree_->Branch("pion_pz_0c"        , &pion_pz_0c           );
+     tree_->Branch("pion_track_normchi2"   , &pion_track_normchi2      );
+     tree_->Branch("pion_Hits"        , &pion_Hits           );
+     tree_->Branch("pion_PHits"       , &pion_PHits          );
+     tree_->Branch("pion_dxy_Bcdecay"         , &pion_dxy_Bcdecay          );
+     tree_->Branch("pion_dz_Bcdecay"          , &pion_dz_Bcdecay          );
+     tree_->Branch("pion_NTrackerLayers"       , &pion_NTrackerLayers          );
+     tree_->Branch("pion_NPixelLayers"       , &pion_NPixelLayers          );
+
+     tree_->Branch("B_J_mass"          , &B_J_mass             );
+     tree_->Branch("B_J_px"            , &B_J_px               );
+     tree_->Branch("B_J_py"            , &B_J_py               );
+     tree_->Branch("B_J_pz"            , &B_J_pz               );
+     tree_->Branch("B_J_DecayVtxX"     , &B_J_DecayVtxX        );
+     tree_->Branch("B_J_DecayVtxY"     , &B_J_DecayVtxY        );
+     tree_->Branch("B_J_DecayVtxZ"     , &B_J_DecayVtxZ        );
+     tree_->Branch("B_J_DecayVtxXE"    , &B_J_DecayVtxXE       );
+     tree_->Branch("B_J_DecayVtxYE"    , &B_J_DecayVtxYE       );
+     tree_->Branch("B_J_DecayVtxZE"    , &B_J_DecayVtxZE       );
+
+     tree_->Branch("B_mu_px1_cjp"      , &B_mu_px1_cjp         );
+     tree_->Branch("B_mu_py1_cjp"      , &B_mu_py1_cjp         );
+     tree_->Branch("B_mu_pz1_cjp"      , &B_mu_pz1_cjp         );
+
+     tree_->Branch("B_mu_px2_cjp"      , &B_mu_px2_cjp         );
+     tree_->Branch("B_mu_py2_cjp"      , &B_mu_py2_cjp         );
+     tree_->Branch("B_mu_pz2_cjp"      , &B_mu_pz2_cjp         );
+
+     tree_->Branch("Bc_Prob"            , &Bc_Prob               );
+     tree_->Branch("Bc_Chi2"            , &Bc_Chi2               );
+     tree_->Branch("Bs_Prob"            , &Bs_Prob               );
+     tree_->Branch("Bs_Chi2"            , &Bs_Chi2               );
+     tree_->Branch("B_J_Prob"          , &B_J_Prob             );
+     tree_->Branch("B_Phi_Prob"          , &B_Phi_Prob             );
+
+     tree_->Branch("kaonP_px_0c"        , &kaonP_px_0c           );
+     tree_->Branch("kaonP_py_0c"        , &kaonP_py_0c           );
+     tree_->Branch("kaonP_pz_0c"        , &kaonP_pz_0c           );
+     tree_->Branch("kaonP_px_cjp"        , &kaonP_px_cjp           );
+     tree_->Branch("kaonP_py_cjp"        , &kaonP_py_cjp           );
+     tree_->Branch("kaonP_pz_cjp"        , &kaonP_pz_cjp           );
+     tree_->Branch("kaonP_track_normchi2"   , &kaonP_track_normchi2      );
+     tree_->Branch("kaonP_Hits"        , &kaonP_Hits           );
+     tree_->Branch("kaonP_PHits"       , &kaonP_PHits          );
+     tree_->Branch("kaonP_dxy_Bsdecay"         , &kaonP_dxy_Bsdecay          );
+     tree_->Branch("kaonP_dz_Bsdecay"          , &kaonP_dz_Bsdecay          );
+     tree_->Branch("kaonP_NTrackerLayers"       , &kaonP_NTrackerLayers          );
+     tree_->Branch("kaonP_NPixelLayers"       , &kaonP_NPixelLayers          );
+
+     tree_->Branch("kaonM_px_0c"        , &kaonM_px_0c           );
+     tree_->Branch("kaonM_py_0c"        , &kaonM_py_0c           );
+     tree_->Branch("kaonM_pz_0c"        , &kaonM_pz_0c           );
+     tree_->Branch("kaonM_px_cjp"        , &kaonM_px_cjp           );
+     tree_->Branch("kaonM_py_cjp"        , &kaonM_py_cjp           );
+     tree_->Branch("kaonM_pz_cjp"        , &kaonM_pz_cjp           );
+     tree_->Branch("kaonM_track_normchi2"   , &kaonM_track_normchi2      );
+     tree_->Branch("kaonM_Hits"        , &kaonM_Hits           );
+     tree_->Branch("kaonM_PHits"       , &kaonM_PHits          );
+     tree_->Branch("kaonM_dxy_Bsdecay"         , &kaonM_dxy_Bsdecay          );
+     tree_->Branch("kaonM_dz_Bsdecay"          , &kaonM_dz_Bsdecay          );
+     tree_->Branch("kaonM_NTrackerLayers"       , &kaonM_NTrackerLayers          );
+     tree_->Branch("kaonM_NPixelLayers"       , &kaonM_NPixelLayers          );
+
+     tree_->Branch("PV_bestBang_X"     , &PV_bestBang_X        );
+     tree_->Branch("PV_bestBang_Y"     , &PV_bestBang_Y        );
+     tree_->Branch("PV_bestBang_Z"     , &PV_bestBang_Z        );
+     tree_->Branch("PV_bestBang_XE"    , &PV_bestBang_XE       );
+     tree_->Branch("PV_bestBang_YE"    , &PV_bestBang_YE       );
+     tree_->Branch("PV_bestBang_ZE"    , &PV_bestBang_ZE       );
+     tree_->Branch("PV_bestBang_XYE"   , &PV_bestBang_XYE      );
+     tree_->Branch("PV_bestBang_XZE"   , &PV_bestBang_XZE      );
+     tree_->Branch("PV_bestBang_YZE"   , &PV_bestBang_YZE      );
+     tree_->Branch("PV_bestBang_CL"    , &PV_bestBang_CL       );
+
+     tree_->Branch("PV_bestBang_RF_X"  , &PV_bestBang_RF_X     );
+     tree_->Branch("PV_bestBang_RF_Y"  , &PV_bestBang_RF_Y     );
+     tree_->Branch("PV_bestBang_RF_Z"  , &PV_bestBang_RF_Z     );
+     tree_->Branch("PV_bestBang_RF_XE" , &PV_bestBang_RF_XE    );
+     tree_->Branch("PV_bestBang_RF_YE" , &PV_bestBang_RF_YE    );
+     tree_->Branch("PV_bestBang_RF_ZE" , &PV_bestBang_RF_ZE    );
+     tree_->Branch("PV_bestBang_RF_XYE", &PV_bestBang_RF_XYE   );
+     tree_->Branch("PV_bestBang_RF_XZE", &PV_bestBang_RF_XZE   );
+     tree_->Branch("PV_bestBang_RF_YZE", &PV_bestBang_RF_YZE   );
+     tree_->Branch("PV_bestBang_RF_CL" , &PV_bestBang_RF_CL    );
+     tree_->Branch("PV_bestBang_RF_NTrkDif",&PV_bestBang_RF_NTrkDif  );
+
+     tree_->Branch("run"               , &run                  , "run/I"                   );
+     tree_->Branch("event"             , &event                , "event/I"                 );
+
+     tree_->Branch("nTrgL"             , &nTrgL                , "nTrgL/I"                 );
+     tree_->Branch("nTrgL1L"           , &nTrgL1L              , "nTrgL1L/I"               );
+     tree_->Branch("triggersL"         , &triggersL            , "triggersL[nTrgL]/C"      );
+   //   tree_->Branch("triggersL1L"       , &triggersL1L          , "triggersL1L[nTrgL1L]/C"  );
+     tree_->Branch("triggersMuPL"      , &triggersMuPL         );
+     tree_->Branch("triggersMuML"      , &triggersMuML         );
+     tree_->Branch("triggersL1L2_MuPL" , &triggersL1L2_MuPL    );
+     tree_->Branch("triggersL1L2_MuML" , &triggersL1L2_MuML    );
+
+   //////------------////////
+     tree_->Branch("mum_normChi2"      , &mum_normChi2         );
+     tree_->Branch("mumCat"            , &mumCat               );
+     tree_->Branch("mumAngT"           , &mumAngT              );
+     tree_->Branch("mumNHits"          , &mumNHits             );
+     tree_->Branch("mumNPHits"         , &mumNPHits            );
+     tree_->Branch("mum_dxy_Bsdecay"            , &mum_dxy_Bsdecay               );
+     tree_->Branch("mum_dz_Bsdecay"             , &mum_dz_Bsdecay                );
+
+     tree_->Branch("mum_isGlobalMuon"               , &mum_isGlobalMuon     );
+     tree_->Branch("mum_isTrackerMuon"              , &mum_isTrackerMuon    );
+     tree_->Branch("mum_isTight"                    , &mum_isTight          );
+     tree_->Branch("mum_LastStationOptimizedLowPtT" , &mum_LastStationOptimizedLowPtT  );
+     tree_->Branch("mum_LastStationT"               , &mum_LastStationT          );
+     tree_->Branch("mum_OneStationT"                , &mum_OneStationT          );
+     tree_->Branch("mum_LastStationAngT"            , &mum_LastStationAngT          );
+     tree_->Branch("mum_OneStationAngT"             , &mum_OneStationAngT          );
+     tree_->Branch("mum_2DCompatibilityT"           , &mum_2DCompatibilityT          );
+
+     tree_->Branch("mum_NMuonHits"     , &mum_NMuonHits        );
+     tree_->Branch("mum_NMuonStations" , &mum_NMuonStations    );
+     tree_->Branch("mum_NTrackerLayers", &mum_NTrackerLayers   );
+     tree_->Branch("mum_NPixelLayers"  , &mum_NPixelLayers     );
+     tree_->Branch("mum_relIso"        , &mum_relIso           );
 
 
+   //////------------////////
+     tree_->Branch("mup_normChi2"      , &mup_normChi2         );
+     tree_->Branch("mupCat"            , &mupCat               );
+     tree_->Branch("mupAngT"           , &mupAngT              );
+     tree_->Branch("mupNHits"          , &mupNHits             );
+     tree_->Branch("mupNPHits"         , &mupNPHits            );
+     tree_->Branch("mup_dxy_Bsdecay"            , &mup_dxy_Bsdecay               );
+     tree_->Branch("mup_dz_Bsdecay"             , &mup_dz_Bsdecay                );
 
-// ------------ method called once each job just before starting event loop  ------------
-
-void Bfinder::beginJob()
-{
-
-  std::cout << "Beginning analyzer job with value of doMC = " << doMC_ << std::endl;
-
-  edm::Service<TFileService> fs;
-  tree_ = fs->make<TTree>("ntuple","B ntuple");
-
-  tree_->Branch("nB"                , &nB       , "nB/i"    );
-  tree_->Branch("nMu"               , &nMu      , "nMu/i"   );
-  tree_->Branch("nVtx"              , &nVtx     , "nVtx/i"  );
-
-  tree_->Branch("B_mass_cjp"            , &B_mass_cjp               );
-  tree_->Branch("B_px_cjp"              , &B_px_cjp                 );
-  tree_->Branch("B_py_cjp"              , &B_py_cjp                 );
-  tree_->Branch("B_pz_cjp"              , &B_pz_cjp                 );
-  tree_->Branch("B_DecayVtxX"       , &B_DecayVtxX          );
-  tree_->Branch("B_DecayVtxY"       , &B_DecayVtxY          );
-  tree_->Branch("B_DecayVtxZ"       , &B_DecayVtxZ          );
-  tree_->Branch("B_DecayVtxXE"      , &B_DecayVtxXE         );
-  tree_->Branch("B_DecayVtxYE"      , &B_DecayVtxYE         );
-  tree_->Branch("B_DecayVtxZE"      , &B_DecayVtxZE         );
+     tree_->Branch("mup_isGlobalMuon"    , &mup_isGlobalMuon     );
+     tree_->Branch("mup_isTrackerMuon"   , &mup_isTrackerMuon    );
+     tree_->Branch("mup_isTight"         , &mup_isTight          );
+     tree_->Branch("mup_LastStationOptimizedLowPtT" , &mup_LastStationOptimizedLowPtT  );
+     tree_->Branch("mup_LastStationT"               , &mup_LastStationT          );
+     tree_->Branch("mup_OneStationT"                , &mup_OneStationT          );
+     tree_->Branch("mup_LastStationAngT"            , &mup_LastStationAngT          );
+     tree_->Branch("mup_OneStationAngT"             , &mup_OneStationAngT          );
+     tree_->Branch("mup_2DCompatibilityT"           , &mup_2DCompatibilityT          );
 
 
-  tree_->Branch("B_J_mass"          , &B_J_mass             );
-  tree_->Branch("B_J_px"            , &B_J_px               );
-  tree_->Branch("B_J_py"            , &B_J_py               );
-  tree_->Branch("B_J_pz"            , &B_J_pz               );
-  tree_->Branch("B_J_DecayVtxX"     , &B_J_DecayVtxX        );
-  tree_->Branch("B_J_DecayVtxY"     , &B_J_DecayVtxY        );
-  tree_->Branch("B_J_DecayVtxZ"     , &B_J_DecayVtxZ        );
-  tree_->Branch("B_J_DecayVtxXE"    , &B_J_DecayVtxXE       );
-  tree_->Branch("B_J_DecayVtxYE"    , &B_J_DecayVtxYE       );
-  tree_->Branch("B_J_DecayVtxZE"    , &B_J_DecayVtxZE       );
+     tree_->Branch("mup_NMuonHits"     , &mup_NMuonHits        );
+     tree_->Branch("mup_NMuonStations" , &mup_NMuonStations    );
+     tree_->Branch("mup_NTrackerLayers", &mup_NTrackerLayers   );
+     tree_->Branch("mup_NPixelLayers"  , &mup_NPixelLayers     );
+     tree_->Branch("mup_relIso"        , &mup_relIso           );
 
-  tree_->Branch("B_pion_px_cjp"        , &B_pion_px_cjp           );
-  tree_->Branch("B_pion_py_cjp"        , &B_pion_py_cjp           );
-  tree_->Branch("B_pion_pz_cjp"        , &B_pion_pz_cjp           );
-  tree_->Branch("B_pion_charge"        , &B_pion_charge       	  );
-  tree_->Branch("pion_track_normchi2"  , &pion_track_normchi2     );
-  tree_->Branch("pion_Hits"            , &pion_Hits               );
-  tree_->Branch("pion_PHits"           , &pion_PHits              );
-  tree_->Branch("pion_dxy_Bcdecay"     , &pion_dxy_Bcdecay        );
-  tree_->Branch("pion_dz_Bcdecay"      , &pion_dz_Bcdecay         );
-  tree_->Branch("pion_NTrackerLayers"  , &pion_NTrackerLayers     );
-  tree_->Branch("pion_NPixelLayers"    , &pion_NPixelLayers       );
-  tree_->Branch("pi_Bcdecay_weight"    , &pi_Bcdecay_weight       );
-
-  tree_->Branch("B_mu_px1_cjp"      , &B_mu_px1_cjp         );
-  tree_->Branch("B_mu_py1_cjp"      , &B_mu_py1_cjp         );
-  tree_->Branch("B_mu_pz1_cjp"      , &B_mu_pz1_cjp         );
-
-  tree_->Branch("B_mu_px2_cjp"      , &B_mu_px2_cjp         );
-  tree_->Branch("B_mu_py2_cjp"      , &B_mu_py2_cjp         );
-  tree_->Branch("B_mu_pz2_cjp"      , &B_mu_pz2_cjp         );
-
-  tree_->Branch("B_Prob"            , &B_Prob               );
-  tree_->Branch("B_J_Prob"          , &B_J_Prob             );
-
-  tree_->Branch("PV_bestBang_X"     , &PV_bestBang_X        );
-  tree_->Branch("PV_bestBang_Y"     , &PV_bestBang_Y        );
-  tree_->Branch("PV_bestBang_Z"     , &PV_bestBang_Z        );
-  tree_->Branch("PV_bestBang_XE"    , &PV_bestBang_XE       );
-  tree_->Branch("PV_bestBang_YE"    , &PV_bestBang_YE       );
-  tree_->Branch("PV_bestBang_ZE"    , &PV_bestBang_ZE       );
-  tree_->Branch("PV_bestBang_XYE"   , &PV_bestBang_XYE      );
-  tree_->Branch("PV_bestBang_XZE"   , &PV_bestBang_XZE      );
-  tree_->Branch("PV_bestBang_YZE"   , &PV_bestBang_YZE      );
-  tree_->Branch("PV_bestBang_CL"    , &PV_bestBang_CL       );
-
-  tree_->Branch("PV_bestBang_RF_X"  , &PV_bestBang_RF_X     );
-  tree_->Branch("PV_bestBang_RF_Y"  , &PV_bestBang_RF_Y     );
-  tree_->Branch("PV_bestBang_RF_Z"  , &PV_bestBang_RF_Z     );
-  tree_->Branch("PV_bestBang_RF_XE" , &PV_bestBang_RF_XE    );
-  tree_->Branch("PV_bestBang_RF_YE" , &PV_bestBang_RF_YE    );
-  tree_->Branch("PV_bestBang_RF_ZE" , &PV_bestBang_RF_ZE    );
-  tree_->Branch("PV_bestBang_RF_XYE", &PV_bestBang_RF_XYE   );
-  tree_->Branch("PV_bestBang_RF_XZE", &PV_bestBang_RF_XZE   );
-  tree_->Branch("PV_bestBang_RF_YZE", &PV_bestBang_RF_YZE   );
-  tree_->Branch("PV_bestBang_RF_CL" , &PV_bestBang_RF_CL    );
-  tree_->Branch("PV_bestBang_RF_NTrkDif",&PV_bestBang_RF_NTrkDif  );
-
-  tree_->Branch("run"               , &run                  , "run/I"                   );
-  tree_->Branch("event"             , &event                , "event/I"                 );
-
-  tree_->Branch("nTrgL"             , &nTrgL                , "nTrgL/I"                 );
-  tree_->Branch("nTrgL1L"           , &nTrgL1L              , "nTrgL1L/I"               );
-  tree_->Branch("triggersL"         , &triggersL            , "triggersL[nTrgL]/C"      );
-//   tree_->Branch("triggersL1L"       , &triggersL1L          , "triggersL1L[nTrgL1L]/C"  );
-  tree_->Branch("triggersMuPL"      , &triggersMuPL         );
-  tree_->Branch("triggersMuML"      , &triggersMuML         );
-  tree_->Branch("triggersL1L2_MuPL" , &triggersL1L2_MuPL    );
-  tree_->Branch("triggersL1L2_MuML" , &triggersL1L2_MuML    );
-
-//////------------////////
-  tree_->Branch("mum_normChi2"      , &mum_normChi2         );
-  tree_->Branch("mumCat"            , &mumCat               );
-  tree_->Branch("mumAngT"           , &mumAngT              );
-  tree_->Branch("mumNHits"          , &mumNHits             );
-  tree_->Branch("mumNPHits"         , &mumNPHits            );
-  tree_->Branch("mumdxy"            , &mumdxy               );
-  tree_->Branch("mumdz"             , &mumdz                );
-
-  tree_->Branch("mum_isGlobalMuon"  , &mum_isGlobalMuon     );
-  tree_->Branch("mum_isTight"       , &mum_isTight          );
-  tree_->Branch("mum_NMuonHits"     , &mum_NMuonHits        );
-  tree_->Branch("mum_NMuonStations" , &mum_NMuonStations    );
-  tree_->Branch("mum_NTrackerLayers", &mum_NTrackerLayers   );
-  tree_->Branch("mum_NPixelLayers"  , &mum_NPixelLayers     );
-  tree_->Branch("mum_relIso"        , &mum_relIso           );
-
-//////------------////////
-  tree_->Branch("mup_normChi2"      , &mup_normChi2         );
-  tree_->Branch("mupCat"            , &mupCat               );
-  tree_->Branch("mupAngT"           , &mupAngT              );
-  tree_->Branch("mupNHits"          , &mupNHits             );
-  tree_->Branch("mupNPHits"         , &mupNPHits            );
-  tree_->Branch("mupdxy"            , &mupdxy               );
-  tree_->Branch("mupdz"             , &mupdz                );
-
-  tree_->Branch("mup_isGlobalMuon"  , &mup_isGlobalMuon     );
-  tree_->Branch("mup_isTight"       , &mup_isTight          );
-  tree_->Branch("mup_NMuonHits"     , &mup_NMuonHits        );
-  tree_->Branch("mup_NMuonStations" , &mup_NMuonStations    );
-  tree_->Branch("mup_NTrackerLayers", &mup_NTrackerLayers   );
-  tree_->Branch("mup_NPixelLayers"  , &mup_NPixelLayers     );
-  tree_->Branch("mup_relIso"        , &mup_relIso           );
-  tree_->Branch("phoEta"            , &phoEta           );
-
-}
+     tree_->Branch("BcVertex_isValid"        , &BcVertex_isValid           );
+     tree_->Branch("BcVertex_Chi"        , &BcVertex_Chi           );
+     tree_->Branch("BcVertex_normChi"        , &BcVertex_normChi           );
+     tree_->Branch("Bs_Bcdecay_weight"       , &Bs_Bcdecay_weight          );
+     tree_->Branch("pion_Bcdecay_weight"       , &pion_Bcdecay_weight          );
+   }
 
 
-// ------------ method called once each job just after ending the event loop  ------------
-void Bfinder::endJob() {
-  tree_->GetDirectory()->cd();
-  tree_->Write();
-}
+   // ------------ method called once each job just after ending the event loop  ------------
+   void Bfinder::endJob() {
+     tree_->GetDirectory()->cd();
+     tree_->Write();
+   }
 
-//define this as a plug-in
-DEFINE_FWK_MODULE(Bfinder);
+   //define this as a plug-in
+   DEFINE_FWK_MODULE(Bfinder);
