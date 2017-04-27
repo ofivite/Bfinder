@@ -58,6 +58,8 @@
 #include "RecoVertex/VertexPrimitives/interface/BasicSingleVertexState.h"
 #include "RecoVertex/VertexPrimitives/interface/VertexState.h"
 
+#include "DataFormats/EgammaCandidates/interface/Photon.h"
+
 #include "TFile.h"
 #include "TTree.h"
 
@@ -157,10 +159,15 @@ Bfinder::Bfinder(const edm::ParameterSet& iConfig)
  mup_NMuonHits(0), mup_NMuonStations(0), mup_NTrackerLayers(0), mup_NPixelLayers(0), mup_relIso(0),
 
  BcVertex_isValid(0), BcVertex_Chi(0), BcVertex_normChi(0), Bs_Bcdecay_weight(0), pion_Bcdecay_weight(0),
+
+ phoEta(0),
+
  run(0), event(0)
 
 {
    //now do what ever initialization is needed
+//   photonCollectionProducer_ = iConfig.getParameter<std::string>("phoProducer");
+//   photonCollection_ = iConfig.getParameter<std::string>("photonCollection");
 }
 
 
@@ -348,6 +355,11 @@ void Bfinder::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
   Handle< vector<pat::Muon> > thePATMuonHandle;
   iEvent.getByLabel(muonType, thePATMuonHandle);
+
+  Handle< reco::PhotonCollection > photonHandle;
+  iEvent.getByLabel("photons", photonHandle);
+//  iEvent.getByLabel(photonCollectionProducer_, photonCollection_ , photonHandle);
+// const reco::PhotonCollection photonCollection = *(photonHandle.product());
 
   //get genParticles
   // Handle<GenParticleCollection> genParticles;
@@ -599,8 +611,6 @@ void Bfinder::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
       nMuonPTrgL = nMuonP;
       nMuonMTrgL = nMuonM;
-      triggersMuPL ->push_back(triggersMuP);
-      triggersMuML ->push_back(triggersMuM);
 
 
 /*
@@ -946,8 +956,6 @@ for(vector<pat::GenericParticle>::const_iterator iKaonM = thePATTrackHandle->beg
                        } //else { std::cout << "found track match with primary" << endl;}
                }
 
-               PV_bestBang_RF_NTrkDif->push_back( bestPV_Bang.tracksSize() - vertexTracks.size() );
-
                // if no tracks in primary or no reco track included in primary then don't do anything
                // if so, then update bctau_temp and bctauMPV_temp
 
@@ -973,6 +981,11 @@ for(vector<pat::GenericParticle>::const_iterator iKaonM = thePATTrackHandle->beg
                 }
                }
 
+
+         for( std::vector<reco::Photon>::const_iterator iPho = photonHandle->begin(); iPho != photonHandle->end(); ++iPho)
+         {
+              reco::Photon localPho = reco::Photon(*iPho);
+              phoEta->push_back( localPho.eta() );
 
  ///~~~fit 2 tracks from Bc together~~~///
 
@@ -1070,9 +1083,16 @@ for(vector<pat::GenericParticle>::const_iterator iKaonM = thePATTrackHandle->beg
 
                triggersL1L2_MuPL->push_back(triggersL1L2_MuP);
                triggersL1L2_MuML->push_back(triggersL1L2_MuM);
+
                ntriggersL1L2_MuP = nL1L2MuP;
                ntriggersL1L2_MuM = nL1L2MuM;
 
+
+               triggersMuPL ->push_back(triggersMuP);
+               triggersMuML ->push_back(triggersMuM);
+
+
+               PV_bestBang_RF_NTrkDif->push_back( bestPV_Bang.tracksSize() - vertexTracks.size() );
                /////////////////////////////////////////////////////////////////////////////////////////////
                ////////////////////////////////////////////// HERE INDEX IS [nB] /////////////////////////
                         //
@@ -1286,6 +1306,7 @@ for(vector<pat::GenericParticle>::const_iterator iKaonM = thePATTrackHandle->beg
                           vFitMCParticlesBc.clear();
                           BcTracks.clear();
                           vertexTracks.clear();
+              } // photon
             } // pion
    	     } // one kaon
    	} // another kaon
@@ -1373,6 +1394,8 @@ for(vector<pat::GenericParticle>::const_iterator iKaonM = thePATTrackHandle->beg
       mup_NMuonHits->clear(); mup_NMuonStations->clear(); mup_NTrackerLayers->clear(); mup_NPixelLayers->clear(); mup_relIso->clear();
 
       BcVertex_isValid->clear(); BcVertex_Chi->clear(); BcVertex_normChi->clear(); Bs_Bcdecay_weight->clear(); pion_Bcdecay_weight->clear();
+
+      phoEta->clear();
 
    }
 
@@ -1606,11 +1629,13 @@ for(vector<pat::GenericParticle>::const_iterator iKaonM = thePATTrackHandle->beg
      tree_->Branch("mup_NPixelLayers"  , &mup_NPixelLayers     );
      tree_->Branch("mup_relIso"        , &mup_relIso           );
 
-     tree_->Branch("BcVertex_isValid"        , &BcVertex_isValid           );
-     tree_->Branch("BcVertex_Chi"        , &BcVertex_Chi           );
-     tree_->Branch("BcVertex_normChi"        , &BcVertex_normChi           );
-     tree_->Branch("Bs_Bcdecay_weight"       , &Bs_Bcdecay_weight          );
-     tree_->Branch("pion_Bcdecay_weight"       , &pion_Bcdecay_weight          );
+     tree_->Branch("BcVertex_isValid"        , &BcVertex_isValid      );
+     tree_->Branch("BcVertex_Chi"            , &BcVertex_Chi          );
+     tree_->Branch("BcVertex_normChi"        , &BcVertex_normChi      );
+     tree_->Branch("Bs_Bcdecay_weight"       , &Bs_Bcdecay_weight     );
+     tree_->Branch("pion_Bcdecay_weight"     , &pion_Bcdecay_weight   );
+
+     tree_->Branch("phoEta"               , &phoEta          );
    }
 
 
