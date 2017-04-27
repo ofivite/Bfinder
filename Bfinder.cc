@@ -526,14 +526,14 @@ void Bfinder::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
 	  //Let's check the vertex and mass
       ParticleMass PM_PDG_MUON_MASS = PDG_MUON_MASS;
-      ParticleMass PM_PDG_JPSI_MASS = PDG_JPSI_MASS;
-      ParticleMass PM_PDG_KAON_MASS = PDG_KAON_MASS;
-      ParticleMass PM_PDG_PION_MASS = PDG_PION_MASS;
-      ParticleMass PM_PDG_PI0_MASS  = PDG_PI0_MASS;
+//      ParticleMass PM_PDG_JPSI_MASS = PDG_JPSI_MASS;
+//      ParticleMass PM_PDG_KAON_MASS = PDG_KAON_MASS;
+//      ParticleMass PM_PDG_PION_MASS = PDG_PION_MASS;
+//      ParticleMass PM_PDG_PI0_MASS  = PDG_PI0_MASS;
 
       float PM_muon_sigma = PM_PDG_MUON_MASS*1.e-6;
-      float PM_kaon_sigma = PM_PDG_KAON_MASS*1.e-6;
-      float PM_pion_sigma = PM_PDG_PION_MASS*1.e-6;
+//      float PM_kaon_sigma = PM_PDG_KAON_MASS*1.e-6;
+//      float PM_pion_sigma = PM_PDG_PION_MASS*1.e-6;
       float chi = 0.;
       float ndf = 0.;
 
@@ -632,16 +632,25 @@ RefCountedKinematicTree
          {
            for( std::vector<reco::Photon>::const_iterator iPho2 = iPho1; iPho2 != photonHandle->end(); ++iPho2)
            {
-              if iPho1 == iPho2 continue;
+              if (iPho1 == iPho2) continue;
 
               reco::Photon localPho1 = reco::Photon(*iPho1);
               reco::Photon localPho2 = reco::Photon(*iPho2);
-              TLorentzVector p4pho1, p4pho2;
+              TLorentzVector p4pho1, p4pho2, p4p0, p4B0;
               p4pho1.SetPtEtaPhiE(localPho1.pt(), localPho1.eta(), localPho1.phi(), localPho1.energy());
               p4pho2.SetPtEtaPhiE(localPho2.pt(), localPho2.eta(), localPho2.phi(), localPho2.energy());
+              p4p0 = p4pho1 + p4pho2;
+              p4B0 = p4p0 + p4mu1_0c + p4mu2_0c;
+              if (fabs(p4p0.M() - PDG_PI0_MASS) > 0.150) continue;
+              if (fabs(p4B0.M() - PDG_B0_MASS) > 0.400) continue;
 
-              if (fabs((p4pho1 + p4pho2).M() - PDG_PI0_MASS) > 0.150) continue;
+              TVector pho1_caloPos, pho2_caloPos, Jpsi_Pos;
+              pho1_caloPos.SetXYZ(localPho1.caloPosition().x(), localPho1.caloPosition().y(), localPho1.caloPosition().z())
+              pho2_caloPos.SetXYZ(localPho2.caloPosition().x(), localPho2.caloPosition().y(), localPho2.caloPosition().z())
+              Jpsi_Pos.SetXYZ((*MUMUvtx).position().x(), (*MUMUvtx).position().y(), (*MUMUvtx).position().Z())
 
+
+              B0_mass->push_back( p4B0.M() );
               pi0_mass->push_back( (p4pho1 + p4pho2).M() );
 
               pho1_Eta->push_back( localPho1.eta() );
@@ -683,10 +692,10 @@ RefCountedKinematicTree
               {
                    const Vertex &PVtxBeSp = (*recVtxes)[i];
 
-                   Double_t dx = (*BcDecayVertexCjp).position().x() - PVtxBeSp.x();
-                   Double_t dy = (*BcDecayVertexCjp).position().y() - PVtxBeSp.y();
-                   Double_t dz = (*BcDecayVertexCjp).position().z() - PVtxBeSp.z();
-                   Double_t cosAlphaXYZ = ( BcCandCjp->currentState().globalMomentum().x() * dx + BcCandCjp->currentState().globalMomentum().y()*dy + BcCandCjp->currentState().globalMomentum().z()*dz  )/( sqrt(dx*dx+dy*dy+dz*dz)* BcCandCjp->currentState().globalMomentum().mag() );
+                   Double_t dx = (*MUMUvtx).position().x() - PVtxBeSp.x();
+                   Double_t dy = (*MUMUvtx).position().y() - PVtxBeSp.y();
+                   Double_t dz = (*MUMUvtx).position().z() - PVtxBeSp.z();
+                   Double_t cosAlphaXYZ = ( p4B0.Px() * dx + p4B0.Py()*dy + p4B0.Pz()*dz  )/( sqrt(dx*dx+dy*dy+dz*dz)* p4B0.P() );
 
                    if(cosAlphaXYZ>lip)
                    {
@@ -707,6 +716,7 @@ RefCountedKinematicTree
                    }
               }
 
+
              ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
              /////////////////////////////////// // try refitting the primary without the tracks in the B reco candidate
 
@@ -720,9 +730,7 @@ RefCountedKinematicTree
                     TrackRef trackRef = iTrack->castTo<TrackRef>();
 
                     // the 4 tracks in the B cand are  patTrack_Kp glbTrackP glbTrackM
-                    if (  !(   (patTrack_Kp.track()==trackRef)  ||
-                               (patTrack_Km.track()==trackRef)  ||
-                               (patTrack_Pi.track()==trackRef)  ||
+                    if (  !(
                                (trkTrackP==trackRef)            ||
                                (trkTrackM==trackRef)           ) )
                        {
@@ -756,11 +764,11 @@ RefCountedKinematicTree
                 }
                }
 
-               //cout << "PV bestPV_Bang: " <<bestPV_Bang.x()<< " "<<bestPV_Bang.y()<<" "<<bestPV_Bang.z()<< endl;
-            // }}}
 
-               GlobalVector mu1CandMC_p = mu1CandMC->currentState().kinematicParameters().momentum();
-               GlobalVector mu2CandMC_p = mu2CandMC->currentState().kinematicParameters().momentum();
+
+               //cout << "PV bestPV_Bang: " <<bestPV_Bang.x()<< " "<<bestPV_Bang.y()<<" "<<bestPV_Bang.z()<< endl;
+
+
 
                if(iMuon1->charge() == 1 ) mupCategory = getMuCat( *iMuon1 );
                if(iMuon1->charge() == -1) mumCategory = getMuCat( *iMuon1 );
@@ -838,55 +846,6 @@ RefCountedKinematicTree
                ////////////////////////////////////////////// HERE INDEX IS [nB] /////////////////////////
                         //
 
-                          Bc_mass           ->push_back(Bc_mass_cjp_tmp);
-
-                          Bc_px             ->push_back(BcCandCjp->currentState().globalMomentum().x());
-                          Bc_py             ->push_back(BcCandCjp->currentState().globalMomentum().y());
-                          Bc_pz             ->push_back(BcCandCjp->currentState().globalMomentum().z());
-                          Bc_DecayVtxX      ->push_back(BcDecayVertexCjp->position().x());
-                          Bc_DecayVtxY      ->push_back(BcDecayVertexCjp->position().y());
-                          Bc_DecayVtxZ      ->push_back(BcDecayVertexCjp->position().z());
-                          Bc_DecayVtxXE     ->push_back(BcDecayVertexCjp->error().cxx());
-                          Bc_DecayVtxYE     ->push_back(BcDecayVertexCjp->error().cyy());
-                          Bc_DecayVtxZE     ->push_back(BcDecayVertexCjp->error().czz());
-
-                          Bc_DecayVtx_vtxfit_X ->push_back(    BcVtx.x() );
-                          Bc_DecayVtx_vtxfit_Y ->push_back(    BcVtx.y() );
-                          Bc_DecayVtx_vtxfit_Z ->push_back(    BcVtx.z() );
-                          Bc_DecayVtx_vtxfit_XE->push_back(    BcVtx.covariance(0, 0) );
-                          Bc_DecayVtx_vtxfit_YE->push_back(    BcVtx.covariance(1, 1) );
-                          Bc_DecayVtx_vtxfit_ZE->push_back(    BcVtx.covariance(2, 2) );
-                          Bc_DecayVtx_vtxfit_XYE->push_back(   BcVtx.covariance(0, 1) );
-                          Bc_DecayVtx_vtxfit_XZE->push_back(   BcVtx.covariance(0, 2) );
-                          Bc_DecayVtx_vtxfit_YZE->push_back(   BcVtx.covariance(1, 2) );
-                          Bc_DecayVtx_vtxfit_CL->push_back(    ChiSquaredProbability((double)(BcVtx.chi2()),(double)(BcVtx.ndof())) );
-
-
-
-                          Bs_mass_cjp           ->push_back(Bs_mass_cjp_tmp);
-                          Bs_px_cjp             ->push_back(BsCandCjp->currentState().globalMomentum().x());
-                          Bs_py_cjp             ->push_back(BsCandCjp->currentState().globalMomentum().y());
-                          Bs_pz_cjp             ->push_back(BsCandCjp->currentState().globalMomentum().z());
-                          Bs_DecayVtxX      ->push_back(BsDecayVertexCjp->position().x());
-                          Bs_DecayVtxY      ->push_back(BsDecayVertexCjp->position().y());
-                          Bs_DecayVtxZ      ->push_back(BsDecayVertexCjp->position().z());
-                          Bs_DecayVtxXE     ->push_back(BsDecayVertexCjp->error().cxx());
-                          Bs_DecayVtxYE     ->push_back(BsDecayVertexCjp->error().cyy());
-                          Bs_DecayVtxZE     ->push_back(BsDecayVertexCjp->error().czz());
-           //                B_DecayVtxXYE->push_back(bDecayVertexCjp->error().cyx());
-           //                B_DecayVtxXZE->push_back(bDecayVertexCjp->error().czx());
-           //                B_DecayVtxYZE->push_back(bDecayVertexCjp->error().czy());
-
-                         pion_px_0c       ->push_back(iPion->px());
-                         pion_py_0c       ->push_back(iPion->py());
-                         pion_pz_0c       ->push_back(iPion->pz());
-                         pion_track_normchi2  ->push_back(patTrack_Pi.track()->normalizedChi2());
-                         pion_Hits       ->push_back(patTrack_Pi.track()->numberOfValidHits() );
-                         pion_PHits      ->push_back(patTrack_Pi.track()->hitPattern().numberOfValidPixelHits() );
-                         pion_dxy_Bcdecay	->push_back(patTrack_Pi.track()->dxy(BcDecayPoint) );
-                         pion_dz_Bcdecay		->push_back(patTrack_Pi.track()->dz(BcDecayPoint	) );
-                         pion_NTrackerLayers->push_back ( patTrack_Pi.track()->hitPattern().trackerLayersWithMeasurement() );
-                         pion_NPixelLayers->push_back ( patTrack_Pi.track()->hitPattern().pixelLayersWithMeasurement() );
 
                           B_J_mass         ->push_back( MUMU_mass_c0 );
                           B_J_px           ->push_back( MUMUparticle->currentState().globalMomentum().x() );
@@ -899,64 +858,28 @@ RefCountedKinematicTree
                           B_J_DecayVtxYE   ->push_back( MUMUvtx->error().cyy() );
                           B_J_DecayVtxZE   ->push_back( MUMUvtx->error().czz() );
 
-                          kaonP_px_0c       ->push_back(iKaonP->px());
-                          kaonP_py_0c       ->push_back(iKaonP->py());
-                          kaonP_pz_0c       ->push_back(iKaonP->pz());
-                          kaonP_px_cjp       ->push_back(KpCandMC->currentState().globalMomentum().x());
-                          kaonP_py_cjp       ->push_back(KpCandMC->currentState().globalMomentum().y());
-                          kaonP_pz_cjp       ->push_back(KpCandMC->currentState().globalMomentum().z());
-                          kaonP_track_normchi2  ->push_back(patTrack_Kp.track()->normalizedChi2());
-                          kaonP_Hits       ->push_back(patTrack_Kp.track()->numberOfValidHits() );
-                          kaonP_PHits      ->push_back(patTrack_Kp.track()->hitPattern().numberOfValidPixelHits() );
-                          kaonP_dxy_Bsdecay	->push_back(patTrack_Kp.track()->dxy(BsDecayPoint) );
-                          kaonP_dz_Bsdecay		->push_back(patTrack_Kp.track()->dz(BsDecayPoint) );
-   		                    kaonP_NTrackerLayers->push_back ( patTrack_Kp.track()->hitPattern().trackerLayersWithMeasurement() );
-   		                    kaonP_NPixelLayers->push_back ( patTrack_Kp.track()->hitPattern().pixelLayersWithMeasurement() );
-
-                          kaonM_px_0c       ->push_back(iKaonM->px());
-                          kaonM_py_0c       ->push_back(iKaonM->py());
-                          kaonM_pz_0c       ->push_back(iKaonM->pz());
-                          kaonM_px_cjp       ->push_back(KmCandMC->currentState().globalMomentum().x());
-                          kaonM_py_cjp       ->push_back(KmCandMC->currentState().globalMomentum().y());
-                          kaonM_pz_cjp       ->push_back(KmCandMC->currentState().globalMomentum().z());
-                          kaonM_track_normchi2  ->push_back(patTrack_Km.track()->normalizedChi2());
-                          kaonM_Hits       ->push_back(patTrack_Km.track()->numberOfValidHits() );
-                          kaonM_PHits      ->push_back(patTrack_Km.track()->hitPattern().numberOfValidPixelHits() );
-                          kaonM_dxy_Bsdecay	->push_back(patTrack_Km.track()->dxy(BsDecayPoint) );
-                          kaonM_dz_Bsdecay		->push_back(patTrack_Km.track()->dz(BsDecayPoint	) );
-   		                    kaonM_NTrackerLayers->push_back ( patTrack_Km.track()->hitPattern().trackerLayersWithMeasurement() );
-   		                    kaonM_NPixelLayers->push_back ( patTrack_Km.track()->hitPattern().pixelLayersWithMeasurement() );
-
-                          B_mu_px1_cjp ->push_back(mu1CandMC_p.x());
-                          B_mu_py1_cjp ->push_back(mu1CandMC_p.y());
-                          B_mu_pz1_cjp ->push_back(mu1CandMC_p.z());
+                          B_mu_px1_cjp ->push_back(MUP_cMUMU->currentState().kinematicParameters().momentum().x());
+                          B_mu_py1_cjp ->push_back(MUP_cMUMU->currentState().kinematicParameters().momentum().y());
+                          B_mu_pz1_cjp ->push_back(MUP_cMUMU->currentState().kinematicParameters().momentum().z());
            //                B_J_charge1->push_back(mНУ А как же всем известный АМХ 40 ?)))u1CandMC->currentState().particleCharge()); // noneed
 
-                          B_mu_px2_cjp ->push_back(mu2CandMC_p.x());
-                          B_mu_py2_cjp ->push_back(mu2CandMC_p.y());
-                          B_mu_pz2_cjp ->push_back(mu2CandMC_p.z());
+                          B_mu_px2_cjp ->push_back(MUM_cMUMU->currentState().kinematicParameters().momentum().x());
+                          B_mu_py2_cjp ->push_back(MUM_cMUMU->currentState().kinematicParameters().momentum().y());
+                          B_mu_pz2_cjp ->push_back(MUM_cMUMU->currentState().kinematicParameters().momentum().z());
            //                B_J_charge2->push_back(mu2CandMC->currentState().particleCharge());
 
-                          Bc_Prob    ->push_back(Bc_Prob_tmp);
-                          Bc_Chi2    ->push_back(BcDecayVertexCjp->chiSquared());
-
-                          Bs_Prob    ->push_back(Bs_Prob_tmp);
-                          Bs_Chi2    ->push_back(BsDecayVertexCjp->chiSquared());
-
                           B_J_Prob  ->push_back(JP_Prob_tmp);
-                          B_Phi_Prob->push_back(phi_Prob_tmp);
-
    //------------------//
                   mumCat->push_back( mumCategory );
-   	             mum_isGlobalMuon->push_back ( recoMuonM->isGlobalMuon() );
+   	              mum_isGlobalMuon->push_back ( recoMuonM->isGlobalMuon() );
                   mum_isTrackerMuon->push_back ( recoMuonM->isTrackerMuon() );
                   mumAngT->push_back( muon::isGoodMuon(*recoMuonM,muon::TMOneStationTight) ); // este es para poner la condicion si es o no softmuon
 /*                  if ( BsTV.isValid() )
         	          mum_isTight->push_back ( muon::isTightMuon(*recoMuonM, BsVtx ) );
                   else
 */                    mum_isTight->push_back ( -1 );
-                  mum_dxy_Bsdecay->push_back( recoMuonM->muonBestTrack()->dxy(BsDecayPoint) );// el dxy del Muon negatico respetcto del PV con BSc (el de mayor pt)
-                  mum_dz_Bsdecay->push_back( recoMuonM->muonBestTrack()->dz(BsDecayPoint) );
+//                  mum_dxy_Bsdecay->push_back( recoMuonM->muonBestTrack()->dxy(BsDecayPoint) );// el dxy del Muon negatico respetcto del PV con BSc (el de mayor pt)
+//                  mum_dz_Bsdecay->push_back( recoMuonM->muonBestTrack()->dz(BsDecayPoint) );
 
          	       if (!(glbTrackM.isNull()))
                     {
@@ -1002,8 +925,8 @@ RefCountedKinematicTree
                   else
 */                    mup_isTight->push_back ( -1 );
 
-                  mup_dxy_Bsdecay->push_back( recoMuonP->muonBestTrack()->dxy(BsDecayPoint) );// el dxy del Muon negatico respetcto del PV con BSc (el de mayor pt)
-                  mup_dz_Bsdecay->push_back( recoMuonP->muonBestTrack()->dz(BsDecayPoint) );
+//                  mup_dxy_Bsdecay->push_back( recoMuonP->muonBestTrack()->dxy(BsDecayPoint) );// el dxy del Muon negatico respetcto del PV con BSc (el de mayor pt)
+//                  mup_dz_Bsdecay->push_back( recoMuonP->muonBestTrack()->dz(BsDecayPoint) );
 
          	       if (!(glbTrackP.isNull()))
                   {
@@ -1040,17 +963,10 @@ RefCountedKinematicTree
 
                           /////////////////////////////////////////////////
 
-                          phiParticles.clear();
                           muonParticles.clear();
-                          Bs_candidate_init.clear();
-                          Bs_candidate.clear();
-                          vFitMCParticlesBc.clear();
-                          BcTracks.clear();
                           vertexTracks.clear();
-              } // photon
-            } // pion
-   	     } // one kaon
-   	} // another kaon
+                } // 1 photon
+              } // 2 photon
    } // muon from jpsi
    }//muon from jpsi
 
@@ -1071,24 +987,7 @@ RefCountedKinematicTree
       triggersMuPL->clear(); triggersMuML->clear();
       triggersL1L2_MuPL->clear(); triggersL1L2_MuML->clear();
 
-      Bc_mass->clear();
-      Bc_px->clear();           Bc_py->clear();          Bc_pz->clear();
-      Bc_DecayVtxX->clear();    Bc_DecayVtxY->clear();   Bc_DecayVtxZ->clear();
-      Bc_DecayVtxXE->clear();   Bc_DecayVtxYE->clear();  Bc_DecayVtxZE->clear();
-
-      Bc_DecayVtx_vtxfit_X->clear();   Bc_DecayVtx_vtxfit_Y->clear();  Bc_DecayVtx_vtxfit_Z->clear();
-      Bc_DecayVtx_vtxfit_XE->clear();   Bc_DecayVtx_vtxfit_YE->clear();  Bc_DecayVtx_vtxfit_ZE->clear();
-      Bc_DecayVtx_vtxfit_XYE->clear();   Bc_DecayVtx_vtxfit_XZE->clear();  Bc_DecayVtx_vtxfit_YZE->clear();
-      Bc_DecayVtx_vtxfit_CL->clear();
-
-      Bs_mass_cjp->clear();
-      Bs_px_cjp->clear();           Bs_py_cjp->clear();          Bs_pz_cjp->clear();
-      Bs_DecayVtxX->clear();    Bs_DecayVtxY->clear();   Bs_DecayVtxZ->clear();
-      Bs_DecayVtxXE->clear();   Bs_DecayVtxYE->clear();  Bs_DecayVtxZE->clear();
-
-      pion_px_0c->clear();     pion_py_0c->clear();    pion_pz_0c->clear();
-      pion_track_normchi2->clear();   pion_Hits->clear();    pion_PHits->clear();
-      pion_dxy_Bcdecay->clear();  pion_dz_Bcdecay->clear(); pion_NTrackerLayers->clear();  pion_NPixelLayers->clear();
+      B0_mass->clear(); pi0_mass->clear();
 
       B_J_mass->clear();       B_J_px->clear();            B_J_py->clear();        B_J_pz->clear();
       B_J_DecayVtxX->clear();  B_J_DecayVtxY->clear();     B_J_DecayVtxZ->clear();
@@ -1098,18 +997,7 @@ RefCountedKinematicTree
       B_mu_px1_cjp->clear();   B_mu_py1_cjp->clear();  B_mu_pz1_cjp->clear();
       B_mu_px2_cjp->clear();   B_mu_py2_cjp->clear();  B_mu_pz2_cjp->clear();
 
-      Bc_Prob->clear(); Bc_Chi2->clear(); Bs_Prob->clear(); Bs_Chi2->clear(); B_J_Prob->clear(); B_Phi_Prob->clear();
-
-      kaonP_px_0c->clear();     kaonP_py_0c->clear();    kaonP_pz_0c->clear();
-      kaonP_px_cjp->clear();     kaonP_py_cjp->clear();    kaonP_pz_cjp->clear();
-      kaonP_track_normchi2->clear();   kaonP_Hits->clear();    kaonP_PHits->clear();
-      kaonP_dxy_Bsdecay->clear();  kaonP_dz_Bsdecay->clear(); kaonP_NTrackerLayers->clear();  kaonP_NPixelLayers->clear();
-
-      kaonM_px_0c->clear();     kaonM_py_0c->clear();    kaonM_pz_0c->clear();
-      kaonM_px_cjp->clear();     kaonM_py_cjp->clear();    kaonM_pz_cjp->clear();
-      kaonM_track_normchi2->clear();   kaonM_Hits->clear();    kaonM_PHits->clear();
-      kaonM_dxy_Bsdecay->clear();  kaonM_dz_Bsdecay->clear(); kaonM_NTrackerLayers->clear();  kaonM_NPixelLayers->clear();
-
+      B_J_Prob->clear();
       //
 
       PV_bestBang_X->clear();      PV_bestBang_Y->clear();     PV_bestBang_Z->clear();
@@ -1134,9 +1022,11 @@ RefCountedKinematicTree
       mup_LastStationAngT->clear(); mup_OneStationAngT->clear(); mup_2DCompatibilityT->clear();
       mup_NMuonHits->clear(); mup_NMuonStations->clear(); mup_NTrackerLayers->clear(); mup_NPixelLayers->clear(); mup_relIso->clear();
 
-      BcVertex_isValid->clear(); BcVertex_Chi->clear(); BcVertex_normChi->clear(); Bs_Bcdecay_weight->clear(); pion_Bcdecay_weight->clear();
-
       pho1_Eta->clear(); pho1_Phi->clear();
+      pho1_Pt->clear();  pho1_Px->clear(); pho1_Py->clear(); pho1_Pz->clear();
+      pho1_E->clear(); pho1_Et->clear();
+
+      pho2_Eta->clear(); pho1_Phi->clear();
       pho1_Pt->clear();  pho1_Px->clear(); pho1_Py->clear(); pho1_Pz->clear();
       pho1_E->clear(); pho1_Et->clear();
 
@@ -1187,49 +1077,8 @@ RefCountedKinematicTree
      tree_->Branch("nMu"               , &nMu      , "nMu/i"   );
      tree_->Branch("nVtx"              , &nVtx     , "nVtx/i"  );
 
-     tree_->Branch("Bc_mass"            , &Bc_mass               );
-     tree_->Branch("Bc_px"              , &Bc_px                 );
-     tree_->Branch("Bc_py"              , &Bc_py                 );
-     tree_->Branch("Bc_pz"              , &Bc_pz                 );
-     tree_->Branch("Bc_DecayVtxX"       , &Bc_DecayVtxX          );
-     tree_->Branch("Bc_DecayVtxY"       , &Bc_DecayVtxY          );
-     tree_->Branch("Bc_DecayVtxZ"       , &Bc_DecayVtxZ          );
-     tree_->Branch("Bc_DecayVtxXE"      , &Bc_DecayVtxXE         );
-     tree_->Branch("Bc_DecayVtxYE"      , &Bc_DecayVtxYE         );
-     tree_->Branch("Bc_DecayVtxZE"      , &Bc_DecayVtxZE         );
-
-     tree_->Branch("Bc_DecayVtx_vtxfit_X"       , &Bc_DecayVtx_vtxfit_X          );
-     tree_->Branch("Bc_DecayVtx_vtxfit_Y"       , &Bc_DecayVtx_vtxfit_Y          );
-     tree_->Branch("Bc_DecayVtx_vtxfit_Z"       , &Bc_DecayVtx_vtxfit_Z          );
-     tree_->Branch("Bc_DecayVtx_vtxfit_XE"       , &Bc_DecayVtx_vtxfit_XE          );
-     tree_->Branch("Bc_DecayVtx_vtxfit_YE"       , &Bc_DecayVtx_vtxfit_YE          );
-     tree_->Branch("Bc_DecayVtx_vtxfit_ZE"       , &Bc_DecayVtx_vtxfit_ZE         );
-     tree_->Branch("Bc_DecayVtx_vtxfit_XYE"       , &Bc_DecayVtx_vtxfit_XYE          );
-     tree_->Branch("Bc_DecayVtx_vtxfit_XZE"       , &Bc_DecayVtx_vtxfit_XZE          );
-     tree_->Branch("Bc_DecayVtx_vtxfit_YZE"       , &Bc_DecayVtx_vtxfit_YZE          );
-     tree_->Branch("Bc_DecayVtx_vtxfit_CL"      , &Bc_DecayVtx_vtxfit_CL         );
-
-     tree_->Branch("Bs_mass_cjp"            , &Bs_mass_cjp               );
-     tree_->Branch("Bs_px_cjp"              , &Bs_px_cjp                 );
-     tree_->Branch("Bs_py_cjp"              , &Bs_py_cjp                 );
-     tree_->Branch("Bs_pz_cjp"              , &Bs_pz_cjp                 );
-     tree_->Branch("Bs_DecayVtxX"       , &Bs_DecayVtxX          );
-     tree_->Branch("Bs_DecayVtxY"       , &Bs_DecayVtxY          );
-     tree_->Branch("Bs_DecayVtxZ"       , &Bs_DecayVtxZ          );
-     tree_->Branch("Bs_DecayVtxXE"      , &Bs_DecayVtxXE         );
-     tree_->Branch("Bs_DecayVtxYE"      , &Bs_DecayVtxYE         );
-     tree_->Branch("Bs_DecayVtxZE"      , &Bs_DecayVtxZE         );
-
-     tree_->Branch("pion_px_0c"        , &pion_px_0c           );
-     tree_->Branch("pion_py_0c"        , &pion_py_0c           );
-     tree_->Branch("pion_pz_0c"        , &pion_pz_0c           );
-     tree_->Branch("pion_track_normchi2"   , &pion_track_normchi2      );
-     tree_->Branch("pion_Hits"        , &pion_Hits           );
-     tree_->Branch("pion_PHits"       , &pion_PHits          );
-     tree_->Branch("pion_dxy_Bcdecay"         , &pion_dxy_Bcdecay          );
-     tree_->Branch("pion_dz_Bcdecay"          , &pion_dz_Bcdecay          );
-     tree_->Branch("pion_NTrackerLayers"       , &pion_NTrackerLayers          );
-     tree_->Branch("pion_NPixelLayers"       , &pion_NPixelLayers          );
+     tree_->Branch("B0_mass"            , &B0_mass               );
+     tree_->Branch("pi0_mass"            , &pi0_mass               );
 
      tree_->Branch("B_J_mass"          , &B_J_mass             );
      tree_->Branch("B_J_px"            , &B_J_px               );
@@ -1250,40 +1099,8 @@ RefCountedKinematicTree
      tree_->Branch("B_mu_py2_cjp"      , &B_mu_py2_cjp         );
      tree_->Branch("B_mu_pz2_cjp"      , &B_mu_pz2_cjp         );
 
-     tree_->Branch("Bc_Prob"            , &Bc_Prob               );
-     tree_->Branch("Bc_Chi2"            , &Bc_Chi2               );
-     tree_->Branch("Bs_Prob"            , &Bs_Prob               );
-     tree_->Branch("Bs_Chi2"            , &Bs_Chi2               );
      tree_->Branch("B_J_Prob"          , &B_J_Prob             );
-     tree_->Branch("B_Phi_Prob"          , &B_Phi_Prob             );
 
-     tree_->Branch("kaonP_px_0c"        , &kaonP_px_0c           );
-     tree_->Branch("kaonP_py_0c"        , &kaonP_py_0c           );
-     tree_->Branch("kaonP_pz_0c"        , &kaonP_pz_0c           );
-     tree_->Branch("kaonP_px_cjp"        , &kaonP_px_cjp           );
-     tree_->Branch("kaonP_py_cjp"        , &kaonP_py_cjp           );
-     tree_->Branch("kaonP_pz_cjp"        , &kaonP_pz_cjp           );
-     tree_->Branch("kaonP_track_normchi2"   , &kaonP_track_normchi2      );
-     tree_->Branch("kaonP_Hits"        , &kaonP_Hits           );
-     tree_->Branch("kaonP_PHits"       , &kaonP_PHits          );
-     tree_->Branch("kaonP_dxy_Bsdecay"         , &kaonP_dxy_Bsdecay          );
-     tree_->Branch("kaonP_dz_Bsdecay"          , &kaonP_dz_Bsdecay          );
-     tree_->Branch("kaonP_NTrackerLayers"       , &kaonP_NTrackerLayers          );
-     tree_->Branch("kaonP_NPixelLayers"       , &kaonP_NPixelLayers          );
-
-     tree_->Branch("kaonM_px_0c"        , &kaonM_px_0c           );
-     tree_->Branch("kaonM_py_0c"        , &kaonM_py_0c           );
-     tree_->Branch("kaonM_pz_0c"        , &kaonM_pz_0c           );
-     tree_->Branch("kaonM_px_cjp"        , &kaonM_px_cjp           );
-     tree_->Branch("kaonM_py_cjp"        , &kaonM_py_cjp           );
-     tree_->Branch("kaonM_pz_cjp"        , &kaonM_pz_cjp           );
-     tree_->Branch("kaonM_track_normchi2"   , &kaonM_track_normchi2      );
-     tree_->Branch("kaonM_Hits"        , &kaonM_Hits           );
-     tree_->Branch("kaonM_PHits"       , &kaonM_PHits          );
-     tree_->Branch("kaonM_dxy_Bsdecay"         , &kaonM_dxy_Bsdecay          );
-     tree_->Branch("kaonM_dz_Bsdecay"          , &kaonM_dz_Bsdecay          );
-     tree_->Branch("kaonM_NTrackerLayers"       , &kaonM_NTrackerLayers          );
-     tree_->Branch("kaonM_NPixelLayers"       , &kaonM_NPixelLayers          );
 
      tree_->Branch("PV_bestBang_X"     , &PV_bestBang_X        );
      tree_->Branch("PV_bestBang_Y"     , &PV_bestBang_Y        );
@@ -1372,12 +1189,6 @@ RefCountedKinematicTree
      tree_->Branch("mup_NPixelLayers"  , &mup_NPixelLayers     );
      tree_->Branch("mup_relIso"        , &mup_relIso           );
 
-     tree_->Branch("BcVertex_isValid"        , &BcVertex_isValid      );
-     tree_->Branch("BcVertex_Chi"            , &BcVertex_Chi          );
-     tree_->Branch("BcVertex_normChi"        , &BcVertex_normChi      );
-     tree_->Branch("Bs_Bcdecay_weight"       , &Bs_Bcdecay_weight     );
-     tree_->Branch("pion_Bcdecay_weight"     , &pion_Bcdecay_weight   );
-
      tree_->Branch("pho1_Eta"               , &pho1_Eta          );
      tree_->Branch("pho1_Phi"               , &pho1_Phi          );
      tree_->Branch("pho1_Pt"               , &pho1_Pt          );
@@ -1386,6 +1197,15 @@ RefCountedKinematicTree
      tree_->Branch("pho1_Pz"               , &pho1_Pz          );
      tree_->Branch("pho1_E"               , &pho1_E          );
      tree_->Branch("pho1_Et"               , &pho1_Et          );
+
+     tree_->Branch("pho2_Eta"               , &pho2_Eta          );
+     tree_->Branch("pho2_Phi"               , &pho2_Phi          );
+     tree_->Branch("pho2_Pt"               , &pho2_Pt          );
+     tree_->Branch("pho2_Px"               , &pho2_Px          );
+     tree_->Branch("pho2_Py"               , &pho2_Py          );
+     tree_->Branch("pho2_Pz"               , &pho2_Pz          );
+     tree_->Branch("pho2_E"               , &pho2_E          );
+     tree_->Branch("pho2_Et"               , &pho2_Et          );
    }
 
 
