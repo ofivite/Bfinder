@@ -14,9 +14,10 @@ process.source = cms.Source("PoolSource",
 			    skipEvents = cms.untracked.uint32(0),
 			    fileNames = cms.untracked.vstring(
 
-'/store/data/Run2012B/MuOniaParked/AOD/22Jan2013-v1/20000/16E502D6-7068-E211-B692-001A645C1EC4.root'
+#'/store/data/Run2012B/MuOniaParked/AOD/22Jan2013-v1/20000/16E502D6-7068-E211-B692-001A645C1EC4.root'
 #'/store/data/Run2012C/MuOniaParked/AOD/22Jan2013-v1/20000/00839611-2576-E211-B384-E41F13181568.root'
-#'/store/data/Run2012A/MuOnia/AOD/22Jan2013-v1/30000/000D2FF5-EE82-E211-BEBA-0026189438A5.root'
+
+'/store/data/Run2012B/MuOnia/AOD/22Jan2013-v1/20000/0215100D-C784-E211-A2DD-002618943972.root'
 #'/store/data/Run2012A/MuOnia/AOD/22Jan2013-v1/30000/000F9808-D483-E211-975C-003048FFD7BE.root'
 #'/store/data/Run2012D/MuOnia/AOD/22Jan2013-v1/10000/004C60F9-188F-E211-B43F-001E6849D384.root'
 	)
