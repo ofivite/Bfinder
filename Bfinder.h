@@ -66,6 +66,7 @@
 
 double PDG_MUON_MASS       =   0.10565837;
 double PDG_PION_MASS       =   0.13957018;
+double PDG_PI0_MASS        =   0.1349766;
 double PDG_KAON_MASS       =   0.493677;
 double PDG_KSHORT_MASS     =   0.497614;
 double PDG_KS_MASS         =   0.497614;
@@ -135,25 +136,7 @@ private:
   std::vector<std::string>         *triggersMuPL        , *triggersMuML;
   std::vector<std::string>         *triggersL1L2_MuPL   , *triggersL1L2_MuML;
 
-  std::vector<float>    *Bc_mass;
-  std::vector<float>    *Bc_px               , *Bc_py             , *Bc_pz;
-  std::vector<float>    *Bc_DecayVtxX        , *Bc_DecayVtxY      , *Bc_DecayVtxZ;
-  std::vector<float>    *Bc_DecayVtxXE       , *Bc_DecayVtxYE     , *Bc_DecayVtxZE;
-  std::vector<float>    *Bc_DecayVtx_vtxfit_X        , *Bc_DecayVtx_vtxfit_Y      , *Bc_DecayVtx_vtxfit_Z;
-  std::vector<float>    *Bc_DecayVtx_vtxfit_XE       , *Bc_DecayVtx_vtxfit_YE     , *Bc_DecayVtx_vtxfit_ZE;
-  std::vector<float>    *Bc_DecayVtx_vtxfit_XYE       , *Bc_DecayVtx_vtxfit_XZE     , *Bc_DecayVtx_vtxfit_YZE;
-  std::vector<float>    *Bc_DecayVtx_vtxfit_CL;
-
-  std::vector<float>    *Bs_mass_cjp;
-  std::vector<float>    *Bs_px_cjp           , *Bs_py_cjp         , *Bs_pz_cjp;
-  std::vector<float>    *Bs_DecayVtxX        , *Bs_DecayVtxY      , *Bs_DecayVtxZ;
-  std::vector<float>    *Bs_DecayVtxXE       , *Bs_DecayVtxYE     , *Bs_DecayVtxZE;
-
-  std::vector<float>    *pion_px_0c         , *pion_py_0c       , *pion_pz_0c;
-  std::vector<float>    *pion_track_normchi2;
-  std::vector<int>      *pion_Hits,  *pion_PHits;
-  std::vector<float>    *pion_dxy_Bcdecay, *pion_dz_Bcdecay;
-  std::vector<int>      *pion_NTrackerLayers,  *pion_NPixelLayers;
+  std::vector<float>    *B0_mass, *pi0_mass;
 
   std::vector<float>    *B_J_mass;
   std::vector<float>    *B_J_px             , *B_J_py             , *B_J_pz;
@@ -162,24 +145,7 @@ private:
 
   std::vector<float>    *B_mu_px1_cjp       , *B_mu_py1_cjp     , *B_mu_pz1_cjp;
   std::vector<float>    *B_mu_px2_cjp       , *B_mu_py2_cjp     , *B_mu_pz2_cjp;
-  std::vector<float>    *Bc_Prob            , *Bc_Chi2,
-                        *Bs_Prob            , *Bs_Chi2,
-                        *B_J_Prob	         	, *B_Phi_Prob;
-
-  std::vector<float>    *kaonP_px_0c        , *kaonP_py_0c       , *kaonP_pz_0c;
-  std::vector<float>    *kaonP_px_cjp         , *kaonP_py_cjp       , *kaonP_pz_cjp;
-  std::vector<float>    *kaonP_track_normchi2;
-  std::vector<int>      *kaonP_Hits,  *kaonP_PHits;
-  std::vector<float>    *kaonP_dxy_Bsdecay, *kaonP_dz_Bsdecay;
-  std::vector<int>      *kaonP_NTrackerLayers,  *kaonP_NPixelLayers;
-
-  std::vector<float>    *kaonM_px_0c         , *kaonM_py_0c       , *kaonM_pz_0c;
-  std::vector<float>    *kaonM_px_cjp         , *kaonM_py_cjp       , *kaonM_pz_cjp;
-  std::vector<float>    *kaonM_track_normchi2;
-  std::vector<int>      *kaonM_Hits,  *kaonM_PHits;
-  std::vector<float>    *kaonM_dxy_Bsdecay, *kaonM_dz_Bsdecay;
-  std::vector<int>      *kaonM_NTrackerLayers,  *kaonM_NPixelLayers;
-
+  std::vector<float>    *B_J_Prob;
 
   std::vector<float>    *PV_bestBang_X      , *PV_bestBang_Y    , *PV_bestBang_Z;
   std::vector<float>    *PV_bestBang_XE     , *PV_bestBang_YE   , *PV_bestBang_ZE;
@@ -208,9 +174,8 @@ private:
   std::vector<int>      *mup_NMuonHits, *mup_NMuonStations, *mup_NTrackerLayers, *mup_NPixelLayers;
   std::vector<float>    *mup_relIso;
 
-  std::vector<bool>     *BcVertex_isValid;
-  std::vector<float>    *BcVertex_Chi, *BcVertex_normChi, *Bs_Bcdecay_weight, *pion_Bcdecay_weight;
-  std::vector<float>    *phoEta, *phoPhi, *phoPt, *phoPx, *phoPy, *phoPz, *phoE, *phoEt;
+  std::vector<float>    *pho1_Eta, *pho1_Phi, *pho1_Pt, *pho1_Px, *pho1_Py, *pho1_Pz, *pho1_E, *pho1_Et;
+  std::vector<float>    *pho2_Eta, *pho2_Phi, *pho2_Pt, *pho2_Px, *pho2_Py, *pho2_Pz, *pho2_E, *pho2_Et;
 
 ///////////////////////
 
