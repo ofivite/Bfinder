@@ -91,6 +91,8 @@ Bfinder::Bfinder(const edm::ParameterSet& iConfig)
   doMC_ ( iConfig.getUntrackedParameter<bool>("doMC",false) ),
   tree_(0),
 
+  nB(0), nMu(0),  nVtx(0),
+
    triggersMuPL(0), triggersMuML(0),
    triggersL1L2_MuPL(0), triggersL1L2_MuML(0),
 
@@ -778,8 +780,6 @@ RefCountedKinematicTree
                        } //else { std::cout << "found track match with primary" << endl;}
                }
 
-               PV_bestBang_RF_NTrkDif->push_back( bestPV_Bang.tracksSize() - vertexTracks.size() );
-
                // if no tracks in primary or no reco track included in primary then don't do anything
                // if so, then update bctau_temp and bctauMPV_temp
 
@@ -807,34 +807,33 @@ RefCountedKinematicTree
 
 
 
-///~~~fit 3 tracks from Bc together~~~///
-	vector<reco::TransientTrack> BcTracks;
-	BcTracks.push_back(muon1TT);
-	BcTracks.push_back(muon2TT);
-	BcTracks.push_back(pion1TT);
-
-        AdaptiveVertexFitter BcVertexFitter;
-        TransientVertex BcTV = BcVertexFitter.vertex(BcTracks, BcGP);
-
-        if ( BcTV.isValid() )
-	{
-
-           BcVtx = reco::Vertex(BcTV);
-	   pi_Bcdecay_weight->push_back(BcVtx.trackWeight(patTrack1.track()));
-        }
-	else
-	{
-	   pi_Bcdecay_weight->push_back(-1);
-	}
-
-
   for( std::vector<reco::Photon>::const_iterator iPho = photonHandle->begin(); iPho != photonHandle->end(); ++iPho)
     {
         reco::Photon localPho = reco::Photon(*iPho);
         phoEta->push_back( localPho.eta() );
 
+        ///~~~fit 3 tracks from Bc together~~~///
+        	vector<reco::TransientTrack> BcTracks;
+        	BcTracks.push_back(muon1TT);
+        	BcTracks.push_back(muon2TT);
+        	BcTracks.push_back(pion1TT);
+
+                AdaptiveVertexFitter BcVertexFitter;
+                TransientVertex BcTV = BcVertexFitter.vertex(BcTracks, BcGP);
+
+                if ( BcTV.isValid() )
+        	{
+
+                   BcVtx = reco::Vertex(BcTV);
+        	   pi_Bcdecay_weight->push_back(BcVtx.trackWeight(patTrack1.track()));
+                }
+        	else
+        	{
+        	   pi_Bcdecay_weight->push_back(-1);
+        	}
 
 
+          PV_bestBang_RF_NTrkDif->push_back( bestPV_Bang.tracksSize() - vertexTracks.size() );
 
     //            PVindex_temp = PV_bestBang_X->size();
                PV_bestBang_X    ->push_back(  PV_bestBang_X_temp);
@@ -860,7 +859,6 @@ RefCountedKinematicTree
                PV_bestBang_RF_CL->push_back(    ChiSquaredProbability((double)(bestVtxRf.chi2()),(double)(bestVtxRf.ndof())) );
 
                //cout << "PV bestPV_Bang: " <<bestPV_Bang.x()<< " "<<bestPV_Bang.y()<<" "<<bestPV_Bang.z()<< endl;
-            // }}}
 
                GlobalVector mu1CandMC_p = mu1CandMC->currentState().kinematicParameters().momentum();
                GlobalVector mu2CandMC_p = mu2CandMC->currentState().kinematicParameters().momentum();
