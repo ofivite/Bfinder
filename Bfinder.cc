@@ -160,7 +160,9 @@ Bfinder::Bfinder(const edm::ParameterSet& iConfig)
 
  BcVertex_isValid(0), BcVertex_Chi(0), BcVertex_normChi(0), Bs_Bcdecay_weight(0), pion_Bcdecay_weight(0),
 
- phoEta(0),
+ phoEta(0),  phoPhi(0),
+ phoPt(0), phoPx(0), phoPy(0), phoPz(0),
+ phoE(0), phoEt(0),
 
  run(0), event(0)
 
@@ -985,7 +987,18 @@ for(vector<pat::GenericParticle>::const_iterator iKaonM = thePATTrackHandle->beg
          for( std::vector<reco::Photon>::const_iterator iPho = photonHandle->begin(); iPho != photonHandle->end(); ++iPho)
          {
               reco::Photon localPho = reco::Photon(*iPho);
+              TLorentzVector p4pho;
+              p4pho.SetPtEtaPhiE(localPho.pt(), localPho.eta(), localPho.phi(), localPho.energy());
+
               phoEta->push_back( localPho.eta() );
+              phoPhi->push_back( localPho.phi() );
+              phoPt->push_back( localPho.pt() );
+              phoPx->push_back( p4pho.Px() );
+              phoPy->push_back( p4pho.Py() );
+              phoPz->push_back( p4pho.Pz() );
+              phoE->push_back( localPho.energy() );
+              phoEt->push_back( localPho.et() );
+
 
  ///~~~fit 2 tracks from Bc together~~~///
 
@@ -1395,7 +1408,9 @@ for(vector<pat::GenericParticle>::const_iterator iKaonM = thePATTrackHandle->beg
 
       BcVertex_isValid->clear(); BcVertex_Chi->clear(); BcVertex_normChi->clear(); Bs_Bcdecay_weight->clear(); pion_Bcdecay_weight->clear();
 
-      phoEta->clear();
+      phoEta->clear(); phoPhi->clear();
+      phoPt->clear();  phoPx->clear(); phoPy->clear(); phoPz->clear();
+      phoE->clear(); phoEt->clear();
 
    }
 
@@ -1636,6 +1651,13 @@ for(vector<pat::GenericParticle>::const_iterator iKaonM = thePATTrackHandle->beg
      tree_->Branch("pion_Bcdecay_weight"     , &pion_Bcdecay_weight   );
 
      tree_->Branch("phoEta"               , &phoEta          );
+     tree_->Branch("phoPhi"               , &phoPhi          );
+     tree_->Branch("phoPt"               , &phoPt          );
+     tree_->Branch("phoPx"               , &phoPx          );
+     tree_->Branch("phoPy"               , &phoPy          );
+     tree_->Branch("phoPz"               , &phoPz          );
+     tree_->Branch("phoE"               , &phoE          );
+     tree_->Branch("phoEt"               , &phoEt          );
    }
 
 

@@ -210,7 +210,7 @@ private:
 
   std::vector<bool>     *BcVertex_isValid;
   std::vector<float>    *BcVertex_Chi, *BcVertex_normChi, *Bs_Bcdecay_weight, *pion_Bcdecay_weight;
-  std::vector<float>    *phoEta;
+  std::vector<float>    *phoEta, *phoPhi, *phoPt, *phoPx, *phoPy, *phoPz, *phoE, *phoEt;
 
 ///////////////////////
 
