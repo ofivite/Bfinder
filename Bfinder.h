@@ -174,8 +174,8 @@ private:
   std::vector<int>      *mup_NMuonHits, *mup_NMuonStations, *mup_NTrackerLayers, *mup_NPixelLayers;
   std::vector<float>    *mup_relIso;
 
-  std::vector<float>    *pho1_Eta, *pho1_Phi, *pho1_Pt, *pho1_Px, *pho1_Py, *pho1_Pz, *pho1_E, *pho1_Et;
-  std::vector<float>    *pho2_Eta, *pho2_Phi, *pho2_Pt, *pho2_Px, *pho2_Py, *pho2_Pz, *pho2_E, *pho2_Et;
+  std::vector<float>    *pho1_Eta, *pho1_Phi, *pho1_Pt, *pho1_Px, *pho1_Py, *pho1_Pz, *pho1_E, *pho1_Et, *pho1_Jpsi_cos;
+  std::vector<float>    *pho2_Eta, *pho2_Phi, *pho2_Pt, *pho2_Px, *pho2_Py, *pho2_Pz, *pho2_E, *pho2_Et, *pho2_Jpsi_cos;
 
 ///////////////////////
 

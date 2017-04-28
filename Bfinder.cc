@@ -65,6 +65,7 @@
 
 #include <vector>
 #include "TLorentzVector.h"
+#include "TVector3.h"
 #include <utility>
 #include <string>
 
@@ -132,11 +133,11 @@ Bfinder::Bfinder(const edm::ParameterSet& iConfig)
 
  pho1_Eta(0),  pho1_Phi(0),
  pho1_Pt(0), pho1_Px(0), pho1_Py(0), pho1_Pz(0),
- pho1_E(0), pho1_Et(0),
+ pho1_E(0), pho1_Et(0), pho1_Jpsi_cos(0),
 
  pho2_Eta(0),  pho2_Phi(0),
  pho2_Pt(0), pho2_Px(0), pho2_Py(0), pho2_Pz(0),
- pho2_E(0), pho2_Et(0),
+ pho2_E(0), pho2_Et(0), pho2_Jpsi_cos(0),
 
  run(0), event(0)
 
@@ -636,19 +637,21 @@ RefCountedKinematicTree
 
               reco::Photon localPho1 = reco::Photon(*iPho1);
               reco::Photon localPho2 = reco::Photon(*iPho2);
-              TLorentzVector p4pho1, p4pho2, p4p0, p4B0;
+              TLorentzVector p4pho1, p4pho2, p4pi0, p4B0;
+              
               p4pho1.SetPtEtaPhiE(localPho1.pt(), localPho1.eta(), localPho1.phi(), localPho1.energy());
               p4pho2.SetPtEtaPhiE(localPho2.pt(), localPho2.eta(), localPho2.phi(), localPho2.energy());
-              p4p0 = p4pho1 + p4pho2;
-              p4B0 = p4p0 + p4mu1_0c + p4mu2_0c;
-              if (fabs(p4p0.M() - PDG_PI0_MASS) > 0.150) continue;
+              p4pi0 = p4pho1 + p4pho2;
+              p4B0 = p4pi0 + p4mu1_0c + p4mu2_0c;
+              if (fabs(p4pi0.M() - PDG_PI0_MASS) > 0.150) continue;
               if (fabs(p4B0.M() - PDG_B0_MASS) > 0.400) continue;
 
-              TVector pho1_caloPos, pho2_caloPos, Jpsi_Pos;
-              pho1_caloPos.SetXYZ(localPho1.caloPosition().x(), localPho1.caloPosition().y(), localPho1.caloPosition().z())
-              pho2_caloPos.SetXYZ(localPho2.caloPosition().x(), localPho2.caloPosition().y(), localPho2.caloPosition().z())
-              Jpsi_Pos.SetXYZ((*MUMUvtx).position().x(), (*MUMUvtx).position().y(), (*MUMUvtx).position().Z())
-
+              TVector3 pho1_caloPos, pho2_caloPos, Jpsi_Pos, pho1_P3, pho2_P3;
+              pho1_caloPos.SetXYZ(localPho1.caloPosition().x(), localPho1.caloPosition().y(), localPho1.caloPosition().z());
+              pho2_caloPos.SetXYZ(localPho2.caloPosition().x(), localPho2.caloPosition().y(), localPho2.caloPosition().z());
+              Jpsi_Pos.SetXYZ((*MUMUvtx).position().x(), (*MUMUvtx).position().y(), (*MUMUvtx).position().z());
+              pho1_P3.SetXYZ( p4pho1.Px(), p4pho1.Py(), p4pho1.Pz());
+              pho2_P3.SetXYZ( p4pho2.Px(), p4pho2.Py(), p4pho2.Pz());
 
               B0_mass->push_back( p4B0.M() );
               pi0_mass->push_back( (p4pho1 + p4pho2).M() );
@@ -661,6 +664,7 @@ RefCountedKinematicTree
               pho1_Pz->push_back( p4pho1.Pz() );
               pho1_E->push_back( localPho1.energy() );
               pho1_Et->push_back( localPho1.et() );
+              pho1_Jpsi_cos->push_back( TMath::Cos(pho1_P3.Angle(pho1_caloPos - Jpsi_Pos)) );
 
               pho2_Eta->push_back( localPho2.eta() );
               pho2_Phi->push_back( localPho2.phi() );
@@ -670,7 +674,7 @@ RefCountedKinematicTree
               pho2_Pz->push_back( p4pho2.Pz() );
               pho2_E->push_back( localPho2.energy() );
               pho2_Et->push_back( localPho2.et() );
-
+              pho2_Jpsi_cos->push_back( TMath::Cos(pho2_P3.Angle(pho2_caloPos - Jpsi_Pos)) );
 
 
               reco::Vertex bestPV_Bang;
@@ -1025,10 +1029,12 @@ RefCountedKinematicTree
       pho1_Eta->clear(); pho1_Phi->clear();
       pho1_Pt->clear();  pho1_Px->clear(); pho1_Py->clear(); pho1_Pz->clear();
       pho1_E->clear(); pho1_Et->clear();
+      pho1_Jpsi_cos->clear();
 
-      pho2_Eta->clear(); pho1_Phi->clear();
-      pho1_Pt->clear();  pho1_Px->clear(); pho1_Py->clear(); pho1_Pz->clear();
-      pho1_E->clear(); pho1_Et->clear();
+      pho2_Eta->clear(); pho2_Phi->clear();
+      pho2_Pt->clear();  pho2_Px->clear(); pho2_Py->clear(); pho2_Pz->clear();
+      pho2_E->clear(); pho2_Et->clear();
+      pho2_Jpsi_cos->clear();
 
    }
 
@@ -1197,6 +1203,7 @@ RefCountedKinematicTree
      tree_->Branch("pho1_Pz"               , &pho1_Pz          );
      tree_->Branch("pho1_E"               , &pho1_E          );
      tree_->Branch("pho1_Et"               , &pho1_Et          );
+     tree_->Branch("pho1_Jpsi_cos"               , &pho1_Jpsi_cos          );
 
      tree_->Branch("pho2_Eta"               , &pho2_Eta          );
      tree_->Branch("pho2_Phi"               , &pho2_Phi          );
@@ -1206,6 +1213,9 @@ RefCountedKinematicTree
      tree_->Branch("pho2_Pz"               , &pho2_Pz          );
      tree_->Branch("pho2_E"               , &pho2_E          );
      tree_->Branch("pho2_Et"               , &pho2_Et          );
+     tree_->Branch("pho2_Jpsi_cos"               , &pho2_Jpsi_cos          );
+
+
    }
 
 
