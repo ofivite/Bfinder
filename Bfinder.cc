@@ -334,7 +334,8 @@ void Bfinder::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   iEvent.getByLabel(muonType, thePATMuonHandle);
 
   Handle< reco::PhotonCollection > photonHandle;
-  iEvent.getByLabel("photons", photonHandle);
+  // iEvent.getByLabel("photons", photonHandle);
+  iEvent.getByLabel("pfPhotonTranslator", "pfphot", photonHandle);
 //  iEvent.getByLabel(photonCollectionProducer_, photonCollection_ , photonHandle);
 // const reco::PhotonCollection photonCollection = *(photonHandle.product());
 
@@ -638,7 +639,7 @@ RefCountedKinematicTree
               reco::Photon localPho1 = reco::Photon(*iPho1);
               reco::Photon localPho2 = reco::Photon(*iPho2);
               TLorentzVector p4pho1, p4pho2, p4pi0, p4B0;
-              
+
               p4pho1.SetPtEtaPhiE(localPho1.pt(), localPho1.eta(), localPho1.phi(), localPho1.energy());
               p4pho2.SetPtEtaPhiE(localPho2.pt(), localPho2.eta(), localPho2.phi(), localPho2.energy());
               p4pi0 = p4pho1 + p4pho2;
