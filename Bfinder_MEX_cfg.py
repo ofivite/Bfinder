@@ -6,7 +6,7 @@ process = cms.Process("PAT")
 from PhysicsTools.PatAlgos.patTemplate_cfg import *
 
 
-process.maxEvents = cms.untracked.PSet(  input = cms.untracked.int32(1000), SkipEvent = cms.untracked.vstring('ProductNotFound') )
+process.maxEvents = cms.untracked.PSet(  input = cms.untracked.int32(-1), SkipEvent = cms.untracked.vstring('ProductNotFound') )
 #process.maxEvents = cms.untracked.PSet(  input = cms.untracked.int32(1000), SkipEvent = cms.untracked.vstring('ProductNotFound') )
 
 process.source = cms.Source("PoolSource",
