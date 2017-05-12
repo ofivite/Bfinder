@@ -388,8 +388,8 @@ void Bfinder::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
     std::string alltnames = triggersL;
     //Bool_t checkflag = false;
-//    std::string::size_type trigger1 = alltnames.find("HLT_DoubleMu3p5_LowMass_Displaced",0);
-    std::string::size_type trigger1 = alltnames.find("HLT_DoubleMu4_Jpsi_Displaced",0);
+    std::string::size_type trigger1 = alltnames.find("HLT_DoubleMu3p5_LowMass_Displaced",0);
+//    std::string::size_type trigger1 = alltnames.find("HLT_DoubleMu4_Jpsi_Displaced",0);
     if(trigger1==std::string::npos)
       {
 	//checkflag=true;return;

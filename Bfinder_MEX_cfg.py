@@ -6,7 +6,7 @@ process = cms.Process("PAT")
 from PhysicsTools.PatAlgos.patTemplate_cfg import *
 
 
-process.maxEvents = cms.untracked.PSet(  input = cms.untracked.int32(-1), SkipEvent = cms.untracked.vstring('ProductNotFound') )
+process.maxEvents = cms.untracked.PSet(  input = cms.untracked.int32(1000), SkipEvent = cms.untracked.vstring('ProductNotFound') )
 #process.maxEvents = cms.untracked.PSet(  input = cms.untracked.int32(1000), SkipEvent = cms.untracked.vstring('ProductNotFound') )
 
 process.source = cms.Source("PoolSource",
@@ -14,10 +14,10 @@ process.source = cms.Source("PoolSource",
 			    skipEvents = cms.untracked.uint32(0),
 			    fileNames = cms.untracked.vstring(
 
-#'/store/data/Run2012B/MuOniaParked/AOD/22Jan2013-v1/20000/16E502D6-7068-E211-B692-001A645C1EC4.root'
+'/store/data/Run2012B/MuOniaParked/AOD/22Jan2013-v1/20000/16E502D6-7068-E211-B692-001A645C1EC4.root'
 #'/store/data/Run2012C/MuOniaParked/AOD/22Jan2013-v1/20000/00839611-2576-E211-B384-E41F13181568.root'
 
-'/store/data/Run2012B/MuOnia/AOD/22Jan2013-v1/20000/0215100D-C784-E211-A2DD-002618943972.root'
+#'/store/data/Run2012B/MuOnia/AOD/22Jan2013-v1/20000/0215100D-C784-E211-A2DD-002618943972.root'
 #'/store/data/Run2012A/MuOnia/AOD/22Jan2013-v1/30000/000F9808-D483-E211-975C-003048FFD7BE.root'
 #'/store/data/Run2012D/MuOnia/AOD/22Jan2013-v1/10000/004C60F9-188F-E211-B43F-001E6849D384.root'
 	)
@@ -49,8 +49,8 @@ makeTrackCandidates(process,					    #	      patAODTrackCands
 	label='TrackCands',		      # output collection will be 'allLayer0TrackCands', 'allLayer1TrackCands', 'selectedLayer1TrackCands'
 	tracks=cms.InputTag('generalTracks'), # input track collection
 	particleType='pi+',		      # particle type (for assigning a mass)
-	preselection='pt > 0.5',	      # preselection cut on candidates. Only methods of 'reco::Candidate' are available
-	selection='pt > 0.5',		      # Selection on PAT Layer 1 objects ('selectedLayer1TrackCands')
+	preselection='pt > 0.4',	      # preselection cut on candidates. Only methods of 'reco::Candidate' are available
+	selection='pt > 0.4',		      # Selection on PAT Layer 1 objects ('selectedLayer1TrackCands')
 	isolation={},			      # Isolations to use ('source':deltaR; set to {} for None)
 	isoDeposits=[],
 	mcAs = None,			      # Replicate MC match as the one used for Muons
