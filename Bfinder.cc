@@ -59,6 +59,7 @@
 #include "RecoVertex/VertexPrimitives/interface/VertexState.h"
 
 #include "DataFormats/EgammaCandidates/interface/Photon.h"
+#include "DataFormats/ParticleFlowCandidate/interface/PFCandidate.h"
 
 #include "TFile.h"
 #include "TTree.h"
@@ -97,7 +98,7 @@ Bfinder::Bfinder(const edm::ParameterSet& iConfig)
    triggersMuPL(0), triggersMuML(0),
    triggersL1L2_MuPL(0), triggersL1L2_MuML(0),
 
- B0_mass(0), pi0_mass(0),
+ B0_mass(0),
 
  B_J_mass(0),       B_J_px(0),            B_J_py(0),        B_J_pz(0),
  B_J_DecayVtxX(0),  B_J_DecayVtxY(0),     B_J_DecayVtxZ(0),
@@ -131,13 +132,10 @@ Bfinder::Bfinder(const edm::ParameterSet& iConfig)
  mup_NMuonHits(0), mup_NMuonStations(0), mup_NTrackerLayers(0), mup_NPixelLayers(0), mup_relIso(0),
 
 
- pho1_Eta(0),  pho1_Phi(0),
- pho1_Pt(0), pho1_Px(0), pho1_Py(0), pho1_Pz(0),
- pho1_E(0), pho1_Et(0), pho1_Jpsi_cos(0),
+ pionPF_Eta(0),  pionPF_Phi(0),
+ pionPF_Pt(0), pionPF_Px(0), pionPF_Py(0), pionPF_Pz(0),
+ pionPF_E(0), mva_gamma_nh(0), mva_nothing_nh(0),
 
- pho2_Eta(0),  pho2_Phi(0),
- pho2_Pt(0), pho2_Px(0), pho2_Py(0), pho2_Pz(0),
- pho2_E(0), pho2_Et(0), pho2_Jpsi_cos(0),
 
  run(0), event(0)
 
@@ -338,6 +336,9 @@ void Bfinder::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   iEvent.getByLabel("pfPhotonTranslator", "pfphot", photonHandle);
 //  iEvent.getByLabel(photonCollectionProducer_, photonCollection_ , photonHandle);
 // const reco::PhotonCollection photonCollection = *(photonHandle.product());
+
+  Handle< vector<reco::PFCandidate> > pfHandle;
+  iEvent.getByLabel("particleFlow", pfHandle);
 
   //get genParticles
   // Handle<GenParticleCollection> genParticles;
@@ -630,52 +631,30 @@ RefCountedKinematicTree
 // 	   int PId1=0; int PId2=0;
 
 
-         for( std::vector<reco::Photon>::const_iterator iPho1 = photonHandle->begin(); iPho1 != photonHandle->end(); ++iPho1)
+         for( std::vector<reco::PFCandidate>::const_iterator iPFlow = pfHandle->begin(); iPFlow != pfHandle->end(); ++iPFlow)
          {
-           for( std::vector<reco::Photon>::const_iterator iPho2 = iPho1; iPho2 != photonHandle->end(); ++iPho2)
-           {
-              if (iPho1 == iPho2) continue;
+              if (iPFlow->particleId() != 5) continue;
 
-              reco::Photon localPho1 = reco::Photon(*iPho1);
-              reco::Photon localPho2 = reco::Photon(*iPho2);
-              TLorentzVector p4pho1, p4pho2, p4pi0, p4B0;
+              reco::PFCandidate localpionPF = reco::PFCandidate(*iPFlow);
+              TLorentzVector p4pionPF, p4B0;
 
-              p4pho1.SetPtEtaPhiE(localPho1.pt(), localPho1.eta(), localPho1.phi(), localPho1.energy());
-              p4pho2.SetPtEtaPhiE(localPho2.pt(), localPho2.eta(), localPho2.phi(), localPho2.energy());
-              p4pi0 = p4pho1 + p4pho2;
-              p4B0 = p4pi0 + p4mu1_0c + p4mu2_0c;
-              if (fabs(p4pi0.M() - PDG_PI0_MASS) > 0.150) continue;
-              if (fabs(p4B0.M() - PDG_B0_MASS) > 0.400) continue;
-
-              TVector3 pho1_caloPos, pho2_caloPos, Jpsi_Pos, pho1_P3, pho2_P3;
-              pho1_caloPos.SetXYZ(localPho1.caloPosition().x(), localPho1.caloPosition().y(), localPho1.caloPosition().z());
-              pho2_caloPos.SetXYZ(localPho2.caloPosition().x(), localPho2.caloPosition().y(), localPho2.caloPosition().z());
-              Jpsi_Pos.SetXYZ((*MUMUvtx).position().x(), (*MUMUvtx).position().y(), (*MUMUvtx).position().z());
-              pho1_P3.SetXYZ( p4pho1.Px(), p4pho1.Py(), p4pho1.Pz());
-              pho2_P3.SetXYZ( p4pho2.Px(), p4pho2.Py(), p4pho2.Pz());
+              p4pionPF.SetPtEtaPhiM(localpionPF.pt(), localpionPF.eta(), localpionPF.phi(), PDG_PI0_MASS);
+              p4B0 = p4pionPF + p4mu1_0c + p4mu2_0c;
+              if (fabs(p4B0.M() - PDG_B0_MASS) > 0.300) continue;
 
               B0_mass->push_back( p4B0.M() );
-              pi0_mass->push_back( (p4pho1 + p4pho2).M() );
 
-              pho1_Eta->push_back( localPho1.eta() );
-              pho1_Phi->push_back( localPho1.phi() );
-              pho1_Pt->push_back( localPho1.pt() );
-              pho1_Px->push_back( p4pho1.Px() );
-              pho1_Py->push_back( p4pho1.Py() );
-              pho1_Pz->push_back( p4pho1.Pz() );
-              pho1_E->push_back( localPho1.energy() );
-              pho1_Et->push_back( localPho1.et() );
-              pho1_Jpsi_cos->push_back( TMath::Cos(pho1_P3.Angle(pho1_caloPos - Jpsi_Pos)) );
+              pionPF_Eta->push_back( localpionPF.eta() );
+              pionPF_Phi->push_back( localpionPF.phi() );
+              pionPF_Pt->push_back( localpionPF.pt() );
 
-              pho2_Eta->push_back( localPho2.eta() );
-              pho2_Phi->push_back( localPho2.phi() );
-              pho2_Pt->push_back( localPho2.pt() );
-              pho2_Px->push_back( p4pho2.Px() );
-              pho2_Py->push_back( p4pho2.Py() );
-              pho2_Pz->push_back( p4pho2.Pz() );
-              pho2_E->push_back( localPho2.energy() );
-              pho2_Et->push_back( localPho2.et() );
-              pho2_Jpsi_cos->push_back( TMath::Cos(pho2_P3.Angle(pho2_caloPos - Jpsi_Pos)) );
+
+              pionPF_Px->push_back( p4pionPF.Px() );
+              pionPF_Py->push_back( p4pionPF.Py() );
+              pionPF_Pz->push_back( p4pionPF.Pz() );
+              pionPF_E->push_back( localpionPF.energy() );
+              mva_gamma_nh->push_back( localpionPF.et() );
+              mva_nothing_nh->push_back( localpionPF.mva_nothing_nh() );
 
 
               reco::Vertex bestPV_Bang;
@@ -970,8 +949,7 @@ RefCountedKinematicTree
 
                           muonParticles.clear();
                           vertexTracks.clear();
-                } // 1 photon
-              } // 2 photon
+              } // pion
    } // muon from jpsi
    }//muon from jpsi
 
@@ -992,7 +970,7 @@ RefCountedKinematicTree
       triggersMuPL->clear(); triggersMuML->clear();
       triggersL1L2_MuPL->clear(); triggersL1L2_MuML->clear();
 
-      B0_mass->clear(); pi0_mass->clear();
+      B0_mass->clear();
 
       B_J_mass->clear();       B_J_px->clear();            B_J_py->clear();        B_J_pz->clear();
       B_J_DecayVtxX->clear();  B_J_DecayVtxY->clear();     B_J_DecayVtxZ->clear();
@@ -1027,16 +1005,10 @@ RefCountedKinematicTree
       mup_LastStationAngT->clear(); mup_OneStationAngT->clear(); mup_2DCompatibilityT->clear();
       mup_NMuonHits->clear(); mup_NMuonStations->clear(); mup_NTrackerLayers->clear(); mup_NPixelLayers->clear(); mup_relIso->clear();
 
-      pho1_Eta->clear(); pho1_Phi->clear();
-      pho1_Pt->clear();  pho1_Px->clear(); pho1_Py->clear(); pho1_Pz->clear();
-      pho1_E->clear(); pho1_Et->clear();
-      pho1_Jpsi_cos->clear();
-
-      pho2_Eta->clear(); pho2_Phi->clear();
-      pho2_Pt->clear();  pho2_Px->clear(); pho2_Py->clear(); pho2_Pz->clear();
-      pho2_E->clear(); pho2_Et->clear();
-      pho2_Jpsi_cos->clear();
-
+      pionPF_Eta->clear(); pionPF_Phi->clear();
+      pionPF_Pt->clear();  pionPF_Px->clear(); pionPF_Py->clear(); pionPF_Pz->clear();
+      pionPF_E->clear(); mva_gamma_nh->clear();
+      mva_nothing_nh->clear();
    }
 
 
@@ -1085,7 +1057,6 @@ RefCountedKinematicTree
      tree_->Branch("nVtx"              , &nVtx     , "nVtx/i"  );
 
      tree_->Branch("B0_mass"            , &B0_mass               );
-     tree_->Branch("pi0_mass"            , &pi0_mass               );
 
      tree_->Branch("B_J_mass"          , &B_J_mass             );
      tree_->Branch("B_J_px"            , &B_J_px               );
@@ -1196,26 +1167,15 @@ RefCountedKinematicTree
      tree_->Branch("mup_NPixelLayers"  , &mup_NPixelLayers     );
      tree_->Branch("mup_relIso"        , &mup_relIso           );
 
-     tree_->Branch("pho1_Eta"               , &pho1_Eta          );
-     tree_->Branch("pho1_Phi"               , &pho1_Phi          );
-     tree_->Branch("pho1_Pt"               , &pho1_Pt          );
-     tree_->Branch("pho1_Px"               , &pho1_Px          );
-     tree_->Branch("pho1_Py"               , &pho1_Py          );
-     tree_->Branch("pho1_Pz"               , &pho1_Pz          );
-     tree_->Branch("pho1_E"               , &pho1_E          );
-     tree_->Branch("pho1_Et"               , &pho1_Et          );
-     tree_->Branch("pho1_Jpsi_cos"               , &pho1_Jpsi_cos          );
-
-     tree_->Branch("pho2_Eta"               , &pho2_Eta          );
-     tree_->Branch("pho2_Phi"               , &pho2_Phi          );
-     tree_->Branch("pho2_Pt"               , &pho2_Pt          );
-     tree_->Branch("pho2_Px"               , &pho2_Px          );
-     tree_->Branch("pho2_Py"               , &pho2_Py          );
-     tree_->Branch("pho2_Pz"               , &pho2_Pz          );
-     tree_->Branch("pho2_E"               , &pho2_E          );
-     tree_->Branch("pho2_Et"               , &pho2_Et          );
-     tree_->Branch("pho2_Jpsi_cos"               , &pho2_Jpsi_cos          );
-
+     tree_->Branch("pionPF_Eta"               , &pionPF_Eta          );
+     tree_->Branch("pionPF_Phi"               , &pionPF_Phi          );
+     tree_->Branch("pionPF_Pt"               , &pionPF_Pt          );
+     tree_->Branch("pionPF_Px"               , &pionPF_Px          );
+     tree_->Branch("pionPF_Py"               , &pionPF_Py          );
+     tree_->Branch("pionPF_Pz"               , &pionPF_Pz          );
+     tree_->Branch("pionPF_E"               , &pionPF_E          );
+     tree_->Branch("mva_gamma_nh"               , &mva_gamma_nh          );
+     tree_->Branch("mva_nothing_nh"               , &mva_nothing_nh          );
 
    }
 

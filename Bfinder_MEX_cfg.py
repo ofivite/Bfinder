@@ -6,15 +6,16 @@ process = cms.Process("PAT")
 from PhysicsTools.PatAlgos.patTemplate_cfg import *
 
 
-process.maxEvents = cms.untracked.PSet(  input = cms.untracked.int32(-1), SkipEvent = cms.untracked.vstring('ProductNotFound') )
-#process.maxEvents = cms.untracked.PSet(  input = cms.untracked.int32(1000), SkipEvent = cms.untracked.vstring('ProductNotFound') )
+##process.maxEvents = cms.untracked.PSet(  input = cms.untracked.int32(-1), SkipEvent = cms.untracked.vstring('ProductNotFound') )
+process.maxEvents = cms.untracked.PSet(  input = cms.untracked.int32(1000), SkipEvent = cms.untracked.vstring('ProductNotFound') )
 
 process.source = cms.Source("PoolSource",
 			    duplicateCheckMode = cms.untracked.string('noDuplicateCheck'),
 			    skipEvents = cms.untracked.uint32(0),
 			    fileNames = cms.untracked.vstring(
 
-'/store/data/Run2012B/MuOniaParked/AOD/22Jan2013-v1/20000/16E502D6-7068-E211-B692-001A645C1EC4.root'
+'root://xrootd-cms.infn.it//store/data/Run2012B/MuOniaParked/AOD/22Jan2013-v1/20000/16E502D6-7068-E211-B692-001A645C1EC4.root'
+#'/store/data/Run2012B/MuOniaParked/AOD/22Jan2013-v1/20000/16E502D6-7068-E211-B692-001A645C1EC4.root'
 #'/store/data/Run2012C/MuOniaParked/AOD/22Jan2013-v1/20000/00839611-2576-E211-B384-E41F13181568.root'
 
 #'/store/data/Run2012B/MuOnia/AOD/22Jan2013-v1/20000/0215100D-C784-E211-A2DD-002618943972.root'

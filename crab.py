@@ -32,8 +32,8 @@ if __name__ == '__main__':
     #from copy import deepcopy
     global_lumi_mask_2012 = 'https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions12/8TeV/Reprocessing/Cert_190456-208686_8TeV_22Jan2013ReReco_Collisions12_JSON_MuonPhys.txt'
     dset = ''
-    task = 'B0_parked_PFpho'
-    units_per_job = 7
+    task = 'B0_parked'
+    units_per_job = 90
     run_range=''
     # print 'aaa', sys.argv, len(sys.argv)
     
