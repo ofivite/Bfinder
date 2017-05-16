@@ -3,13 +3,13 @@ from math import sqrt
 from variables import *
 isMC = 0
 
-_fileOUT = 'B0_parked_notall.root'
+_fileOUT = 'B0_parked_D_notall.root'
 
 MyFileNamesMC = glob.glob( MCpath(1) + "*.root")
-MyFileNamesDA = (glob.glob("/afs/cern.ch/work/o/ofilatov/CMSSW_5_3_24/src/XbFrame/Xb_frame/crab_projects_Bfinder_B0_parked/crab_Bfinder_B0_parked_parke*/results/*.root"))
+MyFileNamesDA = (glob.glob("/afs/cern.ch/work/o/ofilatov/CMSSW_5_3_24/src/XbFrame/Xb_frame/crab_projects_Bfinder_B0_parked/crab_Bfinder_B0_parked_parked_D/results/*.root"))
 
-__aa = 0;    __bb = 10
-##__aa = 0;  __bb =  len(MyFileNamesDA);
+##__aa = 0;    __bb = 10
+__aa = 0;  __bb =  len(MyFileNamesDA);
 MyFileNames = (MyFileNamesMC if isMC else MyFileNamesDA[__aa: __bb]); ch = TChain('mkcands/ntuple');
 
 for fName in  MyFileNames:
@@ -25,7 +25,7 @@ H_cuts = TH1F("H_cuts", "H_cuts", 40, 0, 20)
 ###  declaration and connecting to the branches of my new variables {{{1
 NOUT, NOUT_evt, BBB, ibs = [int(0) for i in range(4)];
 PV, PVE, JPV, JPVE, JPP3, B0V, B0VE, B0P3, _TV3zero = [TVector3(0,0,0) for i in range(9)]
-pionP4_0c, MU1P4_cjp, MU2P4_cjp, MUMUP4_C0, MUMUP4_cjp, B0P4 = [TLorentzVector(0,0,0,0) for i in range(6)];
+pionP4_0c, pionP4_wo_mass, MU1P4_cjp, MU2P4_cjp, MUMUP4_C0, MUMUP4_cjp, B0P4 = [TLorentzVector(0,0,0,0) for i in range(7)];
 _TV3zero  = TVector3(0,0,0)
 
 _MY_VARS_ = [
@@ -52,13 +52,13 @@ _MY_VARS_ = [
 'JPsi_mass_C0', 'JPsi_pt_C0', 
 "JPsi_pvcos2_C0", "JPsi_pv_DS_2D_C0", 'JPsi_VtxProb', 
 
-#-----~-----
-"Bs_mass_Cjp",
-"Bs_pt_Cjp", "Bs_bcvtxDS2d_Cjp", "Bs_bcvtxDS2d_vtxfit", 'Bs_pvDS2d_Cjp', 'Bs_pv_detach_2D',
-"Bs_bcvtx_cos2_Cjp", 'Bs_bcvtx_cos2_vtxfit', 'Bs_pv_cos2_Cjp',
-"Bs_Eta_cjp", "Bs_Phi_cjp",
-
-'Bs_Bcdecay_weight', "Bs_vtxprob_Cjp", 'BsVtx_Chi2',
+###-----~-----
+##"Bs_mass_Cjp",
+##"Bs_pt_Cjp", "Bs_bcvtxDS2d_Cjp", "Bs_bcvtxDS2d_vtxfit", 'Bs_pvDS2d_Cjp', 'Bs_pv_detach_2D',
+##"Bs_bcvtx_cos2_Cjp", 'Bs_bcvtx_cos2_vtxfit', 'Bs_pv_cos2_Cjp',
+##"Bs_Eta_cjp", "Bs_Phi_cjp",
+##
+##'Bs_Bcdecay_weight', "Bs_vtxprob_Cjp", 'BsVtx_Chi2',
 #-----~-----
 'pion_pt_0c', 'pion_mass',
 'pion_track_normchi2', 'pion_Hits',  'pion_PHits',
@@ -115,7 +115,7 @@ for evt in range(0, nEvt):
         MUMUP4_C0    .SetXYZM(ch.B_J_px[ibs], ch.B_J_py[ibs], ch.B_J_pz[ibs], ch.B_J_mass[ibs])
         MUMUP4_cjp = MU1P4_cjp + MU2P4_cjp
 
-
+        pionP4_wo_mass.SetPtEtaPhiE(ch.pionPF_Pt[ibs], ch.pionPF_Eta[ibs], ch.pionPF_Phi[ibs], ch.pionPF_E[ibs])
         pionP4_0c  .SetPtEtaPhiM(ch.pionPF_Pt[ibs], ch.pionPF_Eta[ibs], ch.pionPF_Phi[ibs], PDG_PI0_MASS)
 
 ##        BsP4_Cjp    .SetXYZM  ( ch.Bs_px_cjp[ibs], ch.Bs_py_cjp[ibs], ch.Bs_pz_cjp[ibs], ch.Bs_mass_cjp[ibs])
@@ -240,7 +240,7 @@ for evt in range(0, nEvt):
             H_cuts.Fill(14)
             continue
 
-        if DetachSignificance2( JPV - PV, PVE, JPVE) < 30.0:
+        if DetachSignificance2( JPV - PV, PVE, JPVE) < 3.0:
             H_cuts.Fill(15)
             continue
         if abs(MUMUP4_C0.Eta()) > 2.5  :continue
@@ -359,7 +359,7 @@ for evt in range(0, nEvt):
 	deltaR_pi_JP[0] = pionP4_0c.DeltaR(MUMUP4_C0)
         mva_nothing_nh[0] = ch.mva_nothing_nh[ibs]
         mva_gamma_nh[0] = ch.mva_gamma_nh[ibs]
-##        pion_mass[0] = sqrt(ch.pionPF_E[ibs]**2 - ch.pionPF_Px[ibs]**2 - ch.pionPF_Py[ibs]**2 - ch.pionPF_Pz[ibs]**2)
+        pion_mass[0] = pionP4_wo_mass.M()
         
 #####~~~~~~~~~~~~~~~~~~~~~~~~~~~~#####
 ###~~~~~~~~~~B0 and misc.~~~~~~~~~~###
@@ -379,8 +379,7 @@ for evt in range(0, nEvt):
 ##        B0_pvDS2d_vtxfit[0] = DetachSignificance2( B0V_vtxfit - PV, PVE, B0VE_vtxfit)
 ##        B0_pv_detach_2D[0] =  sqrt( (B0V - PV).X()**2 + (B0V - PV).Y()**2)
 ##        B0_pv_detach_2D_vtxfit[0] =  sqrt( (B0V_vtxfit - PV).X()**2 + (B0V_vtxfit - PV).Y()**2)
-        if B0_pvDS2d[0] < 3. :continue
-##
+
         B0_pvcos2[0]        = DirectionCos2 ( B0V - PV, B0P3 )
 ##        B0_pvcos2_vtxfit[0]        = DirectionCos2 ( B0V_vtxfit - PV, B0P3 )
 
