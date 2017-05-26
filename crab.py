@@ -32,11 +32,11 @@ if __name__ == '__main__':
     #from copy import deepcopy
     global_lumi_mask_2012 = 'https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions12/8TeV/Reprocessing/Cert_190456-208686_8TeV_22Jan2013ReReco_Collisions12_JSON_MuonPhys.txt'
     dset = ''
-    task = 'B0_parked'
+    task = 'B0_parked_v1'
     units_per_job = 90
     run_range=''
     # print 'aaa', sys.argv, len(sys.argv)
-    
+
     if len(sys.argv) >= 2:
         n = int(sys.argv[1])
         year = '2012'
@@ -51,13 +51,13 @@ if __name__ == '__main__':
             dset = '/MuOniaParked/Run2012C'
         if n == 4:
             dset = '/MuOniaParked/Run2012D'
-    
+
     def submit(cfg):
 		try:
 			print crabCommand('submit', config = cfg)
 		except HTTPException, hte:
 			print hte.headers
-    
+
     # print 'Bfinder_' + task + '_parked_' + dset[-1]
     #
     config.General.requestName = 'Bfinder_' + task + '_parked_' + dset[-1]
@@ -70,5 +70,3 @@ if __name__ == '__main__':
     config.Data.lumiMask = lumi_mask
     if run_range: config.Data.runRange = run_range
     submit(config)
-
-

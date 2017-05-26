@@ -131,7 +131,7 @@ Bfinder::Bfinder(const edm::ParameterSet& iConfig)
  mup_LastStationAngT(0), mup_OneStationAngT(0), mup_2DCompatibilityT(0),
  mup_NMuonHits(0), mup_NMuonStations(0), mup_NTrackerLayers(0), mup_NPixelLayers(0), mup_relIso(0),
 
-
+ pfID(0), pfMass(0),
  pionPF_Eta(0),  pionPF_Phi(0),
  pionPF_Pt(0), pionPF_Px(0), pionPF_Py(0), pionPF_Pz(0),
  pionPF_E(0), mva_gamma_nh(0), mva_nothing_nh(0),
@@ -338,7 +338,14 @@ void Bfinder::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 // const reco::PhotonCollection photonCollection = *(photonHandle.product());
 
   Handle< vector<reco::PFCandidate> > pfHandle;
-  iEvent.getByLabel("particleFlow", pfHandle);
+  try
+{
+  iEvent.getByLabel("particleFlowTmp", "AddedMuonsAndHadrons", pfHandle);
+}
+catch ( ... )
+  {
+    std::cout << "Couldn't get handle on PFlow!" << std::endl;
+  }
 
   //get genParticles
   // Handle<GenParticleCollection> genParticles;
@@ -577,8 +584,8 @@ void Bfinder::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
       // *** *************** MUON MACHINT HERE ********** ****************************
 
-      std::string::size_type triggerMupOS = ListTriggMuP_tmp.find("HLT_DoubleMu4_Jpsi_Displaced",0);
-      std::string::size_type triggerMuNeg = ListTriggMuM_tmp.find("HLT_DoubleMu4_Jpsi_Displaced",0);
+      std::string::size_type triggerMupOS = ListTriggMuP_tmp.find("HLT_DoubleMu3p5_LowMass_Displaced",0);
+      std::string::size_type triggerMuNeg = ListTriggMuM_tmp.find("HLT_DoubleMu3p5_LowMass_Displaced",0);
 
       if(triggerMupOS==std::string::npos || triggerMuNeg==std::string::npos )
         {
@@ -633,15 +640,17 @@ RefCountedKinematicTree
 
          for( std::vector<reco::PFCandidate>::const_iterator iPFlow = pfHandle->begin(); iPFlow != pfHandle->end(); ++iPFlow)
          {
-              if (iPFlow->particleId() != 5) continue;
+  //            if (iPFlow->particleId() != 5) continue;
 
               reco::PFCandidate localpionPF = reco::PFCandidate(*iPFlow);
               TLorentzVector p4pionPF, p4B0;
 
               p4pionPF.SetPtEtaPhiM(localpionPF.pt(), localpionPF.eta(), localpionPF.phi(), PDG_PI0_MASS);
               p4B0 = p4pionPF + p4mu1_0c + p4mu2_0c;
-              if (fabs(p4B0.M() - PDG_B0_MASS) > 0.300) continue;
+  //            if (fabs(p4B0.M() - PDG_B0_MASS) > 0.300) continue;
 
+              pfID->push_back(localpionPF.particleId());
+              pfMass->push_back(localpionPF.mass());
               B0_mass->push_back( p4B0.M() );
 
               pionPF_Eta->push_back( localpionPF.eta() );
@@ -653,7 +662,7 @@ RefCountedKinematicTree
               pionPF_Py->push_back( p4pionPF.Py() );
               pionPF_Pz->push_back( p4pionPF.Pz() );
               pionPF_E->push_back( localpionPF.energy() );
-              mva_gamma_nh->push_back( localpionPF.et() );
+              mva_gamma_nh->push_back( localpionPF.mva_gamma_nh() );
               mva_nothing_nh->push_back( localpionPF.mva_nothing_nh() );
 
 
@@ -1005,6 +1014,7 @@ RefCountedKinematicTree
       mup_LastStationAngT->clear(); mup_OneStationAngT->clear(); mup_2DCompatibilityT->clear();
       mup_NMuonHits->clear(); mup_NMuonStations->clear(); mup_NTrackerLayers->clear(); mup_NPixelLayers->clear(); mup_relIso->clear();
 
+      pfID->clear(); pfMass->clear();
       pionPF_Eta->clear(); pionPF_Phi->clear();
       pionPF_Pt->clear();  pionPF_Px->clear(); pionPF_Py->clear(); pionPF_Pz->clear();
       pionPF_E->clear(); mva_gamma_nh->clear();
@@ -1166,6 +1176,9 @@ RefCountedKinematicTree
      tree_->Branch("mup_NTrackerLayers", &mup_NTrackerLayers   );
      tree_->Branch("mup_NPixelLayers"  , &mup_NPixelLayers     );
      tree_->Branch("mup_relIso"        , &mup_relIso           );
+
+     tree_->Branch("pfID"               , &pfID          );
+     tree_->Branch("pfMass"               , &pfMass          );
 
      tree_->Branch("pionPF_Eta"               , &pionPF_Eta          );
      tree_->Branch("pionPF_Phi"               , &pionPF_Phi          );

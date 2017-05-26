@@ -174,7 +174,8 @@ private:
   std::vector<int>      *mup_NMuonHits, *mup_NMuonStations, *mup_NTrackerLayers, *mup_NPixelLayers;
   std::vector<float>    *mup_relIso;
 
-  std::vector<float>    *pionPF_Eta, *pionPF_Phi, *pionPF_Pt, *pionPF_Px, *pionPF_Py, *pionPF_Pz, *pionPF_E, *mva_gamma_nh, *mva_nothing_nh;
+  std::vector<int>      *pfID;
+  std::vector<float>    *pfMass, *pionPF_Eta, *pionPF_Phi, *pionPF_Pt, *pionPF_Px, *pionPF_Py, *pionPF_Pz, *pionPF_E, *mva_gamma_nh, *mva_nothing_nh;
 ///////////////////////
 
   int                   muAcc, muTrig, weight;
