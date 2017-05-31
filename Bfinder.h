@@ -136,7 +136,7 @@ private:
   std::vector<std::string>         *triggersMuPL        , *triggersMuML;
   std::vector<std::string>         *triggersL1L2_MuPL   , *triggersL1L2_MuML;
 
-  std::vector<float>    *B0_mass;
+  std::vector<float>    *psiMass;
 
   std::vector<float>    *B_J_mass;
   std::vector<float>    *B_J_px             , *B_J_py             , *B_J_pz;
@@ -174,8 +174,10 @@ private:
   std::vector<int>      *mup_NMuonHits, *mup_NMuonStations, *mup_NTrackerLayers, *mup_NPixelLayers;
   std::vector<float>    *mup_relIso;
 
-  std::vector<int>      *pfID;
-  std::vector<float>    *pfMass, *pionPF_Eta, *pionPF_Phi, *pionPF_Pt, *pionPF_Px, *pionPF_Py, *pionPF_Pz, *pionPF_E, *mva_gamma_nh, *mva_nothing_nh;
+  std::vector<float>      *massPiPi;
+  std::vector<float>    *pfMass, *pionPF_Eta, *pionPF_Phi, *pionPF_Pt, *pi1_maxDeltaR, *pi2_maxDeltaR, *pi1_Pt, *pi2_Pt;
+
+  std::vector<int>      *pi1_numberOfGammas, *pi2_numberOfGammas;
 ///////////////////////
 
   int                   muAcc, muTrig, weight;

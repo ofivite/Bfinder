@@ -60,6 +60,8 @@
 
 #include "DataFormats/EgammaCandidates/interface/Photon.h"
 #include "DataFormats/ParticleFlowCandidate/interface/PFCandidate.h"
+#include "DataFormats/TauReco/interface/RecoTauPiZero.h"
+
 
 #include "TFile.h"
 #include "TTree.h"
@@ -98,7 +100,7 @@ Bfinder::Bfinder(const edm::ParameterSet& iConfig)
    triggersMuPL(0), triggersMuML(0),
    triggersL1L2_MuPL(0), triggersL1L2_MuML(0),
 
- B0_mass(0),
+ psiMass(0),
 
  B_J_mass(0),       B_J_px(0),            B_J_py(0),        B_J_pz(0),
  B_J_DecayVtxX(0),  B_J_DecayVtxY(0),     B_J_DecayVtxZ(0),
@@ -131,10 +133,10 @@ Bfinder::Bfinder(const edm::ParameterSet& iConfig)
  mup_LastStationAngT(0), mup_OneStationAngT(0), mup_2DCompatibilityT(0),
  mup_NMuonHits(0), mup_NMuonStations(0), mup_NTrackerLayers(0), mup_NPixelLayers(0), mup_relIso(0),
 
- pfID(0), pfMass(0),
+ massPiPi(0), pfMass(0),
  pionPF_Eta(0),  pionPF_Phi(0),
- pionPF_Pt(0), pionPF_Px(0), pionPF_Py(0), pionPF_Pz(0),
- pionPF_E(0), mva_gamma_nh(0), mva_nothing_nh(0),
+ pionPF_Pt(0), pi1_maxDeltaR(0), pi2_maxDeltaR(0), pi1_Pt(0),
+ pi2_Pt(0), pi1_numberOfGammas(0), pi2_numberOfGammas(0),
 
 
  run(0), event(0)
@@ -345,6 +347,16 @@ void Bfinder::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 catch ( ... )
   {
     std::cout << "Couldn't get handle on PFlow!" << std::endl;
+  }
+
+  Handle< vector<reco::RecoTauPiZero> > pi0Handle;
+  try
+{
+  iEvent.getByLabel("hpsPFTauProducer", "pizeros", pi0Handle);
+}
+catch ( ... )
+  {
+    std::cout << "Couldn't get handle on pi0!" << std::endl;
   }
 
   //get genParticles
@@ -638,32 +650,37 @@ RefCountedKinematicTree
 // 	   int PId1=0; int PId2=0;
 
 
-         for( std::vector<reco::PFCandidate>::const_iterator iPFlow = pfHandle->begin(); iPFlow != pfHandle->end(); ++iPFlow)
+         for( std::vector< <reco::RecoTauPiZero> >::const_iterator iPiZero1 = pi0Handle->begin(); iPiZero1 != pi0Handle->end(); ++iPiZero1)
          {
-  //            if (iPFlow->particleId() != 5) continue;
+           for( std::vector< <reco::RecoTauPiZero> >::const_iterator iPiZero2 = iPiZero1; iPiZero2 != pi0Handle->end(); ++iPiZero2)
+           {
+  //            if (iPiZero1->particleId() != 5) continue;
 
-              reco::PFCandidate localpionPF = reco::PFCandidate(*iPFlow);
-              TLorentzVector p4pionPF, p4B0;
+              // reco::RecoTauPiZero localpionPF = reco::PFCandidate(*iPiZero1);
+              TLorentzVector PiZeroP4_1, PiZeroP4_2, psiP4;
+              if ( (iPiZero1->pt() < 1.) || (iPiZero2->pt() < 1.) ) continue;
+              // if ((PiZeroP4_1 + PiZeroP4_2).M() < 0.4 || (PiZeroP4_1 + PiZeroP4_2).M() > 0.6) continue;
 
-              p4pionPF.SetPtEtaPhiM(localpionPF.pt(), localpionPF.eta(), localpionPF.phi(), PDG_PI0_MASS);
-              p4B0 = p4pionPF + p4mu1_0c + p4mu2_0c;
-  //            if (fabs(p4B0.M() - PDG_B0_MASS) > 0.300) continue;
-
-              pfID->push_back(localpionPF.particleId());
-              pfMass->push_back(localpionPF.mass());
-              B0_mass->push_back( p4B0.M() );
-
-              pionPF_Eta->push_back( localpionPF.eta() );
-              pionPF_Phi->push_back( localpionPF.phi() );
-              pionPF_Pt->push_back( localpionPF.pt() );
+              PiZeroP4_1.SetPxPyPzE(iPiZero1->px(), iPiZero1->py(), iPiZero1->pz(), iPiZero1->energy());
+              PiZeroP4_2.SetPxPyPzE(iPiZero2->px(), iPiZero2->py(), iPiZero2->pz(), iPiZero2->energy());
+              psiP4 = PiZeroP4_1 + PiZeroP4_2 + p4mu1_0c + p4mu2_0c;
+              if ( fabs(psiP4.M() - PDG_PSI2S_MASS) > 0.1 ) continue;
 
 
-              pionPF_Px->push_back( p4pionPF.Px() );
-              pionPF_Py->push_back( p4pionPF.Py() );
-              pionPF_Pz->push_back( p4pionPF.Pz() );
-              pionPF_E->push_back( localpionPF.energy() );
-              mva_gamma_nh->push_back( localpionPF.mva_gamma_nh() );
-              mva_nothing_nh->push_back( localpionPF.mva_nothing_nh() );
+  //            pfMass->push_back(localpionPF.mass());
+
+                // pionPF_Eta->push_back( localpionPF.eta() );
+                // pionPF_Phi->push_back( localpionPF.phi() );
+                // pionPF_Pt->push_back( localpionPF.pt() );
+
+              massPiPi->push_back( (PiZeroP4_1 + PiZeroP4_2).M()  );
+              psiMass->push_back( psiP4.M() );
+              pi1_maxDeltaR->push_back( sqrt(iPiZero1->maxDeltaEta()*iPiZero1->maxDeltaEta() + iPiZero1->maxDeltaPhi()*iPiZero1->maxDeltaPhi()) );
+              pi2_maxDeltaR->push_back( sqrt(iPiZero2->maxDeltaEta()*iPiZero2->maxDeltaEta() + iPiZero2->maxDeltaPhi()*iPiZero2->maxDeltaPhi()) );
+              pi1_Pt->push_back( PiZeroP4_1.Pt() );
+              pi2_Pt->push_back( localpionPF.energy() );
+              pi1_numberOfGammas->push_back( iPiZero1->numberOfGammas() );
+              pi2_numberOfGammas->push_back( iPiZero2->numberOfGammas() );
 
 
               reco::Vertex bestPV_Bang;
@@ -958,6 +975,7 @@ RefCountedKinematicTree
 
                           muonParticles.clear();
                           vertexTracks.clear();
+                  } // pion
               } // pion
    } // muon from jpsi
    }//muon from jpsi
@@ -979,7 +997,7 @@ RefCountedKinematicTree
       triggersMuPL->clear(); triggersMuML->clear();
       triggersL1L2_MuPL->clear(); triggersL1L2_MuML->clear();
 
-      B0_mass->clear();
+      psiMass->clear();
 
       B_J_mass->clear();       B_J_px->clear();            B_J_py->clear();        B_J_pz->clear();
       B_J_DecayVtxX->clear();  B_J_DecayVtxY->clear();     B_J_DecayVtxZ->clear();
@@ -1014,11 +1032,11 @@ RefCountedKinematicTree
       mup_LastStationAngT->clear(); mup_OneStationAngT->clear(); mup_2DCompatibilityT->clear();
       mup_NMuonHits->clear(); mup_NMuonStations->clear(); mup_NTrackerLayers->clear(); mup_NPixelLayers->clear(); mup_relIso->clear();
 
-      pfID->clear(); pfMass->clear();
+      massPiPi->clear(); pfMass->clear();
       pionPF_Eta->clear(); pionPF_Phi->clear();
-      pionPF_Pt->clear();  pionPF_Px->clear(); pionPF_Py->clear(); pionPF_Pz->clear();
-      pionPF_E->clear(); mva_gamma_nh->clear();
-      mva_nothing_nh->clear();
+      pionPF_Pt->clear();  pi1_maxDeltaR->clear(); pi2_maxDeltaR->clear(); pi1_Pt->clear();
+      pi2_Pt->clear(); pi1_numberOfGammas->clear();
+      pi2_numberOfGammas->clear();
    }
 
 
@@ -1066,7 +1084,7 @@ RefCountedKinematicTree
      tree_->Branch("nMu"               , &nMu      , "nMu/i"   );
      tree_->Branch("nVtx"              , &nVtx     , "nVtx/i"  );
 
-     tree_->Branch("B0_mass"            , &B0_mass               );
+     tree_->Branch("psiMass"            , &psiMass               );
 
      tree_->Branch("B_J_mass"          , &B_J_mass             );
      tree_->Branch("B_J_px"            , &B_J_px               );
@@ -1177,18 +1195,18 @@ RefCountedKinematicTree
      tree_->Branch("mup_NPixelLayers"  , &mup_NPixelLayers     );
      tree_->Branch("mup_relIso"        , &mup_relIso           );
 
-     tree_->Branch("pfID"               , &pfID          );
+     tree_->Branch("massPiPi"               , &massPiPi          );
      tree_->Branch("pfMass"               , &pfMass          );
 
      tree_->Branch("pionPF_Eta"               , &pionPF_Eta          );
      tree_->Branch("pionPF_Phi"               , &pionPF_Phi          );
      tree_->Branch("pionPF_Pt"               , &pionPF_Pt          );
-     tree_->Branch("pionPF_Px"               , &pionPF_Px          );
-     tree_->Branch("pionPF_Py"               , &pionPF_Py          );
-     tree_->Branch("pionPF_Pz"               , &pionPF_Pz          );
-     tree_->Branch("pionPF_E"               , &pionPF_E          );
-     tree_->Branch("mva_gamma_nh"               , &mva_gamma_nh          );
-     tree_->Branch("mva_nothing_nh"               , &mva_nothing_nh          );
+     tree_->Branch("pi1_maxDeltaR"               , &pi1_maxDeltaR          );
+     tree_->Branch("pi2_maxDeltaR"               , &pi2_maxDeltaR          );
+     tree_->Branch("pi1_Pt"               , &pi1_Pt          );
+     tree_->Branch("pi2_Pt"               , &pi2_Pt          );
+     tree_->Branch("pi1_numberOfGammas"               , &pi1_numberOfGammas          );
+     tree_->Branch("pi2_numberOfGammas"               , &pi2_numberOfGammas          );
 
    }
 
