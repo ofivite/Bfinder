@@ -111,6 +111,16 @@ Bfinder::Bfinder(const edm::ParameterSet& iConfig)
 
  B_J_Prob(0),
 
+ kaonP_px_0c(0),       kaonP_py_0c(0),  kaonP_pz_0c(0),
+ kaonP_track_normchi2(0),     kaonP_Hits(0),  kaonP_PHits(0),
+ kaonP_NTrackerLayers(0),  kaonP_NPixelLayers(0),
+
+ kaonM_px_0c(0),       kaonM_py_0c(0),  kaonM_pz_0c(0),
+ kaonM_track_normchi2(0),     kaonM_Hits(0),  kaonM_PHits(0),
+ kaonM_NTrackerLayers(0),  kaonM_NPixelLayers(0),
+
+ B_Phi_Prob(0), maxDelta(0),
+
  PV_bestBang_X(0),      PV_bestBang_Y(0),     PV_bestBang_Z(0),
  PV_bestBang_XE(0),     PV_bestBang_YE(0),    PV_bestBang_ZE(0),
  PV_bestBang_XYE(0),    PV_bestBang_XZE(0),   PV_bestBang_YZE(0),
@@ -133,7 +143,7 @@ Bfinder::Bfinder(const edm::ParameterSet& iConfig)
  mup_LastStationAngT(0), mup_OneStationAngT(0), mup_2DCompatibilityT(0),
  mup_NMuonHits(0), mup_NMuonStations(0), mup_NTrackerLayers(0), mup_NPixelLayers(0), mup_relIso(0),
 
- massPiPi(0), pfMass(0),
+ massPiPiPi(0), pfMass(0),
  pionPF_Eta(0),  pionPF_Phi(0),
  pionPF_Pt(0), pi1_maxDeltaR(0), pi2_maxDeltaR(0), pi1_Pt(0),
  pi2_Pt(0), pi1_numberOfGammas(0), pi2_numberOfGammas(0),
@@ -550,12 +560,12 @@ catch ( ... )
       ParticleMass PM_PDG_MUON_MASS = PDG_MUON_MASS;
 //      ParticleMass PM_PDG_JPSI_MASS = PDG_JPSI_MASS;
 //      ParticleMass PM_PDG_KAON_MASS = PDG_KAON_MASS;
-//      ParticleMass PM_PDG_PION_MASS = PDG_PION_MASS;
+      ParticleMass PM_PDG_PION_MASS = PDG_PION_MASS;
 //      ParticleMass PM_PDG_PI0_MASS  = PDG_PI0_MASS;
 
       float PM_muon_sigma = PM_PDG_MUON_MASS*1.e-6;
 //      float PM_kaon_sigma = PM_PDG_KAON_MASS*1.e-6;
-//      float PM_pion_sigma = PM_PDG_PION_MASS*1.e-6;
+      float PM_pion_sigma = PM_PDG_PION_MASS*1.e-6;
       float chi = 0.;
       float ndf = 0.;
 
@@ -650,37 +660,126 @@ RefCountedKinematicTree
 // 	   int PId1=0; int PId2=0;
 
 
+
+
+	   pat::GenericParticle patTrack_Kp;
+ 	   pat::GenericParticle patTrack_Km;
+
+	   for(vector<pat::GenericParticle>::const_iterator iKaonP = thePATTrackHandle->begin(); iKaonP != thePATTrackHandle->end(); ++iKaonP )
+	     {
+
+// 	       int ngenT1 = 0;//PdgIDatTruthLevel(iKaonP->track(), genParticles, PId1);
+	       patTrack_Kp = *iKaonP;
+
+        if(iKaonP->pt() < 0.5 || iKaonP->charge() != 1 || fabs(iKaonP->eta()) > 2.5) continue;
+
+
+	       if(!(patTrack_Kp.track()->quality(reco::TrackBase::highPurity))) continue;
+
+               bool matchflag = false;
+               const reco::CandidatePtrVector & mu1P_overlaps = patTrack_Kp.overlaps(muonTypeForPAT);
+               if ( mu1P_overlaps.size() > 0 ) //std::cout << "patTrack_Kp overlaps with a muon." << endl;
+               for (size_t i = 0; i < mu1P_overlaps.size(); ++i) {
+                 const pat::Muon *mu = dynamic_cast<const pat::Muon *>(&*mu1P_overlaps[i]);
+                 if (mu) {
+                   // check here that muon match isn't the same as a muon used in the reco...
+                   if (mu==patMuonP || mu==patMuonM)  {
+                       //std::cout << "match between patTrack_Kp and patMuonP/patMuonM" << endl;
+                       matchflag=true;
+                   }
+                 }
+               }
+
+               if(matchflag) continue;
+
+               TransientTrack kaonPTT(patTrack_Kp.track(), &(*bFieldHandle) );
+               if(!kaonPTT.isValid()) continue;
+
+/////
+for(vector<pat::GenericParticle>::const_iterator iKaonM = thePATTrackHandle->begin(); iKaonM != thePATTrackHandle->end(); ++iKaonM )
+  {
+   if(iKaonP == iKaonM) continue;
+// 	       int ngenT1 = 0;//PdgIDatTruthLevel(iKaonP->track(), genParticles, PId1);
+   patTrack_Km = *iKaonM;
+   if(iKaonM->pt() < 0.5 || iKaonM->charge() != -1 || fabs(iKaonP->eta()) > 2.5) continue;
+
+
+    if(!(patTrack_Km.track()->quality(reco::TrackBase::highPurity))) continue;
+
+          bool matchflag = false;
+          const reco::CandidatePtrVector & mu2P_overlaps = patTrack_Km.overlaps(muonTypeForPAT);
+          if ( mu2P_overlaps.size() > 0 ) //std::cout << "patTrack_Kp overlaps with a muon." << endl;
+          for (size_t i = 0; i < mu2P_overlaps.size(); ++i) {
+            const pat::Muon *mu = dynamic_cast<const pat::Muon *>(&*mu2P_overlaps[i]);
+            if (mu) {
+              // check here that muon match isn't the same as a muon used in the reco...
+              if (mu==patMuonP || mu==patMuonM)  {
+                  //std::cout << "match between patTrack_Kp and patMuonP/patMuonM" << endl;
+                  matchflag=true;
+              }
+            }
+          }
+
+          if(matchflag) continue;
+
+          TransientTrack kaonMTT(patTrack_Km.track(), &(*bFieldHandle) );
+          if(!kaonMTT.isValid()) continue;
+
+
+               TLorentzVector p4kaonP_0c, p4kaonM_0c, p4phi_0c, p4jpsi_0c;
+               p4kaonP_0c.SetXYZM(iKaonP->px(),iKaonP->py(),iKaonP->pz(), PDG_PION_MASS);
+               p4kaonM_0c.SetXYZM(iKaonM->px(),iKaonM->py(),iKaonM->pz(), PDG_PION_MASS);
+	       p4jpsi_0c = p4mu1_0c + p4mu2_0c
+
+                std::vector<RefCountedKinematicParticle> phiParticles;
+                phiParticles.push_back(pFactory.particle(kaonPTT, PM_PDG_PION_MASS, chi,ndf, PM_pion_sigma));
+                phiParticles.push_back(pFactory.particle(kaonMTT, PM_PDG_PION_MASS, chi,ndf, PM_pion_sigma));
+
+                KinematicParticleVertexFitter   phifitter;
+                RefCountedKinematicTree         phiTree;
+                phiTree = phifitter.fit(phiParticles);
+                if (!phiTree->isValid()) continue;
+
+                phiTree->movePointerToTheTop();
+                RefCountedKinematicParticle PHIparticle       = phiTree->currentParticle();
+                RefCountedKinematicVertex   PHIvtx            = phiTree->currentDecayVertex();
+                if (!PHIvtx->vertexIsValid())  continue;
+                double phi_Prob_tmp = TMath::Prob(PHIvtx->chiSquared(), PHIvtx->degreesOfFreedom());
+                if(phi_Prob_tmp < 0.01) continue;
+
+                double PHI_mass_c0 = PHIparticle->currentState().mass();
+
+
          for( std::vector< <reco::RecoTauPiZero> >::const_iterator iPiZero1 = pi0Handle->begin(); iPiZero1 != pi0Handle->end(); ++iPiZero1)
          {
-           for( std::vector< <reco::RecoTauPiZero> >::const_iterator iPiZero2 = iPiZero1; iPiZero2 != pi0Handle->end(); ++iPiZero2)
-           {
   //            if (iPiZero1->particleId() != 5) continue;
 
               // reco::RecoTauPiZero localpionPF = reco::PFCandidate(*iPiZero1);
               TLorentzVector PiZeroP4_1, PiZeroP4_2, psiP4;
-              if ( (iPiZero1->pt() < 1.) || (iPiZero2->pt() < 1.) ) continue;
-              // if ((PiZeroP4_1 + PiZeroP4_2).M() < 0.4 || (PiZeroP4_1 + PiZeroP4_2).M() > 0.6) continue;
+              if ( iPiZero1->pt() < 0.5) continue;
 
               PiZeroP4_1.SetPxPyPzE(iPiZero1->px(), iPiZero1->py(), iPiZero1->pz(), iPiZero1->energy());
-              PiZeroP4_2.SetPxPyPzE(iPiZero2->px(), iPiZero2->py(), iPiZero2->pz(), iPiZero2->energy());
-              psiP4 = PiZeroP4_1 + PiZeroP4_2 + p4mu1_0c + p4mu2_0c;
-              if ( fabs(psiP4.M() - PDG_PSI2S_MASS) > 0.1 ) continue;
+              if ( (PiZeroP4_1 + Pp4kaonP_0c + p4kaonM_0c).M() < 0.3 || (PiZeroP4_1 + Pp4kaonP_0c + p4kaonM_0c).M() > 1.) continue;
+
+//              PiZeroP4_2.SetPxPyPzE(iPiZero2->px(), iPiZero2->py(), iPiZero2->pz(), iPiZero2->energy());
+//              psiP4 = PiZeroP4_1 + PiZeroP4_2 + p4mu1_0c + p4mu2_0c;
+//              if ( fabs(psiP4.M() - PDG_PSI2S_MASS) > 0.1 ) continue;
 
 
-  //            pfMass->push_back(localpionPF.mass());
+              pfMass->push_back(iPiZero1->mass());
 
                 // pionPF_Eta->push_back( localpionPF.eta() );
                 // pionPF_Phi->push_back( localpionPF.phi() );
                 // pionPF_Pt->push_back( localpionPF.pt() );
 
-              massPiPi->push_back( (PiZeroP4_1 + PiZeroP4_2).M()  );
-              psiMass->push_back( psiP4.M() );
+              massPiPiPi->push_back( (PiZeroP4_1 + Pp4kaonP_0c + p4kaonM_0c).M()  );
+//              psiMass->push_back( psiP4.M() );
               pi1_maxDeltaR->push_back( sqrt(iPiZero1->maxDeltaEta()*iPiZero1->maxDeltaEta() + iPiZero1->maxDeltaPhi()*iPiZero1->maxDeltaPhi()) );
-              pi2_maxDeltaR->push_back( sqrt(iPiZero2->maxDeltaEta()*iPiZero2->maxDeltaEta() + iPiZero2->maxDeltaPhi()*iPiZero2->maxDeltaPhi()) );
+//              pi2_maxDeltaR->push_back( sqrt(iPiZero2->maxDeltaEta()*iPiZero2->maxDeltaEta() + iPiZero2->maxDeltaPhi()*iPiZero2->maxDeltaPhi()) );
               pi1_Pt->push_back( PiZeroP4_1.Pt() );
-              pi2_Pt->push_back( localpionPF.energy() );
+//              pi2_Pt->push_back( localpionPF.energy() );
               pi1_numberOfGammas->push_back( iPiZero1->numberOfGammas() );
-              pi2_numberOfGammas->push_back( iPiZero2->numberOfGammas() );
+//              pi2_numberOfGammas->push_back( iPiZero2->numberOfGammas() );
 
 
               reco::Vertex bestPV_Bang;
@@ -705,7 +804,7 @@ RefCountedKinematicTree
                    Double_t dx = (*MUMUvtx).position().x() - PVtxBeSp.x();
                    Double_t dy = (*MUMUvtx).position().y() - PVtxBeSp.y();
                    Double_t dz = (*MUMUvtx).position().z() - PVtxBeSp.z();
-                   Double_t cosAlphaXYZ = ( p4B0.Px() * dx + p4B0.Py()*dy + p4B0.Pz()*dz  )/( sqrt(dx*dx+dy*dy+dz*dz)* p4B0.P() );
+                   Double_t cosAlphaXYZ = ( p4jpsi_0c.Px() * dx + p4jpsi_0c.Py()*dy + p4jpsi_0c.Pz()*dz  )/( sqrt(dx*dx+dy*dy+dz*dz)* p4jpsi_0c.P() );
 
                    if(cosAlphaXYZ>lip)
                    {
@@ -879,6 +978,30 @@ RefCountedKinematicTree
            //                B_J_charge2->push_back(mu2CandMC->currentState().particleCharge());
 
                           B_J_Prob  ->push_back(JP_Prob_tmp);
+
+
+   //------------------//
+
+                          kaonP_px_0c       ->push_back(iKaonP->px());
+                          kaonP_py_0c       ->push_back(iKaonP->py());
+                          kaonP_pz_0c       ->push_back(iKaonP->pz());
+                          kaonP_track_normchi2  ->push_back(patTrack_Kp.track()->normalizedChi2());
+                          kaonP_Hits       ->push_back(patTrack_Kp.track()->numberOfValidHits() );
+                          kaonP_PHits      ->push_back(patTrack_Kp.track()->hitPattern().numberOfValidPixelHits() );
+	                  kaonP_NTrackerLayers->push_back ( patTrack_Kp.track()->hitPattern().trackerLayersWithMeasurement() );
+   		          kaonP_NPixelLayers->push_back ( patTrack_Kp.track()->hitPattern().pixelLayersWithMeasurement() );
+
+                          kaonM_px_0c       ->push_back(iKaonM->px());
+                          kaonM_py_0c       ->push_back(iKaonM->py());
+                          kaonM_pz_0c       ->push_back(iKaonM->pz());
+                          kaonM_track_normchi2  ->push_back(patTrack_Km.track()->normalizedChi2());
+                          kaonM_Hits       ->push_back(patTrack_Km.track()->numberOfValidHits() );
+                          kaonM_PHits      ->push_back(patTrack_Km.track()->hitPattern().numberOfValidPixelHits() );
+	 		  kaonM_NTrackerLayers->push_back ( patTrack_Km.track()->hitPattern().trackerLayersWithMeasurement() );
+   		          kaonM_NPixelLayers->push_back ( patTrack_Km.track()->hitPattern().pixelLayersWithMeasurement() );
+		
+			  B_Phi_Prob->push_back(phi_Prob_tmp);
+			  maxDelta->push_back(std::max( PiZeroP4_1.DeltaR(Pp4kaonP_0c), PiZeroP4_1.DeltaR(p4kaonM_0c), p4kaonP_0c.DeltaR(Pp4kaonM_0c) ));
    //------------------//
                   mumCat->push_back( mumCategory );
    	              mum_isGlobalMuon->push_back ( recoMuonM->isGlobalMuon() );
@@ -977,6 +1100,7 @@ RefCountedKinematicTree
                           vertexTracks.clear();
                   } // pion
               } // pion
+	} // pion
    } // muon from jpsi
    }//muon from jpsi
 
@@ -1010,6 +1134,16 @@ RefCountedKinematicTree
       B_J_Prob->clear();
       //
 
+      kaonP_px_0c->clear();     kaonP_py_0c->clear();    kaonP_pz_0c->clear();
+      kaonP_track_normchi2->clear();   kaonP_Hits->clear();    kaonP_PHits->clear();
+      kaonP_NTrackerLayers->clear();  kaonP_NPixelLayers->clear();
+
+      kaonM_px_0c->clear();     kaonM_py_0c->clear();    kaonM_pz_0c->clear();
+      kaonM_track_normchi2->clear();   kaonM_Hits->clear();    kaonM_PHits->clear();
+      kaonM_NTrackerLayers->clear();  kaonM_NPixelLayers->clear();
+
+      B_Phi_Prob->clear(); maxDelta->clear();
+
       PV_bestBang_X->clear();      PV_bestBang_Y->clear();     PV_bestBang_Z->clear();
       PV_bestBang_XE->clear();     PV_bestBang_YE->clear();    PV_bestBang_ZE->clear();
       PV_bestBang_XYE->clear();    PV_bestBang_XZE->clear();   PV_bestBang_YZE->clear();
@@ -1032,7 +1166,7 @@ RefCountedKinematicTree
       mup_LastStationAngT->clear(); mup_OneStationAngT->clear(); mup_2DCompatibilityT->clear();
       mup_NMuonHits->clear(); mup_NMuonStations->clear(); mup_NTrackerLayers->clear(); mup_NPixelLayers->clear(); mup_relIso->clear();
 
-      massPiPi->clear(); pfMass->clear();
+      massPiPiPi->clear(); pfMass->clear();
       pionPF_Eta->clear(); pionPF_Phi->clear();
       pionPF_Pt->clear();  pi1_maxDeltaR->clear(); pi2_maxDeltaR->clear(); pi1_Pt->clear();
       pi2_Pt->clear(); pi1_numberOfGammas->clear();
@@ -1106,6 +1240,28 @@ RefCountedKinematicTree
      tree_->Branch("B_mu_pz2_cjp"      , &B_mu_pz2_cjp         );
 
      tree_->Branch("B_J_Prob"          , &B_J_Prob             );
+
+     tree_->Branch("kaonP_px_0c"        , &kaonP_px_0c           );
+     tree_->Branch("kaonP_py_0c"        , &kaonP_py_0c           );
+     tree_->Branch("kaonP_pz_0c"        , &kaonP_pz_0c           );
+     tree_->Branch("kaonP_track_normchi2"   , &kaonP_track_normchi2      );
+     tree_->Branch("kaonP_Hits"        , &kaonP_Hits           );
+     tree_->Branch("kaonP_PHits"       , &kaonP_PHits          );
+     tree_->Branch("kaonP_NTrackerLayers"       , &kaonP_NTrackerLayers          );
+     tree_->Branch("kaonP_NPixelLayers"       , &kaonP_NPixelLayers          );
+
+     tree_->Branch("kaonM_px_0c"        , &kaonM_px_0c           );
+     tree_->Branch("kaonM_py_0c"        , &kaonM_py_0c           );
+     tree_->Branch("kaonM_pz_0c"        , &kaonM_pz_0c           );
+     tree_->Branch("kaonM_track_normchi2"   , &kaonM_track_normchi2      );
+     tree_->Branch("kaonM_Hits"        , &kaonM_Hits           );
+     tree_->Branch("kaonM_PHits"       , &kaonM_PHits          );
+     tree_->Branch("kaonM_NTrackerLayers"       , &kaonM_NTrackerLayers          );
+     tree_->Branch("kaonM_NPixelLayers" , &kaonM_NPixelLayers );
+
+     tree_->Branch("B_Phi_Prob" , &B_Phi_Prob );
+     tree_->Branch("maxDelta" , &maxDelta);
+
 
 
      tree_->Branch("PV_bestBang_X"     , &PV_bestBang_X        );
@@ -1195,7 +1351,7 @@ RefCountedKinematicTree
      tree_->Branch("mup_NPixelLayers"  , &mup_NPixelLayers     );
      tree_->Branch("mup_relIso"        , &mup_relIso           );
 
-     tree_->Branch("massPiPi"               , &massPiPi          );
+     tree_->Branch("massPiPiPi"               , &massPiPiPi          );
      tree_->Branch("pfMass"               , &pfMass          );
 
      tree_->Branch("pionPF_Eta"               , &pionPF_Eta          );

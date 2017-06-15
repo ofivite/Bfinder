@@ -147,6 +147,18 @@ private:
   std::vector<float>    *B_mu_px2_cjp       , *B_mu_py2_cjp     , *B_mu_pz2_cjp;
   std::vector<float>    *B_J_Prob;
 
+  std::vector<float>    *kaonP_px_0c        , *kaonP_py_0c       , *kaonP_pz_0c;
+  std::vector<float>    *kaonP_track_normchi2;
+  std::vector<int>      *kaonP_Hits,  *kaonP_PHits;
+  std::vector<int>      *kaonP_NTrackerLayers,  *kaonP_NPixelLayers;
+
+  std::vector<float>    *kaonM_px_0c         , *kaonM_py_0c       , *kaonM_pz_0c;
+  std::vector<float>    *kaonM_track_normchi2;
+  std::vector<int>      *kaonM_Hits,  *kaonM_PHits;
+  std::vector<int>      *kaonM_NTrackerLayers,  *kaonM_NPixelLayers;
+
+  std::vector<float>    *B_Phi_Prob, *maxDelta;
+
   std::vector<float>    *PV_bestBang_X      , *PV_bestBang_Y    , *PV_bestBang_Z;
   std::vector<float>    *PV_bestBang_XE     , *PV_bestBang_YE   , *PV_bestBang_ZE;
   std::vector<float>    *PV_bestBang_XYE    , *PV_bestBang_XZE  , *PV_bestBang_YZE;
@@ -174,7 +186,7 @@ private:
   std::vector<int>      *mup_NMuonHits, *mup_NMuonStations, *mup_NTrackerLayers, *mup_NPixelLayers;
   std::vector<float>    *mup_relIso;
 
-  std::vector<float>      *massPiPi;
+  std::vector<float>      *massPiPiPi;
   std::vector<float>    *pfMass, *pionPF_Eta, *pionPF_Phi, *pionPF_Pt, *pi1_maxDeltaR, *pi2_maxDeltaR, *pi1_Pt, *pi2_Pt;
 
   std::vector<int>      *pi1_numberOfGammas, *pi2_numberOfGammas;
