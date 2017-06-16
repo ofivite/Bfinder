@@ -587,6 +587,7 @@ catch ( ... )
       RefCountedKinematicParticle MUP_cMUMU          = ujVFT->currentParticle();
       ujVFT->movePointerToTheNextChild();
       RefCountedKinematicParticle MUM_cMUMU          = ujVFT->currentParticle();
+      if (!MUMUvtx->vertexIsValid())  continue;
       double JP_Prob_tmp = TMath::Prob(MUMUvtx->chiSquared(), MUMUvtx->degreesOfFreedom());
       if(JP_Prob_tmp < 0.01) continue;
 
