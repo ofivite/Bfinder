@@ -147,12 +147,12 @@ private:
   std::vector<float>    *B_mu_px2_cjp       , *B_mu_py2_cjp     , *B_mu_pz2_cjp;
   std::vector<float>    *B_J_Prob;
 
-  std::vector<float>    *kaonP_px_0c        , *kaonP_py_0c       , *kaonP_pz_0c;
+  std::vector<float>    *kaonP_px_0c        , *kaonP_py_0c       , *kaonP_pz_0c, *kaonP_pt_0c;
   std::vector<float>    *kaonP_track_normchi2;
   std::vector<int>      *kaonP_Hits,  *kaonP_PHits;
   std::vector<int>      *kaonP_NTrackerLayers,  *kaonP_NPixelLayers;
 
-  std::vector<float>    *kaonM_px_0c         , *kaonM_py_0c       , *kaonM_pz_0c;
+  std::vector<float>    *kaonM_px_0c         , *kaonM_py_0c       , *kaonM_pz_0c, *kaonM_pt_0c;
   std::vector<float>    *kaonM_track_normchi2;
   std::vector<int>      *kaonM_Hits,  *kaonM_PHits;
   std::vector<int>      *kaonM_NTrackerLayers,  *kaonM_NPixelLayers;

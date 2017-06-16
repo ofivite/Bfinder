@@ -6,8 +6,8 @@ process = cms.Process("PAT")
 from PhysicsTools.PatAlgos.patTemplate_cfg import *
 
 
-##process.maxEvents = cms.untracked.PSet(  input = cms.untracked.int32(-1), SkipEvent = cms.untracked.vstring('ProductNotFound') )
-process.maxEvents = cms.untracked.PSet(  input = cms.untracked.int32(1000), SkipEvent = cms.untracked.vstring('ProductNotFound') )
+process.maxEvents = cms.untracked.PSet(  input = cms.untracked.int32(-1), SkipEvent = cms.untracked.vstring('ProductNotFound') )
+##process.maxEvents = cms.untracked.PSet(  input = cms.untracked.int32(500), SkipEvent = cms.untracked.vstring('ProductNotFound') )
 
 process.source = cms.Source("PoolSource",
 			    duplicateCheckMode = cms.untracked.string('noDuplicateCheck'),
@@ -15,7 +15,7 @@ process.source = cms.Source("PoolSource",
 			    fileNames = cms.untracked.vstring(
 
 #'root://xrootd-cms.infn.it//store/data/Run2012B/MuOniaParked/AOD/22Jan2013-v1/20000/16E502D6-7068-E211-B692-001A645C1EC4.root'
-'/store/mc/Summer12_DR53X/BcToBsPi_EtaPtFilter_8TeV-bcvegpy2/AODSIM/PU_RD2_START53_V19F-v1/00000/04E93CDE-1A84-E311-892B-1CC1DE0570A0.root'
+#'/store/mc/Summer12_DR53X/BcToBsPi_EtaPtFilter_8TeV-bcvegpy2/AODSIM/PU_RD2_START53_V19F-v1/00000/04E93CDE-1A84-E311-892B-1CC1DE0570A0.root'
 #'/store/data/Run2012B/MuOniaParked/AOD/22Jan2013-v1/20000/16E502D6-7068-E211-B692-001A645C1EC4.root'
 #'/store/data/Run2012C/MuOniaParked/AOD/22Jan2013-v1/20000/00839611-2576-E211-B384-E41F13181568.root'
 

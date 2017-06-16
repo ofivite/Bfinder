@@ -111,11 +111,11 @@ Bfinder::Bfinder(const edm::ParameterSet& iConfig)
 
  B_J_Prob(0),
 
- kaonP_px_0c(0),       kaonP_py_0c(0),  kaonP_pz_0c(0),
+ kaonP_px_0c(0),       kaonP_py_0c(0),  kaonP_pz_0c(0),   kaonP_pt_0c(0),
  kaonP_track_normchi2(0),     kaonP_Hits(0),  kaonP_PHits(0),
  kaonP_NTrackerLayers(0),  kaonP_NPixelLayers(0),
 
- kaonM_px_0c(0),       kaonM_py_0c(0),  kaonM_pz_0c(0),
+ kaonM_px_0c(0),       kaonM_py_0c(0),  kaonM_pz_0c(0),   kaonM_pt_0c(0),
  kaonM_track_normchi2(0),     kaonM_Hits(0),  kaonM_PHits(0),
  kaonM_NTrackerLayers(0),  kaonM_NPixelLayers(0),
 
@@ -560,12 +560,12 @@ catch ( ... )
       ParticleMass PM_PDG_MUON_MASS = PDG_MUON_MASS;
 //      ParticleMass PM_PDG_JPSI_MASS = PDG_JPSI_MASS;
 //      ParticleMass PM_PDG_KAON_MASS = PDG_KAON_MASS;
-      ParticleMass PM_PDG_PION_MASS = PDG_PION_MASS;
+//      ParticleMass PM_PDG_PION_MASS = PDG_PION_MASS;
 //      ParticleMass PM_PDG_PI0_MASS  = PDG_PI0_MASS;
 
       float PM_muon_sigma = PM_PDG_MUON_MASS*1.e-6;
 //      float PM_kaon_sigma = PM_PDG_KAON_MASS*1.e-6;
-      float PM_pion_sigma = PM_PDG_PION_MASS*1.e-6;
+//      float PM_pion_sigma = PM_PDG_PION_MASS*1.e-6;
       float chi = 0.;
       float ndf = 0.;
 
@@ -731,7 +731,7 @@ for(vector<pat::GenericParticle>::const_iterator iKaonM = thePATTrackHandle->beg
                p4kaonP_0c.SetXYZM(iKaonP->px(),iKaonP->py(),iKaonP->pz(), PDG_PION_MASS);
                p4kaonM_0c.SetXYZM(iKaonM->px(),iKaonM->py(),iKaonM->pz(), PDG_PION_MASS);
 	       p4jpsi_0c = p4mu1_0c + p4mu2_0c;
-
+/*
                 std::vector<RefCountedKinematicParticle> phiParticles;
                 phiParticles.push_back(pFactory.particle(kaonPTT, PM_PDG_PION_MASS, chi,ndf, PM_pion_sigma));
                 phiParticles.push_back(pFactory.particle(kaonMTT, PM_PDG_PION_MASS, chi,ndf, PM_pion_sigma));
@@ -750,6 +750,7 @@ for(vector<pat::GenericParticle>::const_iterator iKaonM = thePATTrackHandle->beg
 
 //                double PHI_mass_c0 = PHIparticle->currentState().mass();
 
+*/
 
          for( std::vector<reco::RecoTauPiZero>::const_iterator iPiZero1 = pi0Handle->begin(); iPiZero1 != pi0Handle->end(); ++iPiZero1)
          {
@@ -757,7 +758,7 @@ for(vector<pat::GenericParticle>::const_iterator iKaonM = thePATTrackHandle->beg
 
               // reco::RecoTauPiZero localpionPF = reco::PFCandidate(*iPiZero1);
               TLorentzVector PiZeroP4_1, PiZeroP4_2, psiP4;
-              if ( iPiZero1->pt() < 0.5) continue;
+              if ( iPiZero1->pt() < 0.5 || iPiZero1->numberOfGammas() != 2) continue;
 
               PiZeroP4_1.SetPxPyPzE(iPiZero1->px(), iPiZero1->py(), iPiZero1->pz(), iPiZero1->energy());
               if ( (PiZeroP4_1 + p4kaonP_0c + p4kaonM_0c).M() < 0.3 || (PiZeroP4_1 + p4kaonP_0c + p4kaonM_0c).M() > 1.) continue;
@@ -780,6 +781,7 @@ for(vector<pat::GenericParticle>::const_iterator iKaonM = thePATTrackHandle->beg
               pi1_Pt->push_back( PiZeroP4_1.Pt() );
 //              pi2_Pt->push_back( localpionPF.energy() );
               pi1_numberOfGammas->push_back( iPiZero1->numberOfGammas() );
+
 //              pi2_numberOfGammas->push_back( iPiZero2->numberOfGammas() );
 
 
@@ -826,7 +828,8 @@ for(vector<pat::GenericParticle>::const_iterator iKaonM = thePATTrackHandle->beg
                    }
               }
 
-
+	    reco::Vertex bestVtxRf = bestPV_Bang;
+/*
              ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
              /////////////////////////////////// // try refitting the primary without the tracks in the B reco candidate
 
@@ -874,7 +877,7 @@ for(vector<pat::GenericParticle>::const_iterator iKaonM = thePATTrackHandle->beg
                 }
                }
 
-
+*/
 
                //cout << "PV bestPV_Bang: " <<bestPV_Bang.x()<< " "<<bestPV_Bang.y()<<" "<<bestPV_Bang.z()<< endl;
 
@@ -951,7 +954,7 @@ for(vector<pat::GenericParticle>::const_iterator iKaonM = thePATTrackHandle->beg
                triggersMuML ->push_back(triggersMuM);
 
 
-               PV_bestBang_RF_NTrkDif->push_back( bestPV_Bang.tracksSize() - vertexTracks.size() );
+ //              PV_bestBang_RF_NTrkDif->push_back( bestPV_Bang.tracksSize() - vertexTracks.size() );
                /////////////////////////////////////////////////////////////////////////////////////////////
                ////////////////////////////////////////////// HERE INDEX IS [nB] /////////////////////////
                         //
@@ -986,6 +989,8 @@ for(vector<pat::GenericParticle>::const_iterator iKaonM = thePATTrackHandle->beg
                           kaonP_px_0c       ->push_back(iKaonP->px());
                           kaonP_py_0c       ->push_back(iKaonP->py());
                           kaonP_pz_0c       ->push_back(iKaonP->pz());
+                          kaonP_pt_0c       ->push_back(iKaonP->pt());
+	    
                           kaonP_track_normchi2  ->push_back(patTrack_Kp.track()->normalizedChi2());
                           kaonP_Hits       ->push_back(patTrack_Kp.track()->numberOfValidHits() );
                           kaonP_PHits      ->push_back(patTrack_Kp.track()->hitPattern().numberOfValidPixelHits() );
@@ -995,13 +1000,15 @@ for(vector<pat::GenericParticle>::const_iterator iKaonM = thePATTrackHandle->beg
                           kaonM_px_0c       ->push_back(iKaonM->px());
                           kaonM_py_0c       ->push_back(iKaonM->py());
                           kaonM_pz_0c       ->push_back(iKaonM->pz());
+                          kaonM_pt_0c       ->push_back(iKaonM->pt());
+
                           kaonM_track_normchi2  ->push_back(patTrack_Km.track()->normalizedChi2());
                           kaonM_Hits       ->push_back(patTrack_Km.track()->numberOfValidHits() );
                           kaonM_PHits      ->push_back(patTrack_Km.track()->hitPattern().numberOfValidPixelHits() );
 	 		  kaonM_NTrackerLayers->push_back ( patTrack_Km.track()->hitPattern().trackerLayersWithMeasurement() );
    		          kaonM_NPixelLayers->push_back ( patTrack_Km.track()->hitPattern().pixelLayersWithMeasurement() );
 		
-			  B_Phi_Prob->push_back(phi_Prob_tmp);
+//			  B_Phi_Prob->push_back(phi_Prob_tmp);
 			  maxDelta->push_back(std::max( std::max(PiZeroP4_1.DeltaR(p4kaonP_0c), PiZeroP4_1.DeltaR(p4kaonM_0c)), p4kaonP_0c.DeltaR(p4kaonM_0c) ));
    //------------------//
                   mumCat->push_back( mumCategory );
@@ -1098,7 +1105,7 @@ for(vector<pat::GenericParticle>::const_iterator iKaonM = thePATTrackHandle->beg
                           /////////////////////////////////////////////////
 
                           muonParticles.clear();
-                          vertexTracks.clear();
+ //                         vertexTracks.clear();
                   } // pion
               } // pion
 	} // pion
@@ -1135,11 +1142,11 @@ for(vector<pat::GenericParticle>::const_iterator iKaonM = thePATTrackHandle->beg
       B_J_Prob->clear();
       //
 
-      kaonP_px_0c->clear();     kaonP_py_0c->clear();    kaonP_pz_0c->clear();
+      kaonP_px_0c->clear();     kaonP_py_0c->clear();    kaonP_pz_0c->clear();   kaonP_pt_0c->clear();
       kaonP_track_normchi2->clear();   kaonP_Hits->clear();    kaonP_PHits->clear();
       kaonP_NTrackerLayers->clear();  kaonP_NPixelLayers->clear();
 
-      kaonM_px_0c->clear();     kaonM_py_0c->clear();    kaonM_pz_0c->clear();
+      kaonM_px_0c->clear();     kaonM_py_0c->clear();    kaonM_pz_0c->clear();   kaonM_pt_0c->clear();
       kaonM_track_normchi2->clear();   kaonM_Hits->clear();    kaonM_PHits->clear();
       kaonM_NTrackerLayers->clear();  kaonM_NPixelLayers->clear();
 
@@ -1245,6 +1252,8 @@ for(vector<pat::GenericParticle>::const_iterator iKaonM = thePATTrackHandle->beg
      tree_->Branch("kaonP_px_0c"        , &kaonP_px_0c           );
      tree_->Branch("kaonP_py_0c"        , &kaonP_py_0c           );
      tree_->Branch("kaonP_pz_0c"        , &kaonP_pz_0c           );
+     tree_->Branch("kaonP_pt_0c"        , &kaonP_pt_0c           );
+
      tree_->Branch("kaonP_track_normchi2"   , &kaonP_track_normchi2      );
      tree_->Branch("kaonP_Hits"        , &kaonP_Hits           );
      tree_->Branch("kaonP_PHits"       , &kaonP_PHits          );
@@ -1254,6 +1263,8 @@ for(vector<pat::GenericParticle>::const_iterator iKaonM = thePATTrackHandle->beg
      tree_->Branch("kaonM_px_0c"        , &kaonM_px_0c           );
      tree_->Branch("kaonM_py_0c"        , &kaonM_py_0c           );
      tree_->Branch("kaonM_pz_0c"        , &kaonM_pz_0c           );
+     tree_->Branch("kaonM_pt_0c"        , &kaonM_pt_0c           );
+
      tree_->Branch("kaonM_track_normchi2"   , &kaonM_track_normchi2      );
      tree_->Branch("kaonM_Hits"        , &kaonM_Hits           );
      tree_->Branch("kaonM_PHits"       , &kaonM_PHits          );
