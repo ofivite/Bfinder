@@ -560,12 +560,12 @@ catch ( ... )
       ParticleMass PM_PDG_MUON_MASS = PDG_MUON_MASS;
 //      ParticleMass PM_PDG_JPSI_MASS = PDG_JPSI_MASS;
 //      ParticleMass PM_PDG_KAON_MASS = PDG_KAON_MASS;
-      ParticleMass PM_PDG_PION_MASS = PDG_PION_MASS;
+//      ParticleMass PM_PDG_PION_MASS = PDG_PION_MASS;
 //      ParticleMass PM_PDG_PI0_MASS  = PDG_PI0_MASS;
 
       float PM_muon_sigma = PM_PDG_MUON_MASS*1.e-6;
 //      float PM_kaon_sigma = PM_PDG_KAON_MASS*1.e-6;
-      float PM_pion_sigma = PM_PDG_PION_MASS*1.e-6;
+//      float PM_pion_sigma = PM_PDG_PION_MASS*1.e-6;
       float chi = 0.;
       float ndf = 0.;
 
@@ -694,7 +694,7 @@ RefCountedKinematicTree
                if(matchflag) continue;
 
                TransientTrack kaonPTT(patTrack_Kp.track(), &(*bFieldHandle) );
-               if(!(kaonPTT.isValid())) continue;
+               if(!kaonPTT.isValid()) continue;
 
 /////
 for(vector<pat::GenericParticle>::const_iterator iKaonM = thePATTrackHandle->begin(); iKaonM != thePATTrackHandle->end(); ++iKaonM )
@@ -724,24 +724,14 @@ for(vector<pat::GenericParticle>::const_iterator iKaonM = thePATTrackHandle->beg
           if(matchflag) continue;
 
           TransientTrack kaonMTT(patTrack_Km.track(), &(*bFieldHandle) );
-          if(!(kaonMTT.isValid())) continue;
-
-	  TrackRef patTrack_Kp_track, patTrack_Km_track;
-	  patTrack_Kp_track = patTrack_Kp.track();
-	  patTrack_Km_track = patTrack_Km.track();
-	  
-	  if( patTrack_Kp_track.isNull() || patTrack_Km_track.isNull() )
-	    {
-	      //std::cout << "continue due to no track ref" << endl;
-	      continue;
-	    }
+          if(!kaonMTT.isValid()) continue;
 
 
                TLorentzVector p4kaonP_0c, p4kaonM_0c, p4phi_0c, p4jpsi_0c;
                p4kaonP_0c.SetXYZM(iKaonP->px(),iKaonP->py(),iKaonP->pz(), PDG_PION_MASS);
                p4kaonM_0c.SetXYZM(iKaonM->px(),iKaonM->py(),iKaonM->pz(), PDG_PION_MASS);
 	       p4jpsi_0c = p4mu1_0c + p4mu2_0c;
-
+/*
                 std::vector<RefCountedKinematicParticle> phiParticles;
                 phiParticles.push_back(pFactory.particle(kaonPTT, PM_PDG_PION_MASS, chi,ndf, PM_pion_sigma));
                 phiParticles.push_back(pFactory.particle(kaonMTT, PM_PDG_PION_MASS, chi,ndf, PM_pion_sigma));
@@ -754,15 +744,13 @@ for(vector<pat::GenericParticle>::const_iterator iKaonM = thePATTrackHandle->beg
                 phiTree->movePointerToTheTop();
                 RefCountedKinematicParticle PHIparticle       = phiTree->currentParticle();
                 RefCountedKinematicVertex   PHIvtx            = phiTree->currentDecayVertex();
-		
                 if (!PHIvtx->vertexIsValid())  continue;
-		if (PHIvtx->chiSquared() < 0) continue;
                 double phi_Prob_tmp = TMath::Prob(PHIvtx->chiSquared(), PHIvtx->degreesOfFreedom());
                 if(phi_Prob_tmp < 0.1) continue;
 
 //                double PHI_mass_c0 = PHIparticle->currentState().mass();
 
-
+*/
 
          for( std::vector<reco::RecoTauPiZero>::const_iterator iPiZero1 = pi0Handle->begin(); iPiZero1 != pi0Handle->end(); ++iPiZero1)
          {
@@ -1020,7 +1008,7 @@ for(vector<pat::GenericParticle>::const_iterator iKaonM = thePATTrackHandle->beg
 	 		  kaonM_NTrackerLayers->push_back ( patTrack_Km.track()->hitPattern().trackerLayersWithMeasurement() );
    		          kaonM_NPixelLayers->push_back ( patTrack_Km.track()->hitPattern().pixelLayersWithMeasurement() );
 		
-			  B_Phi_Prob->push_back(phi_Prob_tmp);
+//			  B_Phi_Prob->push_back(phi_Prob_tmp);
 			  maxDelta->push_back(std::max( std::max(PiZeroP4_1.DeltaR(p4kaonP_0c), PiZeroP4_1.DeltaR(p4kaonM_0c)), p4kaonP_0c.DeltaR(p4kaonM_0c) ));
    //------------------//
                   mumCat->push_back( mumCategory );
