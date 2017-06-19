@@ -744,7 +744,9 @@ for(vector<pat::GenericParticle>::const_iterator iKaonM = thePATTrackHandle->beg
                 phiTree->movePointerToTheTop();
                 RefCountedKinematicParticle PHIparticle       = phiTree->currentParticle();
                 RefCountedKinematicVertex   PHIvtx            = phiTree->currentDecayVertex();
+		
                 if (!PHIvtx->vertexIsValid())  continue;
+		if (PHIvtx->chiSquared() < 0.) continue;
                 double phi_Prob_tmp = TMath::Prob(PHIvtx->chiSquared(), PHIvtx->degreesOfFreedom());
                 if(phi_Prob_tmp < 0.1) continue;
 
