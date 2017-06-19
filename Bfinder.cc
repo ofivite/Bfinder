@@ -560,12 +560,12 @@ catch ( ... )
       ParticleMass PM_PDG_MUON_MASS = PDG_MUON_MASS;
 //      ParticleMass PM_PDG_JPSI_MASS = PDG_JPSI_MASS;
 //      ParticleMass PM_PDG_KAON_MASS = PDG_KAON_MASS;
-//      ParticleMass PM_PDG_PION_MASS = PDG_PION_MASS;
+      ParticleMass PM_PDG_PION_MASS = PDG_PION_MASS;
 //      ParticleMass PM_PDG_PI0_MASS  = PDG_PI0_MASS;
 
       float PM_muon_sigma = PM_PDG_MUON_MASS*1.e-6;
 //      float PM_kaon_sigma = PM_PDG_KAON_MASS*1.e-6;
-//      float PM_pion_sigma = PM_PDG_PION_MASS*1.e-6;
+      float PM_pion_sigma = PM_PDG_PION_MASS*1.e-6;
       float chi = 0.;
       float ndf = 0.;
 
@@ -672,7 +672,7 @@ RefCountedKinematicTree
 // 	       int ngenT1 = 0;//PdgIDatTruthLevel(iKaonP->track(), genParticles, PId1);
 	       patTrack_Kp = *iKaonP;
 
-        if(iKaonP->pt() < 0.5 || iKaonP->charge() != 1 || fabs(iKaonP->eta()) > 2.5) continue;
+        if(iKaonP->pt() < 2. || iKaonP->charge() != 1 || fabs(iKaonP->eta()) > 2.5) continue;
 
 
 	       if(!(patTrack_Kp.track()->quality(reco::TrackBase::highPurity))) continue;
@@ -702,7 +702,7 @@ for(vector<pat::GenericParticle>::const_iterator iKaonM = thePATTrackHandle->beg
    if(iKaonP == iKaonM) continue;
 // 	       int ngenT1 = 0;//PdgIDatTruthLevel(iKaonP->track(), genParticles, PId1);
    patTrack_Km = *iKaonM;
-   if(iKaonM->pt() < 0.5 || iKaonM->charge() != -1 || fabs(iKaonP->eta()) > 2.5) continue;
+   if(iKaonM->pt() < 2. || iKaonM->charge() != -1 || fabs(iKaonP->eta()) > 2.5) continue;
 
 
     if(!(patTrack_Km.track()->quality(reco::TrackBase::highPurity))) continue;
@@ -731,7 +731,7 @@ for(vector<pat::GenericParticle>::const_iterator iKaonM = thePATTrackHandle->beg
                p4kaonP_0c.SetXYZM(iKaonP->px(),iKaonP->py(),iKaonP->pz(), PDG_PION_MASS);
                p4kaonM_0c.SetXYZM(iKaonM->px(),iKaonM->py(),iKaonM->pz(), PDG_PION_MASS);
 	       p4jpsi_0c = p4mu1_0c + p4mu2_0c;
-/*
+
                 std::vector<RefCountedKinematicParticle> phiParticles;
                 phiParticles.push_back(pFactory.particle(kaonPTT, PM_PDG_PION_MASS, chi,ndf, PM_pion_sigma));
                 phiParticles.push_back(pFactory.particle(kaonMTT, PM_PDG_PION_MASS, chi,ndf, PM_pion_sigma));
@@ -750,7 +750,7 @@ for(vector<pat::GenericParticle>::const_iterator iKaonM = thePATTrackHandle->beg
 
 //                double PHI_mass_c0 = PHIparticle->currentState().mass();
 
-*/
+
 
          for( std::vector<reco::RecoTauPiZero>::const_iterator iPiZero1 = pi0Handle->begin(); iPiZero1 != pi0Handle->end(); ++iPiZero1)
          {
@@ -758,7 +758,7 @@ for(vector<pat::GenericParticle>::const_iterator iKaonM = thePATTrackHandle->beg
 
               // reco::RecoTauPiZero localpionPF = reco::PFCandidate(*iPiZero1);
               TLorentzVector PiZeroP4_1, PiZeroP4_2, psiP4;
-              if ( iPiZero1->pt() < 0.5 || iPiZero1->numberOfGammas() != 2) continue;
+              if ( iPiZero1->pt() < 2. || iPiZero1->numberOfGammas() != 2) continue;
 
               PiZeroP4_1.SetPxPyPzE(iPiZero1->px(), iPiZero1->py(), iPiZero1->pz(), iPiZero1->energy());
               if ( (PiZeroP4_1 + p4kaonP_0c + p4kaonM_0c).M() < 0.3 || (PiZeroP4_1 + p4kaonP_0c + p4kaonM_0c).M() > 1.) continue;
@@ -1008,7 +1008,7 @@ for(vector<pat::GenericParticle>::const_iterator iKaonM = thePATTrackHandle->beg
 	 		  kaonM_NTrackerLayers->push_back ( patTrack_Km.track()->hitPattern().trackerLayersWithMeasurement() );
    		          kaonM_NPixelLayers->push_back ( patTrack_Km.track()->hitPattern().pixelLayersWithMeasurement() );
 		
-//			  B_Phi_Prob->push_back(phi_Prob_tmp);
+			  B_Phi_Prob->push_back(phi_Prob_tmp);
 			  maxDelta->push_back(std::max( std::max(PiZeroP4_1.DeltaR(p4kaonP_0c), PiZeroP4_1.DeltaR(p4kaonM_0c)), p4kaonP_0c.DeltaR(p4kaonM_0c) ));
    //------------------//
                   mumCat->push_back( mumCategory );
