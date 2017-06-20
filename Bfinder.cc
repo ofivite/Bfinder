@@ -121,7 +121,7 @@ Bfinder::Bfinder(const edm::ParameterSet& iConfig)
 
  pfMass(0),
  pion_px(0),  pion_py(0),   pion_pz(0),     pion_pt(0),
- pi_maxDeltaR(0),  kaonP_track_norpi_numberOfGammasmchi2(0),
+ pi_maxDeltaR(0),  pi_numberOfGammas(0),
 
 
 
@@ -1154,7 +1154,7 @@ for( std::vector<reco::RecoTauPiZero>::const_iterator iPiZero = pi0Handle->begin
       kaonP_dxy_Bsdecay->clear();  kaonP_dz_Bsdecay->clear(); kaonP_NTrackerLayers->clear();  kaonP_NPixelLayers->clear();
 
       pfMass->clear();
-      pion_px->clear();    pion_py->clear();   pion_px->clear();    pion_pt->clear();
+      pion_px->clear();    pion_py->clear();   pion_pz->clear();    pion_pt->clear();
       pi_maxDeltaR->clear();    pi_numberOfGammas->clear();
 
       //

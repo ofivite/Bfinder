@@ -147,7 +147,7 @@ private:
 
   std::vector<float>    *B_mu_px1_cjp       , *B_mu_py1_cjp     , *B_mu_pz1_cjp;
   std::vector<float>    *B_mu_px2_cjp       , *B_mu_py2_cjp     , *B_mu_pz2_cjp;
-  std::vector<float>    *B_Prob             , *B_J_Prob		, *B_Phi_Prob;
+  std::vector<float>    *B_Prob             , *B_J_Prob;
 
   std::vector<float>    *kaonP_px_0c        , *kaonP_py_0c       , *kaonP_pz_0c;
   std::vector<float>    *kaonP_px_cjp         , *kaonP_py_cjp       , *kaonP_pz_cjp;
@@ -182,9 +182,6 @@ private:
   std::vector<int>      *mup_isGlobalMuon   , *mup_isTrackerMuon, *mup_isTight, *mup_isGoodLS_OptimT;
   std::vector<int>      *mup_NMuonHits, *mup_NMuonStations, *mup_NTrackerLayers, *mup_NPixelLayers;
   std::vector<float>    *mup_relIso;
-
-  std::vector<bool>     *BsVertex_isValid;
-  std::vector<float>    *BsVertex_Chi, *BsVertex_normChi, *JP_Bsdecay_weight, *phi_Bsdecay_weight;
 
 ///////////////////////
 
