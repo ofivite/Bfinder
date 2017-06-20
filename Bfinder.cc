@@ -58,11 +58,17 @@
 #include "RecoVertex/VertexPrimitives/interface/BasicSingleVertexState.h"
 #include "RecoVertex/VertexPrimitives/interface/VertexState.h"
 
+#include "DataFormats/EgammaCandidates/interface/Photon.h"
+#include "DataFormats/ParticleFlowCandidate/interface/PFCandidate.h"
+#include "DataFormats/TauReco/interface/RecoTauPiZero.h"
+
+
 #include "TFile.h"
 #include "TTree.h"
 
 #include <vector>
 #include "TLorentzVector.h"
+#include "TVector3.h"
 #include <utility>
 #include <string>
 
@@ -328,6 +334,16 @@ void Bfinder::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   Handle< vector<pat::Muon> > thePATMuonHandle;
   iEvent.getByLabel(muonType, thePATMuonHandle);
 
+  Handle< vector<reco::RecoTauPiZero> > pi0Handle;
+try
+{
+iEvent.getByLabel("hpsPFTauProducer", "pizeros", pi0Handle);
+}
+catch ( ... )
+{
+  std::cout << "Couldn't get handle on pi0!" << std::endl;
+}
+
   //get genParticles
   // Handle<GenParticleCollection> genParticles;
 //   if (doMC_)
@@ -377,12 +393,12 @@ void Bfinder::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
     std::string alltnames = triggersL;
     //Bool_t checkflag = false;
-    std::string::size_type trigger1 = alltnames.find("HLT_DoubleMu4_Jpsi_Displaced",0);
+    std::string::size_type trigger1 = alltnames.find("HLT_DoubleMu3p5_LowMass_Displaced",0);
 
     if(trigger1==std::string::npos)
       {
 	//checkflag=true;return;
-	return;
+	   return;
 
       }
 
@@ -617,7 +633,6 @@ RefCountedKinematicTree
 
 
 	   pat::GenericParticle patTrack_Kp;
- 	   pat::GenericParticle patTrack_Km;
 
 	   for(vector<pat::GenericParticle>::const_iterator iKaonP = thePATTrackHandle->begin(); iKaonP != thePATTrackHandle->end(); ++iKaonP )
 	     {
@@ -625,7 +640,7 @@ RefCountedKinematicTree
 // 	       int ngenT1 = 0;//PdgIDatTruthLevel(iKaonP->track(), genParticles, PId1);
 	       patTrack_Kp = *iKaonP;
 
-        if(iKaonP->pt() < 0.7 || iKaonP->charge() != 1 || fabs(iKaonP->eta()) > 2.5) continue;
+        if(iKaonP->pt() < 0.7 || fabs(iKaonP->eta()) > 2.5) continue;
 
 
 	       if(!(patTrack_Kp.track()->quality(reco::TrackBase::highPurity))) continue;
@@ -650,68 +665,48 @@ RefCountedKinematicTree
                if(!kaonPTT.isValid()) continue;
 
 /////
-for(vector<pat::GenericParticle>::const_iterator iKaonM = thePATTrackHandle->begin(); iKaonM != thePATTrackHandle->end(); ++iKaonM )
-  {
-   if(iKaonP == iKaonM) continue;
+for( std::vector<reco::RecoTauPiZero>::const_iterator iPiZero = pi0Handle->begin(); iPiZero != pi0Handle->end(); ++iPiZero)
+{
 // 	       int ngenT1 = 0;//PdgIDatTruthLevel(iKaonP->track(), genParticles, PId1);
-   patTrack_Km = *iKaonM;
-   if(iKaonM->pt() < 0.7 || iKaonM->charge() != -1 || fabs(iKaonP->eta()) > 2.5) continue;
+   if(iPiZero->pt() < 0.7 || fabs(iPiZero->eta()) > 2.5) continue;
 
-
-    if(!(patTrack_Km.track()->quality(reco::TrackBase::highPurity))) continue;
-
-          bool matchflag = false;
-          const reco::CandidatePtrVector & mu2P_overlaps = patTrack_Km.overlaps(muonTypeForPAT);
-          if ( mu2P_overlaps.size() > 0 ) //std::cout << "patTrack_Kp overlaps with a muon." << endl;
-          for (size_t i = 0; i < mu2P_overlaps.size(); ++i) {
-            const pat::Muon *mu = dynamic_cast<const pat::Muon *>(&*mu2P_overlaps[i]);
-            if (mu) {
-              // check here that muon match isn't the same as a muon used in the reco...
-              if (mu==patMuonP || mu==patMuonM)  {
-                  //std::cout << "match between patTrack_Kp and patMuonP/patMuonM" << endl;
-                  matchflag=true;
-              }
-            }
-          }
-
-          if(matchflag) continue;
-
-          TransientTrack kaonMTT(patTrack_Km.track(), &(*bFieldHandle) );
-          if(!kaonMTT.isValid()) continue;
-
-
-               TLorentzVector p4kaonP_0c, p4kaonM_0c, p4phi_0c, p4jpsi_0c;
-               p4kaonP_0c.SetXYZM(iKaonP->px(),iKaonP->py(),iKaonP->pz(), PDG_KAON_MASS);
-               p4kaonM_0c.SetXYZM(iKaonM->px(),iKaonM->py(),iKaonM->pz(), PDG_KAON_MASS);
-
-               p4phi_0c = p4kaonP_0c + p4kaonM_0c;
-               p4jpsi_0c = p4mu1_0c + p4mu2_0c;
-               if(p4phi_0c.M() > PDG_PHI_MASS + 0.1) continue;
-               if(p4phi_0c.M() < PDG_PHI_MASS - 0.1) continue;
-
-                std::vector<RefCountedKinematicParticle> phiParticles;
-                phiParticles.push_back(pFactory.particle(kaonPTT, PM_PDG_KAON_MASS, chi,ndf, PM_kaon_sigma));
-                phiParticles.push_back(pFactory.particle(kaonMTT, PM_PDG_KAON_MASS, chi,ndf, PM_kaon_sigma));
-
-                KinematicParticleVertexFitter   phifitter;
-                RefCountedKinematicTree         phiTree;
-                phiTree = phifitter.fit(phiParticles);
-                if (!phiTree->isValid()) continue;
-
-                phiTree->movePointerToTheTop();
-                RefCountedKinematicParticle PHIparticle       = phiTree->currentParticle();
-                RefCountedKinematicVertex   PHIvtx            = phiTree->currentDecayVertex();
-                if (!PHIvtx->vertexIsValid())  continue;
-                double phi_Prob_tmp = TMath::Prob(PHIvtx->chiSquared(), PHIvtx->degreesOfFreedom());
-                if(phi_Prob_tmp < 0.01) continue;
-
-                double PHI_mass_c0 = PHIparticle->currentState().mass();
-                if ( PHI_mass_c0 < PDG_PHI_MASS - 0.05 ) continue;
-                if ( PHI_mass_c0 > PDG_PHI_MASS + 0.05 ) continue;
+              //  TLorentzVector p4kaonP_0c, p4kaonM_0c, p4phi_0c, p4jpsi_0c;
+              //  p4kaonP_0c.SetXYZM(iKaonP->px(),iKaonP->py(),iKaonP->pz(), PDG_KAON_MASS);
+              //  p4kaonM_0c.SetXYZM(iKaonM->px(),iKaonM->py(),iKaonM->pz(), PDG_KAON_MASS);
+              //
+              //  p4phi_0c = p4kaonP_0c + p4kaonM_0c;
+              //  p4jpsi_0c = p4mu1_0c + p4mu2_0c;
+              //  if(p4phi_0c.M() > PDG_PHI_MASS + 0.1) continue;
+              //  if(p4phi_0c.M() < PDG_PHI_MASS - 0.1) continue;
+              //
+              //   std::vector<RefCountedKinematicParticle> phiParticles;
+              //   phiParticles.push_back(pFactory.particle(kaonPTT, PM_PDG_KAON_MASS, chi,ndf, PM_kaon_sigma));
+              //   phiParticles.push_back(pFactory.particle(kaonMTT, PM_PDG_KAON_MASS, chi,ndf, PM_kaon_sigma));
+              //
+              //   KinematicParticleVertexFitter   phifitter;
+              //   RefCountedKinematicTree         phiTree;
+              //   phiTree = phifitter.fit(phiParticles);
+              //   if (!phiTree->isValid()) continue;
+              //
+              //   phiTree->movePointerToTheTop();
+              //   RefCountedKinematicParticle PHIparticle       = phiTree->currentParticle();
+              //   RefCountedKinematicVertex   PHIvtx            = phiTree->currentDecayVertex();
+              //   if (!PHIvtx->vertexIsValid())  continue;
+              //   double phi_Prob_tmp = TMath::Prob(PHIvtx->chiSquared(), PHIvtx->degreesOfFreedom());
+              //   if(phi_Prob_tmp < 0.01) continue;
+              //
+              //   double PHI_mass_c0 = PHIparticle->currentState().mass();
+              //   if ( PHI_mass_c0 < PDG_PHI_MASS - 0.05 ) continue;
+              //   if ( PHI_mass_c0 > PDG_PHI_MASS + 0.05 ) continue;
 
 
 
                //Now we are ready to combine!
+
+                TLorentzVector p4kaon_0c, p4piZero, p4kStar, p4Bmeson;
+                p4kaon_0c.SetXYZM(iKaonP->px(),iKaonP->py(),iKaonP->pz(), PDG_KAON_MASS);
+                p4kaonM_0c.SetXYZM(iKaonM->px(),iKaonM->py(),iKaonM->pz(), PDG_KAON_MASS);
+
                if(fabs((p4jpsi_0c + p4phi_0c).M() - PDG_BS_MASS) > 0.6) continue;
 
                std::vector<RefCountedKinematicParticle> Bs_candidate_init;
@@ -831,7 +826,6 @@ for(vector<pat::GenericParticle>::const_iterator iKaonM = thePATTrackHandle->beg
 
                     // the 4 tracks in the B cand are  patTrack_Kp glbTrackP glbTrackM
                     if (  !(   (patTrack_Kp.track()==trackRef)  ||
-                               (patTrack_Km.track()==trackRef)  ||
                                (trkTrackP==trackRef)            ||
                                (trkTrackM==trackRef)           ) )
                        {
