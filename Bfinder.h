@@ -135,7 +135,7 @@ private:
   std::vector<std::string>         *triggersMuPL        , *triggersMuML;
   std::vector<std::string>         *triggersL1L2_MuPL   , *triggersL1L2_MuML;
 
-  std::vector<float>    *Bs_mass_cjp;
+  std::vector<float>    *Bs_mass_c0, *JPsi_K_mass_cjp;
   std::vector<float>    *Bs_px_cjp               , *Bs_py_cjp             , *Bs_pz_cjp;
   std::vector<float>    *B_DecayVtxX        , *B_DecayVtxY      , *B_DecayVtxZ;
   std::vector<float>    *B_DecayVtxXE       , *B_DecayVtxYE     , *B_DecayVtxZE;

@@ -100,7 +100,7 @@ Bfinder::Bfinder(const edm::ParameterSet& iConfig)
    triggersMuPL(0), triggersMuML(0),
    triggersL1L2_MuPL(0), triggersL1L2_MuML(0),
 
-   Bs_mass_cjp(0),
+   Bs_mass_c0(0), JPsi_K_mass_cjp(0),
  Bs_px_cjp(0),           Bs_py_cjp(0),          Bs_pz_cjp(0),
  B_DecayVtxX(0),    B_DecayVtxY(0),   B_DecayVtxZ(0),
  B_DecayVtxXE(0),   B_DecayVtxYE(0),  B_DecayVtxZE(0),
@@ -749,8 +749,8 @@ for( std::vector<reco::RecoTauPiZero>::const_iterator iPiZero = pi0Handle->begin
                if(B_Prob_tmp < 0.05) continue;
 
 
- 	             GlobalPoint BsGP = GlobalPoint( (*bDecayVertexCjp).position().x(), (*bDecayVertexCjp).position().y(), (*bDecayVertexCjp).position().z() );
-               ROOT::Math::XYZPoint bDecayPoint( (*bDecayVertexCjp).position().x(), (*bDecayVertexCjp).position().y(), (*bDecayVertexCjp).position().z() );
+ 	           //   GlobalPoint BsGP = GlobalPoint( (*bDecayVertexCjp).position().x(), (*bDecayVertexCjp).position().y(), (*bDecayVertexCjp).position().z() );
+              //  ROOT::Math::XYZPoint bDecayPoint( (*bDecayVertexCjp).position().x(), (*bDecayVertexCjp).position().y(), (*bDecayVertexCjp).position().z() );
 
 	 // get children from final B fit
 
@@ -964,8 +964,8 @@ for( std::vector<reco::RecoTauPiZero>::const_iterator iPiZero = pi0Handle->begin
                /////////////////////////////////////////////////////////////////////////////////////////////
                ////////////////////////////////////////////// HERE INDEX IS [nB] /////////////////////////
                         //
-                          Bs_mass_cjp           ->push_back(Bs_mass_cjp_tmp);
-
+                          Bs_mass_c0           ->push_back(p4Bmeson.M());
+                          JPsi_K_mass_cjp           ->push_back(Bs_mass_cjp_tmp);
                           Bs_px_cjp             ->push_back(bCandCjp->currentState().globalMomentum().x());
                           Bs_py_cjp             ->push_back(bCandCjp->currentState().globalMomentum().y());
                           Bs_pz_cjp             ->push_back(bCandCjp->currentState().globalMomentum().z());
@@ -1140,7 +1140,7 @@ for( std::vector<reco::RecoTauPiZero>::const_iterator iPiZero = pi0Handle->begin
       triggersMuPL->clear(); triggersMuML->clear();
       triggersL1L2_MuPL->clear(); triggersL1L2_MuML->clear();
 
-      Bs_mass_cjp->clear();
+      Bs_mass_c0->clear(); JPsi_K_mass_cjp->clear();
       Bs_px_cjp->clear();           Bs_py_cjp->clear();          Bs_pz_cjp->clear();
       B_DecayVtxX->clear();    B_DecayVtxY->clear();   B_DecayVtxZ->clear();
       B_DecayVtxXE->clear();   B_DecayVtxYE->clear();  B_DecayVtxZE->clear();
@@ -1232,7 +1232,9 @@ for( std::vector<reco::RecoTauPiZero>::const_iterator iPiZero = pi0Handle->begin
      tree_->Branch("nMu"               , &nMu      , "nMu/i"   );
      tree_->Branch("nVtx"              , &nVtx     , "nVtx/i"  );
 
-     tree_->Branch("Bs_mass_cjp"            , &Bs_mass_cjp               );
+     tree_->Branch("Bs_mass_c0"            , &Bs_mass_c0               );
+     tree_->Branch("JPsi_K_mass_cjp"            , &JPsi_K_mass_cjp               );
+
      tree_->Branch("Bs_px_cjp"              , &Bs_px_cjp                 );
      tree_->Branch("Bs_py_cjp"              , &Bs_py_cjp                 );
      tree_->Branch("Bs_pz_cjp"              , &Bs_pz_cjp                 );
