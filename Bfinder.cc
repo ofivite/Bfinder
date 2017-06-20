@@ -706,7 +706,7 @@ for( std::vector<reco::RecoTauPiZero>::const_iterator iPiZero = pi0Handle->begin
                 p4kaon_0c.SetXYZM(iKaonP->px(),iKaonP->py(),iKaonP->pz(), PDG_KAON_MASS);
                 p4piZero.SetPxPyPzE(iPiZero->px(), iPiZero->py(), iPiZero->pz(), iPiZero->energy());
                 p4kStar = p4kaon_0c + p4piZero;
-                p4Bmeson = p4kStar + p4mu1_0c + p4mu2_0c
+                p4Bmeson = p4kStar + p4mu1_0c + p4mu2_0c;
 
                if(fabs(p4kStar.M() - 0.89176) > 0.050) continue;
                if(fabs(p4Bmeson.M() - PDG_BU_MASS) > 0.150) continue;
