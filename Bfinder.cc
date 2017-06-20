@@ -705,16 +705,18 @@ for( std::vector<reco::RecoTauPiZero>::const_iterator iPiZero = pi0Handle->begin
 
                 TLorentzVector p4kaon_0c, p4piZero, p4kStar, p4Bmeson;
                 p4kaon_0c.SetXYZM(iKaonP->px(),iKaonP->py(),iKaonP->pz(), PDG_KAON_MASS);
-                p4kaonM_0c.SetXYZM(iKaonM->px(),iKaonM->py(),iKaonM->pz(), PDG_KAON_MASS);
+                p4piZero.SetPxPyPzE(iPiZero->px(), iPiZero->py(), iPiZero->pz(), iPiZero->energy());
+                p4kStar = p4kaon_0c + p4piZero;
+                p4Bmeson = p4kStar + p4mu1_0c + p4mu2_0c
 
-               if(fabs((p4jpsi_0c + p4phi_0c).M() - PDG_BS_MASS) > 0.6) continue;
+               if(fabs(p4kStar.M() - 0.89176) > 0.050) continue;
+               if(fabs(p4Bmeson.M() - PDG_BU_MASS) > 0.150) continue;
 
                std::vector<RefCountedKinematicParticle> Bs_candidate_init;
 
                Bs_candidate_init.push_back(pFactory.particle(muon1TT, PM_PDG_MUON_MASS, chi,ndf, PM_muon_sigma));
                Bs_candidate_init.push_back(pFactory.particle(muon2TT, PM_PDG_MUON_MASS, chi,ndf, PM_muon_sigma));
                Bs_candidate_init.push_back(pFactory.particle(kaonPTT, PM_PDG_KAON_MASS, chi,ndf, PM_kaon_sigma));
-               Bs_candidate_init.push_back(pFactory.particle(kaonMTT, PM_PDG_KAON_MASS, chi,ndf, PM_kaon_sigma));
                RefCountedKinematicTree xbVFT, BsFitTree;
 
                std::vector<RefCountedKinematicParticle> Bs_candidate = Bs_candidate_init;
@@ -741,13 +743,10 @@ for( std::vector<reco::RecoTauPiZero>::const_iterator iPiZero = pi0Handle->begin
                if (!bDecayVertexCjp->vertexIsValid())  continue;
 
                double Bs_mass_cjp_tmp = bCandCjp->currentState().mass();
-
-               if(Bs_mass_cjp_tmp < 5.2) continue;
-               if(Bs_mass_cjp_tmp > 5.5) continue;
                //
                if(bDecayVertexCjp->chiSquared()<0) continue;
                double B_Prob_tmp   = TMath::Prob(bDecayVertexCjp->chiSquared(), (int) bDecayVertexCjp->degreesOfFreedom());
-               if(B_Prob_tmp < 0.02) continue;
+               if(B_Prob_tmp < 0.05) continue;
 
 
  	             GlobalPoint BsGP = GlobalPoint( (*bDecayVertexCjp).position().x(), (*bDecayVertexCjp).position().y(), (*bDecayVertexCjp).position().z() );
@@ -761,9 +760,6 @@ for( std::vector<reco::RecoTauPiZero>::const_iterator iPiZero = pi0Handle->begin
                RefCountedKinematicParticle mu2CandMC    = BsFitTree->currentParticle();
                BsFitTree->movePointerToTheNextChild();
                RefCountedKinematicParticle KpCandMC     = BsFitTree->currentParticle();
-               BsFitTree->movePointerToTheNextChild();
-               RefCountedKinematicParticle KmCandMC     = BsFitTree->currentParticle();
-
 
 
         // {{{ GET THE BEST PV BY CHOSING THE BEST POINTING ANGLE AND REMOVE BS TRACKS FROM ITS FIT
@@ -791,7 +787,7 @@ for( std::vector<reco::RecoTauPiZero>::const_iterator iPiZero = pi0Handle->begin
                     Double_t dx = (*bDecayVertexCjp).position().x() - PVtxBeSp.x();
                     Double_t dy = (*bDecayVertexCjp).position().y() - PVtxBeSp.y();
                     Double_t dz = (*bDecayVertexCjp).position().z() - PVtxBeSp.z();
-                    Double_t cosAlphaXYZ = ( bCandCjp->currentState().globalMomentum().x() * dx + bCandCjp->currentState().globalMomentum().y()*dy + bCandCjp->currentState().globalMomentum().z()*dz  )/( sqrt(dx*dx+dy*dy+dz*dz)* bCandCjp->currentState().globalMomentum().mag() );
+                    Double_t cosAlphaXYZ = ( p4Bmeson.Px() * dx + p4Bmeson.Py()*dy + p4Bmeson.Pz()*dz  )/( sqrt(dx*dx+dy*dy+dz*dz) * p4Bmeson.P() );
 
                     if(cosAlphaXYZ>lip)
                     {
@@ -861,38 +857,38 @@ for( std::vector<reco::RecoTauPiZero>::const_iterator iPiZero = pi0Handle->begin
                 }
                }
 
-     TransientTrack JP_TT = MUMUparticle->refittedTransientTrack();
-     if (!JP_TT.isValid()) continue;
-
-     TransientTrack phi_TT = PHIparticle->refittedTransientTrack();
-     if (!phi_TT.isValid()) continue;
-
- ///~~~fit 4 tracks from Bs together~~~///
-  vector<reco::TransientTrack> BsTracks;
-  BsTracks.push_back(JP_TT);
-  BsTracks.push_back(phi_TT);
-
-   AdaptiveVertexFitter BsVertexFitter;
-   TransientVertex BsTV = BsVertexFitter.vertex(BsTracks, BsGP);
-
-    BsVertex_isValid->push_back( BsTV.isValid() );
-    if ( BsTV.isValid() )
-     {
-
-       BsVtx = reco::Vertex(BsTV);
-
-        JP_Bsdecay_weight->push_back(BsVtx.trackWeight(JP_TT.trackBaseRef()));
-        phi_Bsdecay_weight->push_back(BsVtx.trackWeight(phi_TT.trackBaseRef()));
-        BsVertex_Chi->push_back(BsTV.totalChiSquared());
-        BsVertex_normChi->push_back(BsTV.normalisedChiSquared());
-      }
-         else
-          {
-               JP_Bsdecay_weight->push_back(-1);
-               phi_Bsdecay_weight->push_back(-1);
-               BsVertex_Chi->push_back(-999);
-               BsVertex_normChi->push_back(-999);
-          }
+ //     TransientTrack JP_TT = MUMUparticle->refittedTransientTrack();
+ //     if (!JP_TT.isValid()) continue;
+ //
+ //     TransientTrack phi_TT = PHIparticle->refittedTransientTrack();
+ //     if (!phi_TT.isValid()) continue;
+ //
+ // ///~~~fit 4 tracks from Bs together~~~///
+ //  vector<reco::TransientTrack> BsTracks;
+ //  BsTracks.push_back(JP_TT);
+ //  BsTracks.push_back(phi_TT);
+ //
+ //   AdaptiveVertexFitter BsVertexFitter;
+ //   TransientVertex BsTV = BsVertexFitter.vertex(BsTracks, BsGP);
+ //
+ //    BsVertex_isValid->push_back( BsTV.isValid() );
+ //    if ( BsTV.isValid() )
+ //     {
+ //
+ //       BsVtx = reco::Vertex(BsTV);
+ //
+ //        JP_Bsdecay_weight->push_back(BsVtx.trackWeight(JP_TT.trackBaseRef()));
+ //        phi_Bsdecay_weight->push_back(BsVtx.trackWeight(phi_TT.trackBaseRef()));
+ //        BsVertex_Chi->push_back(BsTV.totalChiSquared());
+ //        BsVertex_normChi->push_back(BsTV.normalisedChiSquared());
+ //      }
+ //         else
+ //          {
+ //               JP_Bsdecay_weight->push_back(-1);
+ //               phi_Bsdecay_weight->push_back(-1);
+ //               BsVertex_Chi->push_back(-999);
+ //               BsVertex_normChi->push_back(-999);
+ //          }
 
                //cout << "PV bestPV_Bang: " <<bestPV_Bang.x()<< " "<<bestPV_Bang.y()<<" "<<bestPV_Bang.z()<< endl;
             // }}}
