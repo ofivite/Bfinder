@@ -1004,19 +1004,16 @@ for( std::vector<reco::RecoTauPiZero>::const_iterator iPiZero = pi0Handle->begin
    		                    kaonP_NTrackerLayers->push_back ( patTrack_Kp.track()->hitPattern().trackerLayersWithMeasurement() );
    		                    kaonP_NPixelLayers->push_back ( patTrack_Kp.track()->hitPattern().pixelLayersWithMeasurement() );
 
-                          kaonM_px_0c       ->push_back(iKaonM->px());
-                          kaonM_py_0c       ->push_back(iKaonM->py());
-                          kaonM_pz_0c       ->push_back(iKaonM->pz());
-                          kaonM_px_cjp       ->push_back(KmCandMC->currentState().globalMomentum().x());
-                          kaonM_py_cjp       ->push_back(KmCandMC->currentState().globalMomentum().y());
-                          kaonM_pz_cjp       ->push_back(KmCandMC->currentState().globalMomentum().z());
-                          kaonM_track_normchi2  ->push_back(patTrack_Km.track()->normalizedChi2());
-                          kaonM_Hits       ->push_back(patTrack_Km.track()->numberOfValidHits() );
-                          kaonM_PHits      ->push_back(patTrack_Km.track()->hitPattern().numberOfValidPixelHits() );
-                          kaonM_dxy_Bsdecay	->push_back(patTrack_Km.track()->dxy(bDecayPoint) );
-                          kaonM_dz_Bsdecay		->push_back(patTrack_Km.track()->dz(bDecayPoint	) );
-   		                    kaonM_NTrackerLayers->push_back ( patTrack_Km.track()->hitPattern().trackerLayersWithMeasurement() );
-   		                    kaonM_NPixelLayers->push_back ( patTrack_Km.track()->hitPattern().pixelLayersWithMeasurement() );
+                          pfMass->push_back(iPiZero->mass());
+
+                          pion_px->push_back( iPiZero->px());
+                          pion_py->push_back( iPiZero->py() );
+                          pion_pz->push_back( iPiZero->pz() );
+                          pion_pt->push_back( iPiZero->pt() );
+
+                          pi_maxDeltaR->push_back( sqrt(iPiZero->maxDeltaEta()*iPiZero->maxDeltaEta() + iPiZero->maxDeltaPhi()*iPiZero->maxDeltaPhi()) );
+                          pi_numberOfGammas->push_back( iPiZero->numberOfGammas() );
+
 
                           B_mu_px1_cjp ->push_back(mu1CandMC_p.x());
                           B_mu_py1_cjp ->push_back(mu1CandMC_p.y());

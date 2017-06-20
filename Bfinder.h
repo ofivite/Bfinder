@@ -156,12 +156,8 @@ private:
   std::vector<float>    *kaonP_dxy_Bsdecay, *kaonP_dz_Bsdecay;
   std::vector<int>      *kaonP_NTrackerLayers,  *kaonP_NPixelLayers;
 
-  std::vector<float>    *kaonM_px_0c         , *kaonM_py_0c       , *kaonM_pz_0c;
-  std::vector<float>    *kaonM_px_cjp         , *kaonM_py_cjp       , *kaonM_pz_cjp;
-  std::vector<float>    *kaonM_track_normchi2;
-  std::vector<int>      *kaonM_Hits,  *kaonM_PHits;
-  std::vector<float>    *kaonM_dxy_Bsdecay, *kaonM_dz_Bsdecay;
-  std::vector<int>      *kaonM_NTrackerLayers,  *kaonM_NPixelLayers;
+  std::vector<float>    *pfMass, *pion_px, *pion_py, *pion_pz, *pion_pt, *pi_maxDeltaR;
+   std::vector<int>     *pi_numberOfGammas
 
 
   std::vector<float>    *PV_bestBang_X      , *PV_bestBang_Y    , *PV_bestBang_Z;
