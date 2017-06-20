@@ -157,7 +157,7 @@ private:
   std::vector<int>      *kaonP_NTrackerLayers,  *kaonP_NPixelLayers;
 
   std::vector<float>    *pfMass, *pion_px, *pion_py, *pion_pz, *pion_pt, *pi_maxDeltaR;
-   std::vector<int>     *pi_numberOfGammas
+   std::vector<int>     *pi_numberOfGammas;
 
 
   std::vector<float>    *PV_bestBang_X      , *PV_bestBang_Y    , *PV_bestBang_Z;

@@ -112,17 +112,17 @@ Bfinder::Bfinder(const edm::ParameterSet& iConfig)
  B_mu_px1_cjp(0),   B_mu_py1_cjp(0),  B_mu_pz1_cjp(0),
  B_mu_px2_cjp(0),   B_mu_py2_cjp(0),  B_mu_pz2_cjp(0),
 
- B_Prob(0), B_J_Prob(0), B_Phi_Prob(0),
+ B_Prob(0), B_J_Prob(0),
 
  kaonP_px_0c(0),       kaonP_py_0c(0),  kaonP_pz_0c(0),
  kaonP_px_cjp(0),       kaonP_py_cjp(0),  kaonP_pz_cjp(0),
  kaonP_track_normchi2(0),     kaonP_Hits(0),  kaonP_PHits(0),
  kaonP_dxy_Bsdecay(0), kaonP_dz_Bsdecay(0), kaonP_NTrackerLayers(0),  kaonP_NPixelLayers(0),
 
- kaonM_px_0c(0),       kaonM_py_0c(0),  kaonM_pz_0c(0),
- kaonM_px_cjp(0),       kaonM_py_cjp(0),  kaonM_pz_cjp(0),
- kaonM_track_normchi2(0),     kaonM_Hits(0),  kaonM_PHits(0),
- kaonM_dxy_Bsdecay(0), kaonM_dz_Bsdecay(0), kaonM_NTrackerLayers(0),  kaonM_NPixelLayers(0),
+ pfMass(0),
+ pion_px(0),  pion_py(0),   pion_pz(0),     pion_pt(0),
+ pi_maxDeltaR(0),  kaonP_track_norpi_numberOfGammasmchi2(0),
+
 
 
  PV_bestBang_X(0),      PV_bestBang_Y(0),     PV_bestBang_Z(0),
@@ -141,7 +141,6 @@ Bfinder::Bfinder(const edm::ParameterSet& iConfig)
  mup_normChi2(0),  mup_dxy_Bsdecay(0),    mup_dz_Bsdecay(0)    , mupCat(0) , mupAngT(0)    , mupNHits(0)   , mupNPHits(0),
  mup_isGlobalMuon(0), mup_isTrackerMuon(0), mup_isTight(0), mup_isGoodLS_OptimT(0), mup_NMuonHits(0), mup_NMuonStations(0), mup_NTrackerLayers(0), mup_NPixelLayers(0), mup_relIso(0),
 
- BsVertex_isValid(0), BsVertex_Chi(0), BsVertex_normChi(0), JP_Bsdecay_weight(0), phi_Bsdecay_weight(0),
  run(0), event(0)
 
 {
@@ -1027,16 +1026,15 @@ for( std::vector<reco::RecoTauPiZero>::const_iterator iPiZero = pi0Handle->begin
 
                           B_Prob    ->push_back(B_Prob_tmp);
                           B_J_Prob  ->push_back(JP_Prob_tmp);
-                          B_Phi_Prob->push_back(phi_Prob_tmp);
 
    //------------------//
                   mumCat->push_back( mumCategory );
    	             mum_isGlobalMuon->push_back ( recoMuonM->isGlobalMuon() );
                   mum_isTrackerMuon->push_back ( recoMuonM->isTrackerMuon() );
                   mumAngT->push_back( muon::isGoodMuon(*recoMuonM,muon::TMOneStationTight) ); // este es para poner la condicion si es o no softmuon
-                  if ( BsTV.isValid() )
-        	           mum_isTight->push_back ( muon::isTightMuon(*recoMuonM, BsVtx ) );
-                  else
+                  // if ( BsTV.isValid() )
+        	        //    mum_isTight->push_back ( muon::isTightMuon(*recoMuonM, BsVtx ) );
+                  // else
                     mum_isTight->push_back ( -1 );
                   mum_isGoodLS_OptimT->push_back( muon::isGoodMuon(*recoMuonM,muon::TMLastStationOptimizedLowPtTight) );
 
@@ -1073,9 +1071,9 @@ for( std::vector<reco::RecoTauPiZero>::const_iterator iPiZero = pi0Handle->begin
                   mup_isGlobalMuon->push_back ( recoMuonP->isGlobalMuon() );
                   mup_isTrackerMuon->push_back ( recoMuonP->isTrackerMuon() );
                   mupAngT->push_back( muon::isGoodMuon(*recoMuonP,muon::TMOneStationTight) ); // este es para poner la condicion si es o no softmuon
-                  if ( BsTV.isValid() )
-        	           mup_isTight->push_back ( muon::isTightMuon(*recoMuonP, BsVtx ) );
-                  else
+                  // if ( BsTV.isValid() )
+        	        //    mup_isTight->push_back ( muon::isTightMuon(*recoMuonP, BsVtx ) );
+                  // else
                     mup_isTight->push_back ( -1 );
                   mup_isGoodLS_OptimT->push_back( muon::isGoodMuon(*recoMuonP,muon::TMLastStationOptimizedLowPtTight) );
 
@@ -1109,14 +1107,12 @@ for( std::vector<reco::RecoTauPiZero>::const_iterator iPiZero = pi0Handle->begin
 
                           /////////////////////////////////////////////////
 
-                          phiParticles.clear();
                           muonParticles.clear();
                           Bs_candidate_init.clear();
                           Bs_candidate.clear();
-                          BsTracks.clear();
                           vertexTracks.clear();
-   	     } // one kaon
-   	} // another kaon
+   	     } // pion0
+   	} // kaon
    } // muon from jpsi
    }//muon from jpsi
 
@@ -1137,7 +1133,7 @@ for( std::vector<reco::RecoTauPiZero>::const_iterator iPiZero = pi0Handle->begin
       triggersMuPL->clear(); triggersMuML->clear();
       triggersL1L2_MuPL->clear(); triggersL1L2_MuML->clear();
 
-      Bs_mass_c0->clear(); JPsi_K_mass_cjp->clear();
+      Bs_mass_c0->clear();   JPsi_K_mass_cjp->clear();
       Bs_px_cjp->clear();           Bs_py_cjp->clear();          Bs_pz_cjp->clear();
       B_DecayVtxX->clear();    B_DecayVtxY->clear();   B_DecayVtxZ->clear();
       B_DecayVtxXE->clear();   B_DecayVtxYE->clear();  B_DecayVtxZE->clear();
@@ -1150,17 +1146,16 @@ for( std::vector<reco::RecoTauPiZero>::const_iterator iPiZero = pi0Handle->begin
       B_mu_px1_cjp->clear();   B_mu_py1_cjp->clear();  B_mu_pz1_cjp->clear();
       B_mu_px2_cjp->clear();   B_mu_py2_cjp->clear();  B_mu_pz2_cjp->clear();
 
-      B_Prob->clear(); B_J_Prob->clear(); B_Phi_Prob->clear();
+      B_Prob->clear(); B_J_Prob->clear();
 
       kaonP_px_0c->clear();     kaonP_py_0c->clear();    kaonP_pz_0c->clear();
       kaonP_px_cjp->clear();     kaonP_py_cjp->clear();    kaonP_pz_cjp->clear();
       kaonP_track_normchi2->clear();   kaonP_Hits->clear();    kaonP_PHits->clear();
       kaonP_dxy_Bsdecay->clear();  kaonP_dz_Bsdecay->clear(); kaonP_NTrackerLayers->clear();  kaonP_NPixelLayers->clear();
 
-      kaonM_px_0c->clear();     kaonM_py_0c->clear();    kaonM_pz_0c->clear();
-      kaonM_px_cjp->clear();     kaonM_py_cjp->clear();    kaonM_pz_cjp->clear();
-      kaonM_track_normchi2->clear();   kaonM_Hits->clear();    kaonM_PHits->clear();
-      kaonM_dxy_Bsdecay->clear();  kaonM_dz_Bsdecay->clear(); kaonM_NTrackerLayers->clear();  kaonM_NPixelLayers->clear();
+      pfMass->clear();
+      pion_px->clear();    pion_py->clear();   pion_px->clear();    pion_pt->clear();
+      pi_maxDeltaR->clear();    pi_numberOfGammas->clear();
 
       //
 
@@ -1179,8 +1174,6 @@ for( std::vector<reco::RecoTauPiZero>::const_iterator iPiZero = pi0Handle->begin
 
       mup_normChi2->clear();   mup_dxy_Bsdecay->clear();    mup_dz_Bsdecay->clear(); mupCat->clear();    mupAngT->clear();   mupNHits->clear();  mupNPHits->clear();
       mup_isGlobalMuon->clear(); mup_isTrackerMuon->clear(); mup_isTight->clear(); mup_isGoodLS_OptimT->clear(); mup_NMuonHits->clear(); mup_NMuonStations->clear(); mup_NTrackerLayers->clear(); mup_NPixelLayers->clear(); mup_relIso->clear();
-
-      BsVertex_isValid->clear(); BsVertex_Chi->clear(); BsVertex_normChi->clear(); JP_Bsdecay_weight->clear(); phi_Bsdecay_weight->clear();
 
    }
 
@@ -1263,7 +1256,6 @@ for( std::vector<reco::RecoTauPiZero>::const_iterator iPiZero = pi0Handle->begin
 
      tree_->Branch("B_Prob"            , &B_Prob               );
      tree_->Branch("B_J_Prob"          , &B_J_Prob             );
-     tree_->Branch("B_Phi_Prob"          , &B_Phi_Prob             );
 
      tree_->Branch("kaonP_px_0c"        , &kaonP_px_0c           );
      tree_->Branch("kaonP_py_0c"        , &kaonP_py_0c           );
@@ -1279,19 +1271,14 @@ for( std::vector<reco::RecoTauPiZero>::const_iterator iPiZero = pi0Handle->begin
      tree_->Branch("kaonP_NTrackerLayers"       , &kaonP_NTrackerLayers          );
      tree_->Branch("kaonP_NPixelLayers"       , &kaonP_NPixelLayers          );
 
-     tree_->Branch("kaonM_px_0c"        , &kaonM_px_0c           );
-     tree_->Branch("kaonM_py_0c"        , &kaonM_py_0c           );
-     tree_->Branch("kaonM_pz_0c"        , &kaonM_pz_0c           );
-     tree_->Branch("kaonM_px_cjp"        , &kaonM_px_cjp           );
-     tree_->Branch("kaonM_py_cjp"        , &kaonM_py_cjp           );
-     tree_->Branch("kaonM_pz_cjp"        , &kaonM_pz_cjp           );
-     tree_->Branch("kaonM_track_normchi2"   , &kaonM_track_normchi2      );
-     tree_->Branch("kaonM_Hits"        , &kaonM_Hits           );
-     tree_->Branch("kaonM_PHits"       , &kaonM_PHits          );
-     tree_->Branch("kaonM_dxy_Bsdecay"         , &kaonM_dxy_Bsdecay          );
-     tree_->Branch("kaonM_dz_Bsdecay"          , &kaonM_dz_Bsdecay          );
-     tree_->Branch("kaonM_NTrackerLayers"       , &kaonM_NTrackerLayers          );
-     tree_->Branch("kaonM_NPixelLayers"       , &kaonM_NPixelLayers          );
+     tree_->Branch("pfMass"        , &pfMass           );
+     tree_->Branch("pion_px"        , &pion_px           );
+     tree_->Branch("pion_py"        , &pion_py           );
+     tree_->Branch("pion_pz"        , &pion_pz           );
+     tree_->Branch("pion_pt"        , &pion_pt           );
+     tree_->Branch("pi_maxDeltaR"        , &pi_maxDeltaR           );
+     tree_->Branch("pi_numberOfGammas"   , &pi_numberOfGammas      );
+
 
      tree_->Branch("PV_bestBang_X"     , &PV_bestBang_X        );
      tree_->Branch("PV_bestBang_Y"     , &PV_bestBang_Y        );
@@ -1369,11 +1356,6 @@ for( std::vector<reco::RecoTauPiZero>::const_iterator iPiZero = pi0Handle->begin
      tree_->Branch("mup_NPixelLayers"  , &mup_NPixelLayers     );
      tree_->Branch("mup_relIso"        , &mup_relIso           );
 
-     tree_->Branch("BsVertex_isValid"        , &BsVertex_isValid           );
-     tree_->Branch("BsVertex_Chi"        , &BsVertex_Chi           );
-     tree_->Branch("BsVertex_normChi"        , &BsVertex_normChi           );
-     tree_->Branch("JP_Bsdecay_weight"       , &JP_Bsdecay_weight          );
-     tree_->Branch("phi_Bsdecay_weight"       , &phi_Bsdecay_weight          );
    }
 
 
