@@ -7,8 +7,8 @@ _fileOUT = 'B_JPsi_Kstar_2171.root'
 MyFileNamesMC = glob.glob( MCpath(1) + "*.root")
 MyFileNamesDA = glob.glob("/afs/cern.ch/work/o/ofilatov/CMSSW_5_3_24/src/XbFrame/Xb_frame/crab_projects_Bfinder_B_JPsi_Kstar_v1/crab_Bfinder_*/results/*.root")
 
-__aa = 0;    __bb = 10
-##__aa = 0;  __bb =  len(MyFileNamesDA);
+##__aa = 0;    __bb = 10
+__aa = 0;  __bb =  len(MyFileNamesDA);
 MyFileNames = (MyFileNamesMC if isMC else MyFileNamesDA[__aa: __bb]); ch = TChain('mkcands/ntuple');
 
 for fName in  MyFileNames:
@@ -24,7 +24,7 @@ H_cuts = TH1F("H_cuts", "H_cuts", 40, 0, 20)
 ###  declaration and connecting to the branches of my new variables {{{1
 NOUT, NOUT_evt, BBB, ibs = [int(0) for i in range(4)];
 PV, PVE, JPV, JPVE, JPP3, BsV_Cjp, BsP3_Cjp, BsVE_Cjp, _TV3zero = [TVector3() for i in range(9)]
-JP_Kaon_P4_cjp, B_P4_c0, B_P4_Cjp, kaonP_P4_cjp, kaonP_P4_0c, pion_P4, kaonStar_P4, MU1P4_cjp, MU2P4_cjp = [TLorentzVector() for i in range(8)];
+JP_Kaon_P4_cjp, B_P4_c0, B_P4_Cjp, kaonP_P4_cjp, kaonP_P4_0c, pion_P4, kaonStar_P4, MU1P4_cjp, MU2P4_cjp = [TLorentzVector() for i in range(9)];
 _TV3zero  = TVector3(0,0,0)
 
 _MY_VARS_ = [
@@ -55,7 +55,7 @@ _MY_VARS_ = [
 
 #-----~-----
 ##"JP_Eta_cjp", "JP_Phi_cjp", "JP_pvcos2_Cmumu",
-'JP_mass',
+'JP_mass_c0',
 'Jpsi_VtxProb', "JP_DS_2D_Cmumu", 
 
 #-----~-----
@@ -87,14 +87,12 @@ for evt in range(0, nEvt):
     if (ch.GetEntry(evt) <= 0) : break;
     BInfo_size  = ch.nB
     if len(ch.mum_dxy_Bsdecay) != BInfo_size:
-##        print 'Sizes do not match!', 'array len = ', len(ch.mum_dxy_Bsdecay), ' nB = ', BInfo_size
+        print 'Sizes do not match!', 'array len = ', len(ch.mum_dxy_Bsdecay), ' nB = ', BInfo_size
 	match_i += 1
         continue
     
     for Bj in range(BInfo_size):
-        ##
         ibs = Bj
-        ##
 
 #####~~~~~~~~~~~~~~~~~~~~~#####
 ###~~~~~~~~~~Muons~~~~~~~~~~###
@@ -145,7 +143,7 @@ for evt in range(0, nEvt):
 	mup_isTrackerMuon[0] = ch.mup_isTrackerMuon[ibs];  mup_isGoodLS_OptimT[0] = ch.mup_isGoodLS_OptimT[ibs];  
 
 	#
-        if (not 'HLT_DoubleMu4_Jpsi_Displaced' in ch.triggersMuPL[ibs]) or (not 'HLT_DoubleMu4_Jpsi_Displaced' in ch.triggersMuML[ibs])  :continue
+##        if (not 'HLT_DoubleMu4_Jpsi_Displaced' in ch.triggersMuPL[ibs]) or (not 'HLT_DoubleMu4_Jpsi_Displaced' in ch.triggersMuML[ibs])  :continue
         #
 
 
@@ -157,6 +155,7 @@ for evt in range(0, nEvt):
         MU1P4_cjp   .SetXYZM(ch.B_mu_px1_cjp[ibs], ch.B_mu_py1_cjp[ibs], ch.B_mu_pz1_cjp[ibs], PDG_MUON_MASS)
         MU2P4_cjp   .SetXYZM(ch.B_mu_px2_cjp[ibs], ch.B_mu_py2_cjp[ibs], ch.B_mu_pz2_cjp[ibs], PDG_MUON_MASS)
         MUMUP4_cjp = MU1P4_cjp + MU2P4_cjp
+        
         JPV     = TVector3( ch.B_J_DecayVtxX[ibs],  ch.B_J_DecayVtxY[ibs],  ch.B_J_DecayVtxZ[ibs]   )
         JPVE    = TVector3( sqrt(ch.B_J_DecayVtxXE[ibs]), sqrt(ch.B_J_DecayVtxYE[ibs]), sqrt(ch.B_J_DecayVtxZE[ibs])  )
         JPP3    = TVector3( ch.B_J_px[ibs],         ch.B_J_py[ibs],         ch.B_J_pz[ibs])
@@ -174,6 +173,7 @@ for evt in range(0, nEvt):
         if sqrt (ch.B_J_px[ibs]**2 + ch.B_J_py[ibs]**2) < 6.9:
             H_cuts.Fill(12)
 	    continue
+	
         if ch.B_J_Prob[ibs] < 0.1:
             H_cuts.Fill(13)
             continue
@@ -196,7 +196,7 @@ for evt in range(0, nEvt):
 	deltaR_mupmum_cjp[0] = MU1P4_cjp.DeltaR(MU2P4_cjp)
         Jpsi_VtxProb[0]      = ch.B_J_Prob[ibs]
         JP_DS_2D_Cmumu[0]    = DetachSignificance2( JPV - PV, PVE, JPVE)
-        JP_mass[0]           = ch.B_J_mass[ibs]
+        JP_mass_c0[0]           = ch.B_J_mass[ibs]
 
 #####~~~~~~~~~~~~~~~~~~~~~#####
 ###~~~~~~~~~~Kaon~~~~~~~~~~###
@@ -275,7 +275,7 @@ for evt in range(0, nEvt):
 ##            continue
 
         B_vtxprob_Cjp[0]       = ch.B_Prob[ibs]
-        if B_vtxprob_Cjp[0] < 0.1 :  ## 0.1 in Bfinder
+        if B_vtxprob_Cjp[0] < 0.1 :  ## 0.05 in Bfinder
             H_cuts.Fill(10)
             continue
 
