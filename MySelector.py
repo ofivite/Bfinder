@@ -24,7 +24,7 @@ H_cuts = TH1F("H_cuts", "H_cuts", 40, 0, 20)
 ###  declaration and connecting to the branches of my new variables {{{1
 NOUT, NOUT_evt, BBB, ibs = [int(0) for i in range(4)];
 PV, PVE, JPV, JPVE, JPP3, BsV_Cjp, BsP3_Cjp, BsVE_Cjp, _TV3zero = [TVector3() for i in range(9)]
-BsP4_Cjp, kaonP_P4_cjp, kaonP_P4_0c, pion_P4, kaonStar_P4, MU1P4_cjp, MU2P4_cjp = [TLorentzVector() for i in range(7)];
+JP_Kaon_P4_cjp, B_P4_c0, B_P4_Cjp, kaonP_P4_cjp, kaonP_P4_0c, pion_P4, kaonStar_P4, MU1P4_cjp, MU2P4_cjp = [TLorentzVector() for i in range(8)];
 _TV3zero  = TVector3(0,0,0)
 
 _MY_VARS_ = [
@@ -59,12 +59,14 @@ _MY_VARS_ = [
 'Jpsi_VtxProb', "JP_DS_2D_Cmumu", 
 
 #-----~-----
-"Bs_mass_Cjp",
-"Bs_pt_Cjp", "Bs_pvdistsignif2_Cjp", 
-"Bs_pvcos2_Cjp", "Bs_vtxprob_Cjp",
-"Bs_Eta_cjp", "Bs_Phi_cjp", 
 
-'BsVertex_isValid', 'BsVertex_Chi', 'BsVertex_normChi', 'PV_refit_prob',
+'JP_Kaon_mass_cjp',
+"B_mass_c0", 'B_mass_cjp',
+"B_pt_Cjp", "B_pvdistsignif2_Cjp", 
+"B_pvcos2_Cjp", "B_vtxprob_Cjp",
+"B_Eta_cjp", "B_Phi_cjp", 
+
+'PV_refit_prob',
 
 "SAMEEVENT"]
 _MC_VARS = ["MC_mu", "MC_k1"];
@@ -247,39 +249,41 @@ for evt in range(0, nEvt):
 ###~~~~~~~~~~B and misc.~~~~~~~~~~###
 #####~~~~~~~~~~~~~~~~~~~~~~~~~~~~#####
 
-        BsP4_Cjp    .SetXYZM  ( ch.Bs_px_cjp[ibs], ch.Bs_py_cjp[ibs], ch.Bs_pz_cjp[ibs], ch.Bs_mass_cjp[ibs])
-
+        JP_Kaon_P4_cjp = MUMUP4_cjp + kaonP_P4_cjp
+        B_P4_Cjp     = pion_P4 + JP_Kaon_P4_cjp        
+        
         BsV_Cjp     = TVector3(ch.B_DecayVtxX[ibs],  ch.B_DecayVtxY[ibs],  ch.B_DecayVtxZ[ibs]   )
         BsVE_Cjp    = TVector3( sqrt(ch.B_DecayVtxXE[ibs]), sqrt(ch.B_DecayVtxYE[ibs]), sqrt(ch.B_DecayVtxZE[ibs])  )
-        BsP3_Cjp    = BsP4_Cjp.Vect()
+        BsP3_Cjp    = B_P4_Cjp.Vect()
 
-        Bs_mass_Cjp[0]          = ch.Bs_mass_cjp[ibs]
-        if Bs_mass_Cjp[0]   <   5.2    :continue
-        if Bs_mass_Cjp[0]   >   5.5    :continue
+        B_mass_c0[0]          = ch.Bs_mass_c0[ibs]
+        B_mass_cjp[0]          = B_P4_Cjp.M()
+        JP_Kaon_mass_cjp[0] = ch.JPsi_K_mass_cjp[ibs]
+##        PDG_BU_MASS         = 5.27932
+##        if abs(PDG_BU_MASS - B_mass_c0[0])  > 0.05   :continue # were 5.32 - 5.41
 
-        Bs_pt_Cjp[0]            = BsP4_Cjp.Pt()
-##        if Bs_pt_Cjp[0] <   10.0    :continue
-##        Bs_p_Cjp[0]             = BsP4_Cjp.Vect().Mag()
 
-        Bs_pvdistsignif2_Cjp[0] = DetachSignificance2( BsV_Cjp - PV, PVE, BsVE_Cjp)
-        if Bs_pvdistsignif2_Cjp[0] < 3. :continue
+        B_pt_Cjp[0]            = B_P4_Cjp.Pt()
 
-        Bs_pvcos2_Cjp[0]        = DirectionCos2 ( BsV_Cjp - PV, BsP3_Cjp ) 
-        if Bs_pvcos2_Cjp[0] < 0.9 :
+        B_pvdistsignif2_Cjp[0] = DetachSignificance2( BsV_Cjp - PV, PVE, BsVE_Cjp)
+        if B_pvdistsignif2_Cjp[0] < 3. :continue
+
+        B_pvcos2_Cjp[0]        = DirectionCos2 ( BsV_Cjp - PV, BsP3_Cjp )  ## note that the PV was selected for 'bare' B momentum vector, w/o cjp components
+                                                                           ## here you are trying to calculate cosine for cjp B meson vector
+        if B_pvcos2_Cjp[0] < 0.9 :
             H_cuts.Fill(9)
-            continue
+##            continue
 
-        Bs_vtxprob_Cjp[0]       = ch.B_Prob[ibs]
-        if Bs_vtxprob_Cjp[0] < 0.05 :
+        B_vtxprob_Cjp[0]       = ch.B_Prob[ibs]
+        if B_vtxprob_Cjp[0] < 0.1 :  ## 0.1 in Bfinder
             H_cuts.Fill(10)
             continue
 
-        if abs(BsP4_Cjp.Eta())  > 2.5   :continue
+        if abs(B_P4_Cjp.Eta())  > 2.5   :continue
 
-        Bs_Phi_cjp[0]            = BsP4_Cjp.Phi()
-        Bs_Eta_cjp[0]            = BsP4_Cjp.Eta()
+        B_Phi_cjp[0]            = B_P4_Cjp.Phi()
+        B_Eta_cjp[0]            = B_P4_Cjp.Eta()
 
-	BsVertex_isValid[0] = ch.BsVertex_isValid[ibs];  BsVertex_Chi[0] = ch.BsVertex_Chi[ibs];  BsVertex_normChi[0] = ch.BsVertex_normChi[ibs] 
 	PV_refit_prob[0] = ch.PV_bestBang_RF_CL[ibs]
 #---------------------------------------------------
 
