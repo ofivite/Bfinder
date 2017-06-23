@@ -720,14 +720,14 @@ for(vector<reco::PFCandidate>::const_iterator iKaonM = pfHandle->begin(); iKaonM
 */
 
                //Now we are ready to combine!
-               if(fabs((p4jpsi_0c + p4phi_0c).M() - PDG_BS_MASS) > 0.6) continue;
+               if(fabs((p4jpsi_0c + p4phi_0c).M() - PDG_PSI2S_MASS) > 0.4) continue;
 
                std::vector<RefCountedKinematicParticle> Bs_candidate_init;
 
                Bs_candidate_init.push_back(pFactory.particle(muon1TT, PM_PDG_MUON_MASS, chi,ndf, PM_muon_sigma));
                Bs_candidate_init.push_back(pFactory.particle(muon2TT, PM_PDG_MUON_MASS, chi,ndf, PM_muon_sigma));
-               Bs_candidate_init.push_back(pFactory.particle(kaonPTT, PM_PDG_KAON_MASS, chi,ndf, PM_kaon_sigma));
-               Bs_candidate_init.push_back(pFactory.particle(kaonMTT, PM_PDG_KAON_MASS, chi,ndf, PM_kaon_sigma));
+               Bs_candidate_init.push_back(pFactory.particle(kaonPTT, iKaonP->mass(), chi,ndf, PM_kaon_sigma));
+               Bs_candidate_init.push_back(pFactory.particle(kaonMTT, iKaonM->mass(), chi,ndf, PM_kaon_sigma));
                RefCountedKinematicTree xbVFT, BsFitTree;
 
                std::vector<RefCountedKinematicParticle> Bs_candidate = Bs_candidate_init;
@@ -755,12 +755,12 @@ for(vector<reco::PFCandidate>::const_iterator iKaonM = pfHandle->begin(); iKaonM
 
                double Bs_mass_cjp_tmp = bCandCjp->currentState().mass();
 
-               if(Bs_mass_cjp_tmp < 5.2) continue;
-               if(Bs_mass_cjp_tmp > 5.5) continue;
+               if(Bs_mass_cjp_tmp < 3.5) continue;
+               if(Bs_mass_cjp_tmp > 3.85) continue;
                //
                if(bDecayVertexCjp->chiSquared()<0) continue;
                double B_Prob_tmp   = TMath::Prob(bDecayVertexCjp->chiSquared(), (int) bDecayVertexCjp->degreesOfFreedom());
-               if(B_Prob_tmp < 0.02) continue;
+               if(B_Prob_tmp < 0.01) continue;
 
 
  	             GlobalPoint BsGP = GlobalPoint( (*bDecayVertexCjp).position().x(), (*bDecayVertexCjp).position().y(), (*bDecayVertexCjp).position().z() );
@@ -838,8 +838,8 @@ for(vector<reco::PFCandidate>::const_iterator iKaonM = pfHandle->begin(); iKaonM
                     TrackRef trackRef = iTrack->castTo<TrackRef>();
 
                     // the 4 tracks in the B cand are  patTrack_Kp glbTrackP glbTrackM
-                    if (  !(   (patTrack_Kp.track()==trackRef)  ||
-                               (patTrack_Km.track()==trackRef)  ||
+                    if (  !(   (trackRef_P==trackRef)  ||
+                               (trackRef_M==trackRef)  ||
                                (trkTrackP==trackRef)            ||
                                (trkTrackM==trackRef)           ) )
                        {
@@ -875,6 +875,7 @@ for(vector<reco::PFCandidate>::const_iterator iKaonM = pfHandle->begin(); iKaonM
                 }
                }
 
+/*
      TransientTrack JP_TT = MUMUparticle->refittedTransientTrack();
      if (!JP_TT.isValid()) continue;
 
@@ -908,6 +909,7 @@ for(vector<reco::PFCandidate>::const_iterator iKaonM = pfHandle->begin(); iKaonM
                BsVertex_normChi->push_back(-999);
           }
 
+*/
                //cout << "PV bestPV_Bang: " <<bestPV_Bang.x()<< " "<<bestPV_Bang.y()<<" "<<bestPV_Bang.z()<< endl;
             // }}}
 
@@ -1066,7 +1068,7 @@ for(vector<reco::PFCandidate>::const_iterator iKaonM = pfHandle->begin(); iKaonM
 
                           B_Prob    ->push_back(B_Prob_tmp);
                           B_J_Prob  ->push_back(JP_Prob_tmp);
-                          B_Phi_Prob->push_back(phi_Prob_tmp);
+ //                         B_Phi_Prob->push_back(phi_Prob_tmp);
 
    //------------------//
                   mumCat->push_back( mumCategory );
