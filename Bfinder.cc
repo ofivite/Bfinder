@@ -328,6 +328,10 @@ void Bfinder::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   Handle< vector<pat::Muon> > thePATMuonHandle;
   iEvent.getByLabel(muonType, thePATMuonHandle);
 
+  Handle< vector<reco::PFCandidate> > pfHandle;
+  iEvent.getByLabel("particleFlow", pfHandle);
+
+
   //get genParticles
   // Handle<GenParticleCollection> genParticles;
 //   if (doMC_)
@@ -618,20 +622,21 @@ RefCountedKinematicTree
 // 	   int PId1=0; int PId2=0;
 
 
-	   pat::GenericParticle patTrack_Kp;
- 	   pat::GenericParticle patTrack_Km;
+//	   pat::GenericParticle patTrack_Kp;
+// 	   pat::GenericParticle patTrack_Km;
 
-	   for(vector<pat::GenericParticle>::const_iterator iKaonP = thePATTrackHandle->begin(); iKaonP != thePATTrackHandle->end(); ++iKaonP )
+	   for(vector<reco::PFCandidate>::const_iterator iKaonP = pfHandle->begin(); iKaonP != pfHandle->end(); ++iKaonP )
 	     {
 
 // 	       int ngenT1 = 0;//PdgIDatTruthLevel(iKaonP->track(), genParticles, PId1);
-	       patTrack_Kp = *iKaonP;
+//	       patTrack_Kp = *iKaonP;
 
-        if(iKaonP->pt() < 0.7 || iKaonP->charge() != 1 || fabs(iKaonP->eta()) > 2.5) continue;
+       	       if(iKaonP->pt() < 0.7 || iKaonP->charge() != 1 || fabs(iKaonP->eta()) > 2.5 || iKaonP->particleId() != 1) continue;
+	       TrackRef trackRef_P, trackRef_M;
 
-
-	       if(!(patTrack_Kp.track()->quality(reco::TrackBase::highPurity))) continue;
-
+	       trackRef_P = iKaonP->trackRef();
+	       if(!(trackRef_P->quality(reco::TrackBase::highPurity))) continue;
+/*
                bool matchflag = false;
                const reco::CandidatePtrVector & mu1P_overlaps = patTrack_Kp.overlaps(muonTypeForPAT);
                if ( mu1P_overlaps.size() > 0 ) //std::cout << "patTrack_Kp overlaps with a muon." << endl;
@@ -647,21 +652,22 @@ RefCountedKinematicTree
                }
 
                if(matchflag) continue;
-
-               TransientTrack kaonPTT(patTrack_Kp.track(), &(*bFieldHandle) );
+*/
+               TransientTrack kaonPTT(trackRef_P, &(*bFieldHandle) );
                if(!kaonPTT.isValid()) continue;
 
 /////
-for(vector<pat::GenericParticle>::const_iterator iKaonM = thePATTrackHandle->begin(); iKaonM != thePATTrackHandle->end(); ++iKaonM )
+for(vector<reco::PFCandidate>::const_iterator iKaonM = pfHandle->begin(); iKaonM != pfHandle->end(); ++iKaonM )
   {
    if(iKaonP == iKaonM) continue;
 // 	       int ngenT1 = 0;//PdgIDatTruthLevel(iKaonP->track(), genParticles, PId1);
-   patTrack_Km = *iKaonM;
-   if(iKaonM->pt() < 0.7 || iKaonM->charge() != -1 || fabs(iKaonP->eta()) > 2.5) continue;
+//   patTrack_Km = *iKaonM;
+   if(iKaonM->pt() < 0.7 || iKaonM->charge() != -1 || fabs(iKaonP->eta()) > 2.5 || iKaonM->particleId() != 1) continue;
 
+    trackRef_M = iKaonM->trackRef();
+    if(!(trackRef_M->quality(reco::TrackBase::highPurity))) continue;
 
-    if(!(patTrack_Km.track()->quality(reco::TrackBase::highPurity))) continue;
-
+/*
           bool matchflag = false;
           const reco::CandidatePtrVector & mu2P_overlaps = patTrack_Km.overlaps(muonTypeForPAT);
           if ( mu2P_overlaps.size() > 0 ) //std::cout << "patTrack_Kp overlaps with a muon." << endl;
@@ -677,20 +683,20 @@ for(vector<pat::GenericParticle>::const_iterator iKaonM = thePATTrackHandle->beg
           }
 
           if(matchflag) continue;
-
-          TransientTrack kaonMTT(patTrack_Km.track(), &(*bFieldHandle) );
+*/
+          TransientTrack kaonMTT(trackRef_M, &(*bFieldHandle) );
           if(!kaonMTT.isValid()) continue;
 
 
                TLorentzVector p4kaonP_0c, p4kaonM_0c, p4phi_0c, p4jpsi_0c;
-               p4kaonP_0c.SetXYZM(iKaonP->px(),iKaonP->py(),iKaonP->pz(), PDG_KAON_MASS);
-               p4kaonM_0c.SetXYZM(iKaonM->px(),iKaonM->py(),iKaonM->pz(), PDG_KAON_MASS);
+               p4kaonP_0c.SetPtEtaPhiE(iKaonP->pt(),iKaonP->eta(),iKaonP->phi(), iKaonP->energy());
+               p4kaonM_0c.SetPtEtaPhiE(iKaonM->pt(),iKaonM->eta(),iKaonM->phi(), iKaonM->energy());
 
                p4phi_0c = p4kaonP_0c + p4kaonM_0c;
                p4jpsi_0c = p4mu1_0c + p4mu2_0c;
-               if(p4phi_0c.M() > PDG_PHI_MASS + 0.1) continue;
-               if(p4phi_0c.M() < PDG_PHI_MASS - 0.1) continue;
-
+               if(p4phi_0c.M() >  0.7) continue;
+               if(p4phi_0c.M() < 0.3) continue;
+/*
                 std::vector<RefCountedKinematicParticle> phiParticles;
                 phiParticles.push_back(pFactory.particle(kaonPTT, PM_PDG_KAON_MASS, chi,ndf, PM_kaon_sigma));
                 phiParticles.push_back(pFactory.particle(kaonMTT, PM_PDG_KAON_MASS, chi,ndf, PM_kaon_sigma));
@@ -711,7 +717,7 @@ for(vector<pat::GenericParticle>::const_iterator iKaonM = thePATTrackHandle->beg
                 if ( PHI_mass_c0 < PDG_PHI_MASS - 0.05 ) continue;
                 if ( PHI_mass_c0 > PDG_PHI_MASS + 0.05 ) continue;
 
-
+*/
 
                //Now we are ready to combine!
                if(fabs((p4jpsi_0c + p4phi_0c).M() - PDG_BS_MASS) > 0.6) continue;
