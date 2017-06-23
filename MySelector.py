@@ -2,10 +2,10 @@ from ROOT import *; import glob, numpy as n; from array import array
 from variables import *
 isMC = 0
 
-_fileOUT = 'BsJpsiPhi_v3_notall.root'
+_fileOUT = 'B_JPsi_Kstar_2171.root'
 
 MyFileNamesMC = glob.glob( MCpath(1) + "*.root")
-MyFileNamesDA = glob.glob("/afs/cern.ch/work/o/ofilatov/CMSSW_5_3_24/src/XbFrame/Xb_frame/crab_projects_Bfinder_Bs_v3/crab_Bfinder_*/results/*.root")
+MyFileNamesDA = glob.glob("/afs/cern.ch/work/o/ofilatov/CMSSW_5_3_24/src/XbFrame/Xb_frame/crab_projects_Bfinder_B_JPsi_Kstar_v1/crab_Bfinder_*/results/*.root")
 
 ##__aa = 0;    __bb = 100
 __aa = 0;  __bb =  len(MyFileNamesDA);
