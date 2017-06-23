@@ -7,8 +7,8 @@ _fileOUT = 'B_JPsi_Kstar_2171.root'
 MyFileNamesMC = glob.glob( MCpath(1) + "*.root")
 MyFileNamesDA = glob.glob("/afs/cern.ch/work/o/ofilatov/CMSSW_5_3_24/src/XbFrame/Xb_frame/crab_projects_Bfinder_B_JPsi_Kstar_v1/crab_Bfinder_*/results/*.root")
 
-##__aa = 0;    __bb = 100
-__aa = 0;  __bb =  len(MyFileNamesDA);
+__aa = 0;    __bb = 10
+##__aa = 0;  __bb =  len(MyFileNamesDA);
 MyFileNames = (MyFileNamesMC if isMC else MyFileNamesDA[__aa: __bb]); ch = TChain('mkcands/ntuple');
 
 for fName in  MyFileNames:
@@ -24,7 +24,7 @@ H_cuts = TH1F("H_cuts", "H_cuts", 40, 0, 20)
 ###  declaration and connecting to the branches of my new variables {{{1
 NOUT, NOUT_evt, BBB, ibs = [int(0) for i in range(4)];
 PV, PVE, JPV, JPVE, JPP3, BsV_Cjp, BsP3_Cjp, BsVE_Cjp, _TV3zero = [TVector3() for i in range(9)]
-BsP4_Cjp, kaonP_P4_cjp, kaonM_P4_cjp, kaonP_P4_0c, kaonM_P4_0c, MU1P4_cjp, MU2P4_cjp = [TLorentzVector() for i in range(7)];
+BsP4_Cjp, kaonP_P4_cjp, kaonP_P4_0c, pion_P4, kaonStar_P4, MU1P4_cjp, MU2P4_cjp = [TLorentzVector() for i in range(7)];
 _TV3zero  = TVector3(0,0,0)
 
 _MY_VARS_ = [
@@ -33,14 +33,15 @@ _MY_VARS_ = [
 'kaonP_track_normchi2', 'kaonP_Hits',  'kaonP_PHits',
 'kaonP_dxy_Bsdecay', 'kaonP_dz_Bsdecay', 'kaonP_NTrackerLayers',  'kaonP_NPixelLayers',
 
-'kaonM_pt_0c', 'kaonM_pt_cjp',
-'kaonM_track_normchi2', 'kaonM_Hits',  'kaonM_PHits',
-'kaonM_dxy_Bsdecay', 'kaonM_dz_Bsdecay', 'kaonM_NTrackerLayers',  'kaonM_NPixelLayers',
-'deltaR_KpKm',
-
 #-----~-----
-'phi_Bsdecay_weight', 'Phi_VtxProb', 
-'phi_mass_0c', 'phi_mass_cjp', 'phi_pt_0c', 'phi_pt_cjp',
+'pfMass', 'pion_pt',
+'pi_maxDeltaR', 'pi_numberOfGammas',
+
+'deltaR_K_pi',
+#-----~-----
+
+'kStar_mass', 'kStar_pt',
+'deltaR_Jpsi_kStar',
 
 #-----~-----
 'areSoft', 'areTight_def', 'areTight_HM', 'areMyGlobal',
@@ -53,9 +54,9 @@ _MY_VARS_ = [
 'deltaR_mupmum_cjp',
 
 #-----~-----
-##"JP_Eta_cjp", "JP_Phi_cjp",
-'JP_Bsdecay_weight', 'Jpsi_VtxProb',
-##"JP_vtxprob_Cmumu", "JP_pvcos2_Cmumu", "JP_DS_2D_Cmumu", 
+##"JP_Eta_cjp", "JP_Phi_cjp", "JP_pvcos2_Cmumu",
+'JP_mass',
+'Jpsi_VtxProb', "JP_DS_2D_Cmumu", 
 
 #-----~-----
 "Bs_mass_Cjp",
@@ -159,7 +160,11 @@ for evt in range(0, nEvt):
         JPP3    = TVector3( ch.B_J_px[ibs],         ch.B_J_py[ibs],         ch.B_J_pz[ibs])
         PV          = TVector3( ch.PV_bestBang_RF_X[ibs],   ch.PV_bestBang_RF_Y[ibs],   ch.PV_bestBang_RF_Z[ibs]    )
         PVE         = TVector3( sqrt(ch.PV_bestBang_RF_XE[ibs]),  sqrt(ch.PV_bestBang_RF_YE[ibs]),  sqrt(ch.PV_bestBang_RF_ZE[ibs])  )
-        
+
+
+        PDG_JPSI_MASS       =   3.096916
+        if abs(ch.B_J_mass[ibs] - PDG_JPSI_MASS)    > 0.15  :continue
+
         if MU1P4_cjp.Pt() < 4.0 or MU2P4_cjp.Pt() < 4.0:
             H_cuts.Fill(11)
             continue
@@ -171,16 +176,14 @@ for evt in range(0, nEvt):
             H_cuts.Fill(13)
             continue
 
-        if ch.B_J_mass[ibs]   <   3.04    :continue
-        if ch.B_J_mass[ibs]   >   3.15    :continue
-
         if DirectionCos2 ( JPV - PV, JPP3 ) < 0.9:
             H_cuts.Fill(14)
-            continue
+##            continue
 
         if DetachSignificance2( JPV - PV, PVE, JPVE) < 3.0:
             H_cuts.Fill(15)
             continue
+        
         if abs(MUMUP4_cjp.Eta()) > 2.2  :continue
 
 ##        JP_Eta_cjp[0] = MUMUP4_cjp.Eta()
@@ -189,26 +192,22 @@ for evt in range(0, nEvt):
 ##        JPSI_pvcos2_Cmumu_va        = DirectionCos2 ( JPV - PV, JPP3 )
 
 	deltaR_mupmum_cjp[0] = MU1P4_cjp.DeltaR(MU2P4_cjp)
-        Jpsi_VtxProb[0]       = ch.B_J_Prob[ibs]
-	JP_Bsdecay_weight[0] = ch.JP_Bsdecay_weight[ibs]
-
+        Jpsi_VtxProb[0]      = ch.B_J_Prob[ibs]
+        JP_DS_2D_Cmumu[0]    = DetachSignificance2( JPV - PV, PVE, JPVE)
+        JP_mass[0]           = ch.B_J_mass[ibs]
 
 #####~~~~~~~~~~~~~~~~~~~~~#####
-###~~~~~~~~~~Kaons~~~~~~~~~~###
+###~~~~~~~~~~Kaon~~~~~~~~~~###
 #####~~~~~~~~~~~~~~~~~~~~~#####
 
         kaonP_P4_0c  .SetXYZM(ch.kaonP_px_0c[ibs], ch.kaonP_py_0c[ibs], ch.kaonP_pz_0c[ibs], PDG_KAON_MASS)
         kaonP_P4_cjp .SetXYZM(ch.kaonP_px_cjp[ibs], ch.kaonP_py_cjp[ibs], ch.kaonP_pz_cjp[ibs], PDG_KAON_MASS)
-        kaonM_P4_0c  .SetXYZM(ch.kaonM_px_0c[ibs], ch.kaonM_py_0c[ibs], ch.kaonM_pz_0c[ibs], PDG_KAON_MASS)
-        kaonM_P4_cjp .SetXYZM(ch.kaonM_px_cjp[ibs], ch.kaonM_py_cjp[ibs], ch.kaonM_pz_cjp[ibs], PDG_KAON_MASS)
+        pion_P4      .SetXYZM(ch.pion_px[ibs], ch.pion_py[ibs], ch.pion_pz[ibs], ch.pfMass[ibs])
 
 	kaonP_pt_cjp[0] = kaonP_P4_cjp.Pt()
-	kaonM_pt_cjp[0] = kaonM_P4_cjp.Pt()
 	kaonP_pt_0c[0] = kaonP_P4_0c.Pt()
-	kaonM_pt_0c[0] = kaonM_P4_0c.Pt()
 
-	if kaonP_pt_0c[0] < 0.7  or kaonM_pt_0c[0] < 0.7 :continue
-        if abs(kaonP_P4_0c.Eta()) > 2.5 or abs(kaonM_P4_0c.Eta()) > 2.5 :continue
+	if kaonP_pt_0c[0] < 0.7 or abs(kaonP_P4_0c.Eta()) > 2.5 :continue
 
 
         kaonP_track_normchi2[0] = ch.kaonP_track_normchi2[ibs]
@@ -218,36 +217,34 @@ for evt in range(0, nEvt):
         kaonP_NPixelLayers[0] = ch.kaonP_NPixelLayers[ibs]
         kaonP_dxy_Bsdecay[0] = ch.kaonP_dxy_Bsdecay[ibs]
         kaonP_dz_Bsdecay[0] = ch.kaonP_dz_Bsdecay[ibs]
-
-        kaonM_track_normchi2[0] = ch.kaonM_track_normchi2[ibs]
-        kaonM_Hits[0] = ch.kaonM_Hits[ibs]
-        kaonM_PHits[0] = ch.kaonM_PHits[ibs]
-        kaonM_NTrackerLayers[0] = ch.kaonM_NTrackerLayers[ibs]
-        kaonM_NPixelLayers[0] = ch.kaonM_NPixelLayers[ibs]
-        kaonM_dxy_Bsdecay[0] = ch.kaonM_dxy_Bsdecay[ibs]
-        kaonM_dz_Bsdecay[0] = ch.kaonM_dz_Bsdecay[ibs]
-
-	deltaR_KpKm[0] = kaonP_P4_0c.DeltaR(kaonM_P4_0c)
+        
 
 #####~~~~~~~~~~~~~~~~~~~~~#####
-###~~~~~~~~~~Phi~~~~~~~~~~###
+###~~~~~~~~~~Pi~~~~~~~~~~###
 #####~~~~~~~~~~~~~~~~~~~~~#####
 	
-	phi_Bsdecay_weight[0] = ch.phi_Bsdecay_weight[ibs]
-	Phi_VtxProb[0] = ch.B_Phi_Prob[ibs]
+	pfMass[0] = ch.pfMass[ibs]
 
-	phi_mass_0c[0] = (kaonP_P4_0c + kaonM_P4_0c).M()
-	phi_mass_cjp[0] = (kaonP_P4_cjp + kaonM_P4_cjp).M()
-
-	if phi_mass_0c[0] < 1.01 or phi_mass_0c[0] > 1.03   :continue
-
-	phi_pt_0c[0] = (kaonP_P4_0c + kaonM_P4_0c).Pt()
-	phi_pt_cjp[0] = (kaonP_P4_cjp + kaonM_P4_cjp).Pt()
+	pion_pt[0] = ch.pion_pt[ibs]
+	pi_maxDeltaR[0] = ch.pi_maxDeltaR[ibs]
+	pi_numberOfGammas[0] = ch.pi_numberOfGammas[ibs]
+	
+	deltaR_K_pi[0] = kaonP_P4_cjp.DeltaR(pion_P4)
 
 
+#####~~~~~~~~~~~~~~~~~~~~~#####
+###~~~~~~~~~~Kstar~~~~~~~~~~###
+#####~~~~~~~~~~~~~~~~~~~~~#####
+	
+        kaonStar_P4 = pion_P4 + kaonP_P4_cjp
+        kStar_mass[0] = kaonStar_P4.M()
+        kStar_pt = kaonStar_P4.Pt()
+
+        deltaR_Jpsi_kStar[0] = kaonStar_P4.DeltaR(MUMUP4_cjp)
+        	
 
 #####~~~~~~~~~~~~~~~~~~~~~~~~~~~~#####
-###~~~~~~~~~~Bc and misc.~~~~~~~~~~###
+###~~~~~~~~~~B and misc.~~~~~~~~~~###
 #####~~~~~~~~~~~~~~~~~~~~~~~~~~~~#####
 
         BsP4_Cjp    .SetXYZM  ( ch.Bs_px_cjp[ibs], ch.Bs_py_cjp[ibs], ch.Bs_pz_cjp[ibs], ch.Bs_mass_cjp[ibs])
