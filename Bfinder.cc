@@ -624,7 +624,7 @@ RefCountedKinematicTree
 
 
 	       if(!(patTrack1_Kp.track()->quality(reco::TrackBase::highPurity))) continue;
-
+/*
                bool matchflag = false;
                const reco::CandidatePtrVector & mu1P_overlaps = patTrack1_Kp.overlaps(muonTypeForPAT);
                if ( mu1P_overlaps.size() > 0 ) //std::cout << "patTrack1_Kp overlaps with a muon." << endl;
@@ -640,7 +640,7 @@ RefCountedKinematicTree
                }
 
                if(matchflag) continue;
-
+*/
                TransientTrack kaon1PTT(patTrack1_Kp.track(), &(*bFieldHandle) );
                if(!kaon1PTT.isValid()) continue;
 
@@ -663,7 +663,7 @@ for(vector<pat::GenericParticle>::const_iterator iKaon1M = thePATTrackHandle->be
 
 
     if(!(patTrack1_Km.track()->quality(reco::TrackBase::highPurity))) continue;
-
+/*
           bool matchflag = false;
           const reco::CandidatePtrVector & mu2P_overlaps = patTrack1_Km.overlaps(muonTypeForPAT);
           if ( mu2P_overlaps.size() > 0 ) //std::cout << "patTrack1_Kp overlaps with a muon." << endl;
@@ -680,7 +680,7 @@ for(vector<pat::GenericParticle>::const_iterator iKaon1M = thePATTrackHandle->be
 
           if(matchflag) continue;
 
-
+*/
           	TransientTrack kaon1MTT(patTrack1_Km.track(), &(*bFieldHandle) );
          	 if(!kaon1MTT.isValid()) continue;
 
@@ -711,16 +711,16 @@ for(vector<pat::GenericParticle>::const_iterator iKaon1M = thePATTrackHandle->be
 
 ///////----- Positive Kaon -----///////
 
-	   int K1p_hindex = int(iKaon1P - thePATTrackHandle->begin());
+/*	   int K1p_hindex = int(iKaon1P - thePATTrackHandle->begin());
 	   int K1m_hindex = int(iKaon1M - thePATTrackHandle->begin());
 	   int K2p_hindex = -1;
 	   int K2m_hindex = -1;
-
-	   for(vector<pat::GenericParticle>::const_iterator iKaon2P = iKaon1P; iKaon2P != thePATTrackHandle->end(); ++iKaon2P )
+*/
+	   for(vector<pat::GenericParticle>::const_iterator iKaon2P = thePATTrackHandle->begin(); iKaon2P != thePATTrackHandle->end(); ++iKaon2P )
 	     {
 
-	       K2p_hindex = int(iKaon2P - thePATTrackHandle->begin());
-	       if (K2p_hindex == K1p_hindex) continue;
+//	       K2p_hindex = int(iKaon2P - thePATTrackHandle->begin());
+//	       if (K2p_hindex == K1p_hindex) continue;
 //	       if (iKaon2P == iKaon1P) continue;
 
 // 	       int ngenT1 = 0;//PdgIDatTruthLevel(iKaon2P->track(), genParticles, PId1);
@@ -730,7 +730,7 @@ for(vector<pat::GenericParticle>::const_iterator iKaon1M = thePATTrackHandle->be
 
 
 	       if(!(patTrack2_Kp.track()->quality(reco::TrackBase::highPurity))) continue;
-
+/*
                bool matchflag = false;
                const reco::CandidatePtrVector & mu3P_overlaps = patTrack2_Kp.overlaps(muonTypeForPAT);
                if ( mu3P_overlaps.size() > 0 ) //std::cout << "patTrack2_Kp overlaps with a muon." << endl;
@@ -746,19 +746,19 @@ for(vector<pat::GenericParticle>::const_iterator iKaon1M = thePATTrackHandle->be
                }
 
                if(matchflag) continue;
-
+*/
                TransientTrack kaon2PTT(patTrack2_Kp.track(), &(*bFieldHandle) );
                if(!kaon2PTT.isValid()) continue;
 
 
 ///////----- Negative Kaon -----///////
 
-for(vector<pat::GenericParticle>::const_iterator iKaon2M = iKaon1M; iKaon2M != thePATTrackHandle->end(); ++iKaon2M )
+for(vector<pat::GenericParticle>::const_iterator iKaon2M = thePATTrackHandle->begin(); iKaon2M != thePATTrackHandle->end(); ++iKaon2M )
   {
 // 	       int ngenT1 = 0;//PdgIDatTruthLevel(iKaon2P->track(), genParticles, PId1);
 
-   K2m_hindex = int(iKaon2M - thePATTrackHandle->begin());
-   if (K2m_hindex == K1m_hindex) continue;
+//   K2m_hindex = int(iKaon2M - thePATTrackHandle->begin());
+//   if (K2m_hindex == K1m_hindex) continue;
 //   if (iKaon2M == iKaon1M) continue;
 
    patTrack2_Km = *iKaon2M;
@@ -772,7 +772,7 @@ for(vector<pat::GenericParticle>::const_iterator iKaon2M = iKaon1M; iKaon2M != t
 
 
     if(!(patTrack2_Km.track()->quality(reco::TrackBase::highPurity))) continue;
-
+/*
           bool matchflag = false;
           const reco::CandidatePtrVector & mu4P_overlaps = patTrack2_Km.overlaps(muonTypeForPAT);
           if ( mu4P_overlaps.size() > 0 ) //std::cout << "patTrack2_Kp overlaps with a muon." << endl;
@@ -789,7 +789,7 @@ for(vector<pat::GenericParticle>::const_iterator iKaon2M = iKaon1M; iKaon2M != t
 
           if(matchflag) continue;
 
-
+*/
           	TransientTrack kaon2MTT(patTrack2_Km.track(), &(*bFieldHandle) );
          	 if(!kaon2MTT.isValid()) continue;
 
