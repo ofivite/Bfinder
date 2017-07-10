@@ -859,7 +859,7 @@ for(vector<pat::GenericParticle>::const_iterator iKaon2M = thePATTrackHandle->be
                if(B_Prob_tmp < 0.01) continue;
 
 
- 	       GlobalPoint BsGP = GlobalPoint( (*bDecayVertexCjp).position().x(), (*bDecayVertexCjp).position().y(), (*bDecayVertexCjp).position().z() );
+// 	       GlobalPoint BsGP = GlobalPoint( (*bDecayVertexCjp).position().x(), (*bDecayVertexCjp).position().y(), (*bDecayVertexCjp).position().z() );
                ROOT::Math::XYZPoint bDecayPoint( (*bDecayVertexCjp).position().x(), (*bDecayVertexCjp).position().y(), (*bDecayVertexCjp).position().z() );
 
 	 // get children from final B fit
@@ -982,6 +982,7 @@ for(vector<pat::GenericParticle>::const_iterator iKaon2M = thePATTrackHandle->be
 
 reco::Vertex bestVtxRf = bestPV_Bang;
 
+/*
  ///~~~fit 6 tracks from Bs together~~~///
   vector<reco::TransientTrack> BsTracks;
   BsTracks.push_back(muon1TT);
@@ -1022,7 +1023,7 @@ reco::Vertex bestVtxRf = bestPV_Bang;
                BsVertex_normChi->push_back(-999);
           }
 
-               //cout << "PV bestPV_Bang: " <<bestPV_Bang.x()<< " "<<bestPV_Bang.y()<<" "<<bestPV_Bang.z()<< endl;
+ */              //cout << "PV bestPV_Bang: " <<bestPV_Bang.x()<< " "<<bestPV_Bang.y()<<" "<<bestPV_Bang.z()<< endl;
             // }}}
 
                GlobalVector mu1CandMC_p = mu1CandMC->currentState().kinematicParameters().momentum();
@@ -1232,10 +1233,10 @@ reco::Vertex bestVtxRf = bestPV_Bang;
    	             mum_isGlobalMuon->push_back ( recoMuonM->isGlobalMuon() );
                   mum_isTrackerMuon->push_back ( recoMuonM->isTrackerMuon() );
                   mumAngT->push_back( muon::isGoodMuon(*recoMuonM,muon::TMOneStationTight) ); // este es para poner la condicion si es o no softmuon
-                  if ( BsTV.isValid() )
+/*                  if ( BsTV.isValid() )
         	           mum_isTight->push_back ( muon::isTightMuon(*recoMuonM, BsVtx ) );
                   else
-                    mum_isTight->push_back ( -1 );
+*/                    mum_isTight->push_back ( -1 );
                   mum_isGoodLS_OptimT->push_back( muon::isGoodMuon(*recoMuonM,muon::TMLastStationOptimizedLowPtTight) );
 
                   mum_dxy_Bsdecay->push_back( recoMuonM->muonBestTrack()->dxy(bDecayPoint) );// el dxy del Muon negatico respetcto del PV con BSc (el de mayor pt)
@@ -1271,10 +1272,10 @@ reco::Vertex bestVtxRf = bestPV_Bang;
                   mup_isGlobalMuon->push_back ( recoMuonP->isGlobalMuon() );
                   mup_isTrackerMuon->push_back ( recoMuonP->isTrackerMuon() );
                   mupAngT->push_back( muon::isGoodMuon(*recoMuonP,muon::TMOneStationTight) ); // este es para poner la condicion si es o no softmuon
-                  if ( BsTV.isValid() )
+/*                  if ( BsTV.isValid() )
         	           mup_isTight->push_back ( muon::isTightMuon(*recoMuonP, BsVtx ) );
                   else
-                    mup_isTight->push_back ( -1 );
+*/                    mup_isTight->push_back ( -1 );
                   mup_isGoodLS_OptimT->push_back( muon::isGoodMuon(*recoMuonP,muon::TMLastStationOptimizedLowPtTight) );
 
                   mup_dxy_Bsdecay->push_back( recoMuonP->muonBestTrack()->dxy(bDecayPoint) );// el dxy del Muon negatico respetcto del PV con BSc (el de mayor pt)
@@ -1312,7 +1313,7 @@ reco::Vertex bestVtxRf = bestPV_Bang;
                           muonParticles.clear();
                           Bs_candidate_init.clear();
                           Bs_candidate.clear();
-                          BsTracks.clear();
+ //                         BsTracks.clear();
  //                         vertexTracks.clear();
  	             } // one kaon
    		  } // another kaon
