@@ -108,15 +108,26 @@ Bfinder::Bfinder(const edm::ParameterSet& iConfig)
 
  B_Prob(0), B_J_Prob(0), B_Phi_Prob(0),
 
- kaonP_px_0c(0),       kaonP_py_0c(0),  kaonP_pz_0c(0),
- kaonP_px_cjp(0),       kaonP_py_cjp(0),  kaonP_pz_cjp(0),
- kaonP_track_normchi2(0),     kaonP_Hits(0),  kaonP_PHits(0),
- kaonP_dxy_Bsdecay(0), kaonP_dz_Bsdecay(0), kaonP_NTrackerLayers(0),  kaonP_NPixelLayers(0),
+ kaon1P_px_0c(0),       kaon1P_py_0c(0),  kaon1P_pz_0c(0),
+ kaon1P_px_cjp(0),       kaon1P_py_cjp(0),  kaon1P_pz_cjp(0),
+ kaon1P_track_normchi2(0),     kaon1P_Hits(0),  kaon1P_PHits(0),
+ kaon1P_dxy_Bsdecay(0), kaon1P_dz_Bsdecay(0), kaon1P_NTrackerLayers(0),  kaon1P_NPixelLayers(0),
 
- kaonM_px_0c(0),       kaonM_py_0c(0),  kaonM_pz_0c(0),
- kaonM_px_cjp(0),       kaonM_py_cjp(0),  kaonM_pz_cjp(0),
- kaonM_track_normchi2(0),     kaonM_Hits(0),  kaonM_PHits(0),
- kaonM_dxy_Bsdecay(0), kaonM_dz_Bsdecay(0), kaonM_NTrackerLayers(0),  kaonM_NPixelLayers(0),
+ kaon1M_px_0c(0),       kaon1M_py_0c(0),  kaon1M_pz_0c(0),
+ kaon1M_px_cjp(0),       kaon1M_py_cjp(0),  kaon1M_pz_cjp(0),
+ kaon1M_track_normchi2(0),     kaon1M_Hits(0),  kaon1M_PHits(0),
+ kaon1M_dxy_Bsdecay(0), kaon1M_dz_Bsdecay(0), kaon1M_NTrackerLayers(0),  kaon1M_NPixelLayers(0),
+
+ kaon2P_px_0c(0),       kaon2P_py_0c(0),  kaon2P_pz_0c(0),
+ kaon2P_px_cjp(0),       kaon2P_py_cjp(0),  kaon2P_pz_cjp(0),
+ kaon2P_track_normchi2(0),     kaon2P_Hits(0),  kaon2P_PHits(0),
+ kaon2P_dxy_Bsdecay(0), kaon2P_dz_Bsdecay(0), kaon2P_NTrackerLayers(0),  kaon2P_NPixelLayers(0),
+
+ kaon2M_px_0c(0),       kaon2M_py_0c(0),  kaon2M_pz_0c(0),
+ kaon2M_px_cjp(0),       kaon2M_py_cjp(0),  kaon2M_pz_cjp(0),
+ kaon2M_track_normchi2(0),     kaon2M_Hits(0),  kaon2M_PHits(0),
+ kaon2M_dxy_Bsdecay(0), kaon2M_dz_Bsdecay(0), kaon2M_NTrackerLayers(0),  kaon2M_NPixelLayers(0),
+
 
 
  PV_bestBang_X(0),      PV_bestBang_Y(0),     PV_bestBang_Z(0),
@@ -987,33 +998,63 @@ for(vector<pat::GenericParticle>::const_iterator iKaonM = thePATTrackHandle->beg
                           B_J_DecayVtxYE   ->push_back( MUMUvtx->error().cyy() );
                           B_J_DecayVtxZE   ->push_back( MUMUvtx->error().czz() );
 
-                          kaonP_px_0c       ->push_back(iKaonP->px());
-                          kaonP_py_0c       ->push_back(iKaonP->py());
-                          kaonP_pz_0c       ->push_back(iKaonP->pz());
-                          kaonP_px_cjp       ->push_back(KpCandMC->currentState().globalMomentum().x());
-                          kaonP_py_cjp       ->push_back(KpCandMC->currentState().globalMomentum().y());
-                          kaonP_pz_cjp       ->push_back(KpCandMC->currentState().globalMomentum().z());
-                          kaonP_track_normchi2  ->push_back(patTrack_Kp.track()->normalizedChi2());
-                          kaonP_Hits       ->push_back(patTrack_Kp.track()->numberOfValidHits() );
-                          kaonP_PHits      ->push_back(patTrack_Kp.track()->hitPattern().numberOfValidPixelHits() );
-                          kaonP_dxy_Bsdecay	->push_back(patTrack_Kp.track()->dxy(bDecayPoint) );
-                          kaonP_dz_Bsdecay		->push_back(patTrack_Kp.track()->dz(bDecayPoint) );
-   		                    kaonP_NTrackerLayers->push_back ( patTrack_Kp.track()->hitPattern().trackerLayersWithMeasurement() );
-   		                    kaonP_NPixelLayers->push_back ( patTrack_Kp.track()->hitPattern().pixelLayersWithMeasurement() );
+                          kaon1P_px_0c       ->push_back(iKaonP->px());
+                          kaon1P_py_0c       ->push_back(iKaonP->py());
+                          kaon1P_pz_0c       ->push_back(iKaonP->pz());
+                          kaon1P_px_cjp       ->push_back(KpCandMC->currentState().globalMomentum().x());
+                          kaon1P_py_cjp       ->push_back(KpCandMC->currentState().globalMomentum().y());
+                          kaon1P_pz_cjp       ->push_back(KpCandMC->currentState().globalMomentum().z());
+                          kaon1P_track_normchi2  ->push_back(patTrack_Kp.track()->normalizedChi2());
+                          kaon1P_Hits       ->push_back(patTrack_Kp.track()->numberOfValidHits() );
+                          kaon1P_PHits      ->push_back(patTrack_Kp.track()->hitPattern().numberOfValidPixelHits() );
+                          kaon1P_dxy_Bsdecay	->push_back(patTrack_Kp.track()->dxy(bDecayPoint) );
+                          kaon1P_dz_Bsdecay		->push_back(patTrack_Kp.track()->dz(bDecayPoint) );
+   		          kaon1P_NTrackerLayers->push_back ( patTrack_Kp.track()->hitPattern().trackerLayersWithMeasurement() );
+   		          kaon1P_NPixelLayers->push_back ( patTrack_Kp.track()->hitPattern().pixelLayersWithMeasurement() );
 
-                          kaonM_px_0c       ->push_back(iKaonM->px());
-                          kaonM_py_0c       ->push_back(iKaonM->py());
-                          kaonM_pz_0c       ->push_back(iKaonM->pz());
-                          kaonM_px_cjp       ->push_back(KmCandMC->currentState().globalMomentum().x());
-                          kaonM_py_cjp       ->push_back(KmCandMC->currentState().globalMomentum().y());
-                          kaonM_pz_cjp       ->push_back(KmCandMC->currentState().globalMomentum().z());
-                          kaonM_track_normchi2  ->push_back(patTrack_Km.track()->normalizedChi2());
-                          kaonM_Hits       ->push_back(patTrack_Km.track()->numberOfValidHits() );
-                          kaonM_PHits      ->push_back(patTrack_Km.track()->hitPattern().numberOfValidPixelHits() );
-                          kaonM_dxy_Bsdecay	->push_back(patTrack_Km.track()->dxy(bDecayPoint) );
-                          kaonM_dz_Bsdecay		->push_back(patTrack_Km.track()->dz(bDecayPoint	) );
-   		                    kaonM_NTrackerLayers->push_back ( patTrack_Km.track()->hitPattern().trackerLayersWithMeasurement() );
-   		                    kaonM_NPixelLayers->push_back ( patTrack_Km.track()->hitPattern().pixelLayersWithMeasurement() );
+                          kaon1M_px_0c       ->push_back(iKaonM->px());
+                          kaon1M_py_0c       ->push_back(iKaonM->py());
+                          kaon1M_pz_0c       ->push_back(iKaonM->pz());
+                          kaon1M_px_cjp       ->push_back(KmCandMC->currentState().globalMomentum().x());
+                          kaon1M_py_cjp       ->push_back(KmCandMC->currentState().globalMomentum().y());
+                          kaon1M_pz_cjp       ->push_back(KmCandMC->currentState().globalMomentum().z());
+                          kaon1M_track_normchi2  ->push_back(patTrack_Km.track()->normalizedChi2());
+                          kaon1M_Hits       ->push_back(patTrack_Km.track()->numberOfValidHits() );
+                          kaon1M_PHits      ->push_back(patTrack_Km.track()->hitPattern().numberOfValidPixelHits() );
+                          kaon1M_dxy_Bsdecay	->push_back(patTrack_Km.track()->dxy(bDecayPoint) );
+                          kaon1M_dz_Bsdecay		->push_back(patTrack_Km.track()->dz(bDecayPoint	) );
+   		          kaon1M_NTrackerLayers->push_back ( patTrack_Km.track()->hitPattern().trackerLayersWithMeasurement() );
+   		          kaon1M_NPixelLayers->push_back ( patTrack_Km.track()->hitPattern().pixelLayersWithMeasurement() );
+
+
+                          kaon2P_px_0c       ->push_back(iKaonP->px());
+                          kaon2P_py_0c       ->push_back(iKaonP->py());
+                          kaon2P_pz_0c       ->push_back(iKaonP->pz());
+                          kaon2P_px_cjp       ->push_back(KpCandMC->currentState().globalMomentum().x());
+                          kaon2P_py_cjp       ->push_back(KpCandMC->currentState().globalMomentum().y());
+                          kaon2P_pz_cjp       ->push_back(KpCandMC->currentState().globalMomentum().z());
+                          kaon2P_track_normchi2  ->push_back(patTrack_Kp.track()->normalizedChi2());
+                          kaon2P_Hits       ->push_back(patTrack_Kp.track()->numberOfValidHits() );
+                          kaon2P_PHits      ->push_back(patTrack_Kp.track()->hitPattern().numberOfValidPixelHits() );
+                          kaon2P_dxy_Bsdecay	->push_back(patTrack_Kp.track()->dxy(bDecayPoint) );
+                          kaon2P_dz_Bsdecay		->push_back(patTrack_Kp.track()->dz(bDecayPoint) );
+   		          kaon2P_NTrackerLayers->push_back ( patTrack_Kp.track()->hitPattern().trackerLayersWithMeasurement() );
+   		          kaon2P_NPixelLayers->push_back ( patTrack_Kp.track()->hitPattern().pixelLayersWithMeasurement() );
+
+                          kaon2M_px_0c       ->push_back(iKaonM->px());
+                          kaon2M_py_0c       ->push_back(iKaonM->py());
+                          kaon2M_pz_0c       ->push_back(iKaonM->pz());
+                          kaon2M_px_cjp       ->push_back(KmCandMC->currentState().globalMomentum().x());
+                          kaon2M_py_cjp       ->push_back(KmCandMC->currentState().globalMomentum().y());
+                          kaon2M_pz_cjp       ->push_back(KmCandMC->currentState().globalMomentum().z());
+                          kaon2M_track_normchi2  ->push_back(patTrack_Km.track()->normalizedChi2());
+                          kaon2M_Hits       ->push_back(patTrack_Km.track()->numberOfValidHits() );
+                          kaon2M_PHits      ->push_back(patTrack_Km.track()->hitPattern().numberOfValidPixelHits() );
+                          kaon2M_dxy_Bsdecay	->push_back(patTrack_Km.track()->dxy(bDecayPoint) );
+                          kaon2M_dz_Bsdecay		->push_back(patTrack_Km.track()->dz(bDecayPoint	) );
+   		          kaon2M_NTrackerLayers->push_back ( patTrack_Km.track()->hitPattern().trackerLayersWithMeasurement() );
+   		          kaon2M_NPixelLayers->push_back ( patTrack_Km.track()->hitPattern().pixelLayersWithMeasurement() );
+
 
                           B_mu_px1_cjp ->push_back(mu1CandMC_p.x());
                           B_mu_py1_cjp ->push_back(mu1CandMC_p.y());
@@ -1152,16 +1193,26 @@ for(vector<pat::GenericParticle>::const_iterator iKaonM = thePATTrackHandle->beg
 
       B_Prob->clear(); B_J_Prob->clear(); B_Phi_Prob->clear();
 
-      kaonP_px_0c->clear();     kaonP_py_0c->clear();    kaonP_pz_0c->clear();
-      kaonP_px_cjp->clear();     kaonP_py_cjp->clear();    kaonP_pz_cjp->clear();
-      kaonP_track_normchi2->clear();   kaonP_Hits->clear();    kaonP_PHits->clear();
-      kaonP_dxy_Bsdecay->clear();  kaonP_dz_Bsdecay->clear(); kaonP_NTrackerLayers->clear();  kaonP_NPixelLayers->clear();
+      kaon1P_px_0c->clear();     kaon1P_py_0c->clear();    kaon1P_pz_0c->clear();
+      kaon1P_px_cjp->clear();     kaon1P_py_cjp->clear();    kaon1P_pz_cjp->clear();
+      kaon1P_track_normchi2->clear();   kaon1P_Hits->clear();    kaon1P_PHits->clear();
+      kaon1P_dxy_Bsdecay->clear();  kaon1P_dz_Bsdecay->clear(); kaon1P_NTrackerLayers->clear();  kaon1P_NPixelLayers->clear();
 
-      kaonM_px_0c->clear();     kaonM_py_0c->clear();    kaonM_pz_0c->clear();
-      kaonM_px_cjp->clear();     kaonM_py_cjp->clear();    kaonM_pz_cjp->clear();
-      kaonM_track_normchi2->clear();   kaonM_Hits->clear();    kaonM_PHits->clear();
-      kaonM_dxy_Bsdecay->clear();  kaonM_dz_Bsdecay->clear(); kaonM_NTrackerLayers->clear();  kaonM_NPixelLayers->clear();
+      kaon1M_px_0c->clear();     kaon1M_py_0c->clear();    kaon1M_pz_0c->clear();
+      kaon1M_px_cjp->clear();     kaon1M_py_cjp->clear();    kaon1M_pz_cjp->clear();
+      kaon1M_track_normchi2->clear();   kaon1M_Hits->clear();    kaon1M_PHits->clear();
+      kaon1M_dxy_Bsdecay->clear();  kaon1M_dz_Bsdecay->clear(); kaon1M_NTrackerLayers->clear();  kaon1M_NPixelLayers->clear();
 
+
+      kaon2P_px_0c->clear();     kaon2P_py_0c->clear();    kaon2P_pz_0c->clear();
+      kaon2P_px_cjp->clear();     kaon2P_py_cjp->clear();    kaon2P_pz_cjp->clear();
+      kaon2P_track_normchi2->clear();   kaon2P_Hits->clear();    kaon2P_PHits->clear();
+      kaon2P_dxy_Bsdecay->clear();  kaon2P_dz_Bsdecay->clear(); kaon2P_NTrackerLayers->clear();  kaon2P_NPixelLayers->clear();
+
+      kaon2M_px_0c->clear();     kaon2M_py_0c->clear();    kaon2M_pz_0c->clear();
+      kaon2M_px_cjp->clear();     kaon2M_py_cjp->clear();    kaon2M_pz_cjp->clear();
+      kaon2M_track_normchi2->clear();   kaon2M_Hits->clear();    kaon2M_PHits->clear();
+      kaon2M_dxy_Bsdecay->clear();  kaon2M_dz_Bsdecay->clear(); kaon2M_NTrackerLayers->clear();  kaon2M_NPixelLayers->clear();
       //
 
       PV_bestBang_X->clear();      PV_bestBang_Y->clear();     PV_bestBang_Z->clear();
@@ -1263,33 +1314,61 @@ for(vector<pat::GenericParticle>::const_iterator iKaonM = thePATTrackHandle->beg
      tree_->Branch("B_J_Prob"          , &B_J_Prob             );
      tree_->Branch("B_Phi_Prob"          , &B_Phi_Prob             );
 
-     tree_->Branch("kaonP_px_0c"        , &kaonP_px_0c           );
-     tree_->Branch("kaonP_py_0c"        , &kaonP_py_0c           );
-     tree_->Branch("kaonP_pz_0c"        , &kaonP_pz_0c           );
-     tree_->Branch("kaonP_px_cjp"        , &kaonP_px_cjp           );
-     tree_->Branch("kaonP_py_cjp"        , &kaonP_py_cjp           );
-     tree_->Branch("kaonP_pz_cjp"        , &kaonP_pz_cjp           );
-     tree_->Branch("kaonP_track_normchi2"   , &kaonP_track_normchi2      );
-     tree_->Branch("kaonP_Hits"        , &kaonP_Hits           );
-     tree_->Branch("kaonP_PHits"       , &kaonP_PHits          );
-     tree_->Branch("kaonP_dxy_Bsdecay"         , &kaonP_dxy_Bsdecay          );
-     tree_->Branch("kaonP_dz_Bsdecay"          , &kaonP_dz_Bsdecay          );
-     tree_->Branch("kaonP_NTrackerLayers"       , &kaonP_NTrackerLayers          );
-     tree_->Branch("kaonP_NPixelLayers"       , &kaonP_NPixelLayers          );
+     tree_->Branch("kaon1P_px_0c"        , &kaon1P_px_0c           );
+     tree_->Branch("kaon1P_py_0c"        , &kaon1P_py_0c           );
+     tree_->Branch("kaon1P_pz_0c"        , &kaon1P_pz_0c           );
+     tree_->Branch("kaon1P_px_cjp"        , &kaon1P_px_cjp           );
+     tree_->Branch("kaon1P_py_cjp"        , &kaon1P_py_cjp           );
+     tree_->Branch("kaon1P_pz_cjp"        , &kaon1P_pz_cjp           );
+     tree_->Branch("kaon1P_track_normchi2"   , &kaon1P_track_normchi2      );
+     tree_->Branch("kaon1P_Hits"        , &kaon1P_Hits           );
+     tree_->Branch("kaon1P_PHits"       , &kaon1P_PHits          );
+     tree_->Branch("kaon1P_dxy_Bsdecay"         , &kaon1P_dxy_Bsdecay          );
+     tree_->Branch("kaon1P_dz_Bsdecay"          , &kaon1P_dz_Bsdecay          );
+     tree_->Branch("kaon1P_NTrackerLayers"       , &kaon1P_NTrackerLayers          );
+     tree_->Branch("kaon1P_NPixelLayers"       , &kaon1P_NPixelLayers          );
 
-     tree_->Branch("kaonM_px_0c"        , &kaonM_px_0c           );
-     tree_->Branch("kaonM_py_0c"        , &kaonM_py_0c           );
-     tree_->Branch("kaonM_pz_0c"        , &kaonM_pz_0c           );
-     tree_->Branch("kaonM_px_cjp"        , &kaonM_px_cjp           );
-     tree_->Branch("kaonM_py_cjp"        , &kaonM_py_cjp           );
-     tree_->Branch("kaonM_pz_cjp"        , &kaonM_pz_cjp           );
-     tree_->Branch("kaonM_track_normchi2"   , &kaonM_track_normchi2      );
-     tree_->Branch("kaonM_Hits"        , &kaonM_Hits           );
-     tree_->Branch("kaonM_PHits"       , &kaonM_PHits          );
-     tree_->Branch("kaonM_dxy_Bsdecay"         , &kaonM_dxy_Bsdecay          );
-     tree_->Branch("kaonM_dz_Bsdecay"          , &kaonM_dz_Bsdecay          );
-     tree_->Branch("kaonM_NTrackerLayers"       , &kaonM_NTrackerLayers          );
-     tree_->Branch("kaonM_NPixelLayers"       , &kaonM_NPixelLayers          );
+     tree_->Branch("kaon1M_px_0c"        , &kaon1M_px_0c           );
+     tree_->Branch("kaon1M_py_0c"        , &kaon1M_py_0c           );
+     tree_->Branch("kaon1M_pz_0c"        , &kaon1M_pz_0c           );
+     tree_->Branch("kaon1M_px_cjp"        , &kaon1M_px_cjp           );
+     tree_->Branch("kaon1M_py_cjp"        , &kaon1M_py_cjp           );
+     tree_->Branch("kaon1M_pz_cjp"        , &kaon1M_pz_cjp           );
+     tree_->Branch("kaon1M_track_normchi2"   , &kaon1M_track_normchi2      );
+     tree_->Branch("kaon1M_Hits"        , &kaon1M_Hits           );
+     tree_->Branch("kaon1M_PHits"       , &kaon1M_PHits          );
+     tree_->Branch("kaon1M_dxy_Bsdecay"         , &kaon1M_dxy_Bsdecay          );
+     tree_->Branch("kaon1M_dz_Bsdecay"          , &kaon1M_dz_Bsdecay          );
+     tree_->Branch("kaon1M_NTrackerLayers"       , &kaon1M_NTrackerLayers          );
+     tree_->Branch("kaon1M_NPixelLayers"       , &kaon1M_NPixelLayers          );
+
+     tree_->Branch("kaon2P_px_0c"        , &kaon2P_px_0c           );
+     tree_->Branch("kaon2P_py_0c"        , &kaon2P_py_0c           );
+     tree_->Branch("kaon2P_pz_0c"        , &kaon2P_pz_0c           );
+     tree_->Branch("kaon2P_px_cjp"        , &kaon2P_px_cjp           );
+     tree_->Branch("kaon2P_py_cjp"        , &kaon2P_py_cjp           );
+     tree_->Branch("kaon2P_pz_cjp"        , &kaon2P_pz_cjp           );
+     tree_->Branch("kaon2P_track_normchi2"   , &kaon2P_track_normchi2      );
+     tree_->Branch("kaon2P_Hits"        , &kaon2P_Hits           );
+     tree_->Branch("kaon2P_PHits"       , &kaon2P_PHits          );
+     tree_->Branch("kaon2P_dxy_Bsdecay"         , &kaon2P_dxy_Bsdecay          );
+     tree_->Branch("kaon2P_dz_Bsdecay"          , &kaon2P_dz_Bsdecay          );
+     tree_->Branch("kaon2P_NTrackerLayers"       , &kaon2P_NTrackerLayers          );
+     tree_->Branch("kaon2P_NPixelLayers"       , &kaon2P_NPixelLayers          );
+
+     tree_->Branch("kaon2M_px_0c"        , &kaon2M_px_0c           );
+     tree_->Branch("kaon2M_py_0c"        , &kaon2M_py_0c           );
+     tree_->Branch("kaon2M_pz_0c"        , &kaon2M_pz_0c           );
+     tree_->Branch("kaon2M_px_cjp"        , &kaon2M_px_cjp           );
+     tree_->Branch("kaon2M_py_cjp"        , &kaon2M_py_cjp           );
+     tree_->Branch("kaon2M_pz_cjp"        , &kaon2M_pz_cjp           );
+     tree_->Branch("kaon2M_track_normchi2"   , &kaon2M_track_normchi2      );
+     tree_->Branch("kaon2M_Hits"        , &kaon2M_Hits           );
+     tree_->Branch("kaon2M_PHits"       , &kaon2M_PHits          );
+     tree_->Branch("kaon2M_dxy_Bsdecay"         , &kaon2M_dxy_Bsdecay          );
+     tree_->Branch("kaon2M_dz_Bsdecay"          , &kaon2M_dz_Bsdecay          );
+     tree_->Branch("kaon2M_NTrackerLayers"       , &kaon2M_NTrackerLayers          );
+     tree_->Branch("kaon2M_NPixelLayers"       , &kaon2M_NPixelLayers          );
 
      tree_->Branch("PV_bestBang_X"     , &PV_bestBang_X        );
      tree_->Branch("PV_bestBang_Y"     , &PV_bestBang_Y        );

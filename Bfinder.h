@@ -149,19 +149,34 @@ private:
   std::vector<float>    *B_mu_px2_cjp       , *B_mu_py2_cjp     , *B_mu_pz2_cjp;
   std::vector<float>    *B_Prob             , *B_J_Prob		, *B_Phi_Prob;
 
-  std::vector<float>    *kaonP_px_0c        , *kaonP_py_0c       , *kaonP_pz_0c;
-  std::vector<float>    *kaonP_px_cjp         , *kaonP_py_cjp       , *kaonP_pz_cjp;
-  std::vector<float>    *kaonP_track_normchi2;
-  std::vector<int>      *kaonP_Hits,  *kaonP_PHits;
-  std::vector<float>    *kaonP_dxy_Bsdecay, *kaonP_dz_Bsdecay;
-  std::vector<int>      *kaonP_NTrackerLayers,  *kaonP_NPixelLayers;
+  std::vector<float>    *kaon1P_px_0c        , *kaon1P_py_0c       , *kaon1P_pz_0c;
+  std::vector<float>    *kaon1P_px_cjp         , *kaon1P_py_cjp       , *kaon1P_pz_cjp;
+  std::vector<float>    *kaon1P_track_normchi2;
+  std::vector<int>      *kaon1P_Hits,  *kaon1P_PHits;
+  std::vector<float>    *kaon1P_dxy_Bsdecay, *kaon1P_dz_Bsdecay;
+  std::vector<int>      *kaon1P_NTrackerLayers,  *kaon1P_NPixelLayers;
 
-  std::vector<float>    *kaonM_px_0c         , *kaonM_py_0c       , *kaonM_pz_0c;
-  std::vector<float>    *kaonM_px_cjp         , *kaonM_py_cjp       , *kaonM_pz_cjp;
-  std::vector<float>    *kaonM_track_normchi2;
-  std::vector<int>      *kaonM_Hits,  *kaonM_PHits;
-  std::vector<float>    *kaonM_dxy_Bsdecay, *kaonM_dz_Bsdecay;
-  std::vector<int>      *kaonM_NTrackerLayers,  *kaonM_NPixelLayers;
+  std::vector<float>    *kaon1M_px_0c         , *kaon1M_py_0c       , *kaon1M_pz_0c;
+  std::vector<float>    *kaon1M_px_cjp         , *kaon1M_py_cjp       , *kaon1M_pz_cjp;
+  std::vector<float>    *kaon1M_track_normchi2;
+  std::vector<int>      *kaon1M_Hits,  *kaon1M_PHits;
+  std::vector<float>    *kaon1M_dxy_Bsdecay, *kaon1M_dz_Bsdecay;
+  std::vector<int>      *kaon1M_NTrackerLayers,  *kaon1M_NPixelLayers;
+
+  std::vector<float>    *kaon2P_px_0c        , *kaon2P_py_0c       , *kaon2P_pz_0c;
+  std::vector<float>    *kaon2P_px_cjp         , *kaon2P_py_cjp       , *kaon2P_pz_cjp;
+  std::vector<float>    *kaon2P_track_normchi2;
+  std::vector<int>      *kaon2P_Hits,  *kaon2P_PHits;
+  std::vector<float>    *kaon2P_dxy_Bsdecay, *kaon2P_dz_Bsdecay;
+  std::vector<int>      *kaon2P_NTrackerLayers,  *kaon2P_NPixelLayers;
+
+  std::vector<float>    *kaon2M_px_0c         , *kaon2M_py_0c       , *kaon2M_pz_0c;
+  std::vector<float>    *kaon2M_px_cjp         , *kaon2M_py_cjp       , *kaon2M_pz_cjp;
+  std::vector<float>    *kaon2M_track_normchi2;
+  std::vector<int>      *kaon2M_Hits,  *kaon2M_PHits;
+  std::vector<float>    *kaon2M_dxy_Bsdecay, *kaon2M_dz_Bsdecay;
+  std::vector<int>      *kaon2M_NTrackerLayers,  *kaon2M_NPixelLayers;
+
 
 
   std::vector<float>    *PV_bestBang_X      , *PV_bestBang_Y    , *PV_bestBang_Z;
