@@ -147,7 +147,7 @@ private:
 
   std::vector<float>    *B_mu_px1_cjp       , *B_mu_py1_cjp     , *B_mu_pz1_cjp;
   std::vector<float>    *B_mu_px2_cjp       , *B_mu_py2_cjp     , *B_mu_pz2_cjp;
-  std::vector<float>    *B_Prob             , *B_J_Prob		, *B_Phi1_Prob;
+  std::vector<float>    *B_Prob             , *B_J_Prob		, *B_Phi1_Prob,     *B_Phi2_Prob;
 
   std::vector<float>    *kaon1P_px_0c        , *kaon1P_py_0c       , *kaon1P_pz_0c;
   std::vector<float>    *kaon1P_px_cjp         , *kaon1P_py_cjp       , *kaon1P_pz_cjp;
@@ -203,7 +203,7 @@ private:
   std::vector<float>    *mup_relIso;
 
   std::vector<bool>     *BsVertex_isValid;
-  std::vector<float>    *BsVertex_Chi, *BsVertex_normChi, *JP_Bsdecay_weight, *phi_Bsdecay_weight;
+  std::vector<float>    *BsVertex_Chi, *BsVertex_normChi, *muon1_Bsdecay_weight, *muon2_Bsdecay_weight, *kaon1p_Bsdecay_weight, *kaon1m_Bsdecay_weight, *kaon2p_Bsdecay_weight, *kaon2m_Bsdecay_weight;
 
 ///////////////////////
 
