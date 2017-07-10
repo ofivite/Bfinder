@@ -147,7 +147,7 @@ private:
 
   std::vector<float>    *B_mu_px1_cjp       , *B_mu_py1_cjp     , *B_mu_pz1_cjp;
   std::vector<float>    *B_mu_px2_cjp       , *B_mu_py2_cjp     , *B_mu_pz2_cjp;
-  std::vector<float>    *B_Prob             , *B_J_Prob		, *B_Phi_Prob;
+  std::vector<float>    *B_Prob             , *B_J_Prob		, *B_Phi1_Prob;
 
   std::vector<float>    *kaon1P_px_0c        , *kaon1P_py_0c       , *kaon1P_pz_0c;
   std::vector<float>    *kaon1P_px_cjp         , *kaon1P_py_cjp       , *kaon1P_pz_cjp;

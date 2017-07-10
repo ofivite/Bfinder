@@ -106,7 +106,7 @@ Bfinder::Bfinder(const edm::ParameterSet& iConfig)
  B_mu_px1_cjp(0),   B_mu_py1_cjp(0),  B_mu_pz1_cjp(0),
  B_mu_px2_cjp(0),   B_mu_py2_cjp(0),  B_mu_pz2_cjp(0),
 
- B_Prob(0), B_J_Prob(0), B_Phi_Prob(0),
+ B_Prob(0), B_J_Prob(0), B_Phi1_Prob(0),
 
  kaon1P_px_0c(0),       kaon1P_py_0c(0),  kaon1P_pz_0c(0),
  kaon1P_px_cjp(0),       kaon1P_py_cjp(0),  kaon1P_pz_cjp(0),
@@ -596,29 +596,35 @@ RefCountedKinematicTree
 // 	   int PId1=0; int PId2=0;
 
 
-	   pat::GenericParticle patTrack_Kp;
- 	   pat::GenericParticle patTrack_Km;
+/////////////~~~~~~~~~~~~~~~~~~~~~~~~/////////////
+/////~~~~~~~ LOOPS OVER THE FIRST PHI ~~~~~~~/////
+/////////////~~~~~~~~~~~~~~~~~~~~~~~~/////////////
 
-	   for(vector<pat::GenericParticle>::const_iterator iKaonP = thePATTrackHandle->begin(); iKaonP != thePATTrackHandle->end(); ++iKaonP )
+	   pat::GenericParticle patTrack1_Kp, patTrack2_Kp, patTrack1_Km, patTrack2_Km;
+
+
+///////----- Positive Kaon -----///////
+
+	   for(vector<pat::GenericParticle>::const_iterator iKaon1P = thePATTrackHandle->begin(); iKaon1P != thePATTrackHandle->end(); ++iKaon1P )
 	     {
 
-// 	       int ngenT1 = 0;//PdgIDatTruthLevel(iKaonP->track(), genParticles, PId1);
-	       patTrack_Kp = *iKaonP;
+// 	       int ngenT1 = 0;//PdgIDatTruthLevel(iKaon1P->track(), genParticles, PId1);
+	       patTrack1_Kp = *iKaon1P;
 
-        if(iKaonP->pt() < 0.7 || iKaonP->charge() != 1 || fabs(iKaonP->eta()) > 2.5) continue;
+        if(iKaon1P->pt() < 0.5 || iKaon1P->charge() != 1 || fabs(iKaon1P->eta()) > 2.5) continue;
 
 
-	       if(!(patTrack_Kp.track()->quality(reco::TrackBase::highPurity))) continue;
+	       if(!(patTrack1_Kp.track()->quality(reco::TrackBase::highPurity))) continue;
 
                bool matchflag = false;
-               const reco::CandidatePtrVector & mu1P_overlaps = patTrack_Kp.overlaps(muonTypeForPAT);
-               if ( mu1P_overlaps.size() > 0 ) //std::cout << "patTrack_Kp overlaps with a muon." << endl;
+               const reco::CandidatePtrVector & mu1P_overlaps = patTrack1_Kp.overlaps(muonTypeForPAT);
+               if ( mu1P_overlaps.size() > 0 ) //std::cout << "patTrack1_Kp overlaps with a muon." << endl;
                for (size_t i = 0; i < mu1P_overlaps.size(); ++i) {
                  const pat::Muon *mu = dynamic_cast<const pat::Muon *>(&*mu1P_overlaps[i]);
                  if (mu) {
                    // check here that muon match isn't the same as a muon used in the reco...
                    if (mu==patMuonP || mu==patMuonM)  {
-                       //std::cout << "match between patTrack_Kp and patMuonP/patMuonM" << endl;
+                       //std::cout << "match between patTrack1_Kp and patMuonP/patMuonM" << endl;
                        matchflag=true;
                    }
                  }
@@ -626,29 +632,38 @@ RefCountedKinematicTree
 
                if(matchflag) continue;
 
-               TransientTrack kaonPTT(patTrack_Kp.track(), &(*bFieldHandle) );
-               if(!kaonPTT.isValid()) continue;
+               TransientTrack kaon1PTT(patTrack1_Kp.track(), &(*bFieldHandle) );
+               if(!kaon1PTT.isValid()) continue;
 
-/////
-for(vector<pat::GenericParticle>::const_iterator iKaonM = thePATTrackHandle->begin(); iKaonM != thePATTrackHandle->end(); ++iKaonM )
+
+///////----- Negative Kaon -----///////
+
+for(vector<pat::GenericParticle>::const_iterator iKaon1M = thePATTrackHandle->begin(); iKaon1M != thePATTrackHandle->end(); ++iKaon1M )
   {
-   if(iKaonP == iKaonM) continue;
-// 	       int ngenT1 = 0;//PdgIDatTruthLevel(iKaonP->track(), genParticles, PId1);
-   patTrack_Km = *iKaonM;
-   if(iKaonM->pt() < 0.7 || iKaonM->charge() != -1 || fabs(iKaonP->eta()) > 2.5) continue;
+// 	       int ngenT1 = 0;//PdgIDatTruthLevel(iKaon1P->track(), genParticles, PId1);
+   patTrack1_Km = *iKaon1M;
+   if(iKaon1M->pt() < 0.5 || iKaon1M->charge() != -1 || fabs(iKaon1M->eta()) > 2.5) continue;
+
+   TLorentzVector p4kaon1P_0c, p4kaon1M_0c, p4phi1_0c, p4kaon2P_0c, p4kaon2M_0c, p4phi2_0c, p4jpsi_0c;
+   p4kaon1P_0c.SetXYZM(iKaon1P->px(),iKaon1P->py(),iKaon1P->pz(), PDG_KAON_MASS);
+   p4kaon1M_0c.SetXYZM(iKaon1M->px(),iKaon1M->py(),iKaon1M->pz(), PDG_KAON_MASS);
+
+   p4phi1_0c = p4kaon1P_0c + p4kaon1M_0c;
+   p4jpsi_0c = p4mu1_0c + p4mu2_0c;
+   if(fabs(p4phi1_0c.M() - PDG_PHI_MASS) > 0.1) continue;
 
 
-    if(!(patTrack_Km.track()->quality(reco::TrackBase::highPurity))) continue;
+    if(!(patTrack1_Km.track()->quality(reco::TrackBase::highPurity))) continue;
 
           bool matchflag = false;
-          const reco::CandidatePtrVector & mu2P_overlaps = patTrack_Km.overlaps(muonTypeForPAT);
-          if ( mu2P_overlaps.size() > 0 ) //std::cout << "patTrack_Kp overlaps with a muon." << endl;
+          const reco::CandidatePtrVector & mu2P_overlaps = patTrack1_Km.overlaps(muonTypeForPAT);
+          if ( mu2P_overlaps.size() > 0 ) //std::cout << "patTrack1_Kp overlaps with a muon." << endl;
           for (size_t i = 0; i < mu2P_overlaps.size(); ++i) {
             const pat::Muon *mu = dynamic_cast<const pat::Muon *>(&*mu2P_overlaps[i]);
             if (mu) {
               // check here that muon match isn't the same as a muon used in the reco...
               if (mu==patMuonP || mu==patMuonM)  {
-                  //std::cout << "match between patTrack_Kp and patMuonP/patMuonM" << endl;
+                  //std::cout << "match between patTrack1_Kp and patMuonP/patMuonM" << endl;
                   matchflag=true;
               }
             }
@@ -656,50 +671,146 @@ for(vector<pat::GenericParticle>::const_iterator iKaonM = thePATTrackHandle->beg
 
           if(matchflag) continue;
 
-          TransientTrack kaonMTT(patTrack_Km.track(), &(*bFieldHandle) );
-          if(!kaonMTT.isValid()) continue;
+
+          	TransientTrack kaon1MTT(patTrack1_Km.track(), &(*bFieldHandle) );
+         	 if(!kaon1MTT.isValid()) continue;
+
+                std::vector<RefCountedKinematicParticle> phi1_Particles, phi2_Particles;
+                phi1_Particles.push_back(pFactory.particle(kaon1PTT, PM_PDG_KAON_MASS, chi,ndf, PM_kaon_sigma));
+                phi1_Particles.push_back(pFactory.particle(kaon1MTT, PM_PDG_KAON_MASS, chi,ndf, PM_kaon_sigma));
+
+                KinematicParticleVertexFitter   phi1_Fitter;
+                RefCountedKinematicTree         phi1_Tree;
+                phi1_Tree = phi1_Fitter.fit(phi1_Particles);
+                if (!phi1_Tree->isValid()) continue;
+
+                phi1_Tree->movePointerToTheTop();
+                RefCountedKinematicParticle phi1_Particle       = phi1_Tree->currentParticle();
+                RefCountedKinematicVertex   phi1_Vtx            = phi1_Tree->currentDecayVertex();
+                if (!phi1_Vtx->vertexIsValid())  continue;
+                double phi1_Prob_tmp = TMath::Prob(phi1_Vtx->chiSquared(), phi1_Vtx->degreesOfFreedom());
+                if(phi1_Prob_tmp < 0.01) continue;
+
+                double phi1_mass_c0 = phi1_Particle->currentState().mass();
+                if ( fabs(phi1_mass_c0 - PDG_PHI_MASS) > 0.05 ) continue;
 
 
-               TLorentzVector p4kaonP_0c, p4kaonM_0c, p4phi_0c, p4jpsi_0c;
-               p4kaonP_0c.SetXYZM(iKaonP->px(),iKaonP->py(),iKaonP->pz(), PDG_KAON_MASS);
-               p4kaonM_0c.SetXYZM(iKaonM->px(),iKaonM->py(),iKaonM->pz(), PDG_KAON_MASS);
+/////////////~~~~~~~~~~~~~~~~~~~~~~~~~/////////////
+/////~~~~~~~ LOOPS OVER THE SECOND PHI ~~~~~~~/////
+/////////////~~~~~~~~~~~~~~~~~~~~~~~~~/////////////
 
-               p4phi_0c = p4kaonP_0c + p4kaonM_0c;
-               p4jpsi_0c = p4mu1_0c + p4mu2_0c;
-               if(p4phi_0c.M() > PDG_PHI_MASS + 0.1) continue;
-               if(p4phi_0c.M() < PDG_PHI_MASS - 0.1) continue;
 
-                std::vector<RefCountedKinematicParticle> phiParticles;
-                phiParticles.push_back(pFactory.particle(kaonPTT, PM_PDG_KAON_MASS, chi,ndf, PM_kaon_sigma));
-                phiParticles.push_back(pFactory.particle(kaonMTT, PM_PDG_KAON_MASS, chi,ndf, PM_kaon_sigma));
+///////----- Positive Kaon -----///////
 
-                KinematicParticleVertexFitter   phifitter;
-                RefCountedKinematicTree         phiTree;
-                phiTree = phifitter.fit(phiParticles);
-                if (!phiTree->isValid()) continue;
+	   int K1p_hindex = int(iKaon1P - thePATTrackHandle->begin());
+	   int K1m_hindex = int(iKaon1M - thePATTrackHandle->begin());
+	   int K2p_hindex = -1;
+	   int K2m_hindex = -1;
 
-                phiTree->movePointerToTheTop();
-                RefCountedKinematicParticle PHIparticle       = phiTree->currentParticle();
-                RefCountedKinematicVertex   PHIvtx            = phiTree->currentDecayVertex();
-                if (!PHIvtx->vertexIsValid())  continue;
-                double phi_Prob_tmp = TMath::Prob(PHIvtx->chiSquared(), PHIvtx->degreesOfFreedom());
-                if(phi_Prob_tmp < 0.01) continue;
+	   for(vector<pat::GenericParticle>::const_iterator iKaon2P = iKaon1P; iKaon2P != thePATTrackHandle->end(); ++iKaon2P )
+	     {
 
-                double PHI_mass_c0 = PHIparticle->currentState().mass();
-                if ( PHI_mass_c0 < PDG_PHI_MASS - 0.05 ) continue;
-                if ( PHI_mass_c0 > PDG_PHI_MASS + 0.05 ) continue;
+	       K2p_hindex = int(iKaon2P - thePATTrackHandle->begin());
+	       if (K2p_hindex == K1p_hindex) continue;
+//	       if (iKaon2P == iKaon1P) continue;
+
+// 	       int ngenT1 = 0;//PdgIDatTruthLevel(iKaon2P->track(), genParticles, PId1);
+	       patTrack2_Kp = *iKaon2P;
+
+               if(iKaon2P->pt() < 0.5 || iKaon2P->charge() != 1 || fabs(iKaon2P->eta()) > 2.5) continue;
+
+
+	       if(!(patTrack2_Kp.track()->quality(reco::TrackBase::highPurity))) continue;
+
+               bool matchflag = false;
+               const reco::CandidatePtrVector & mu3P_overlaps = patTrack2_Kp.overlaps(muonTypeForPAT);
+               if ( mu3P_overlaps.size() > 0 ) //std::cout << "patTrack2_Kp overlaps with a muon." << endl;
+               for (size_t i = 0; i < mu3P_overlaps.size(); ++i) {
+                 const pat::Muon *mu = dynamic_cast<const pat::Muon *>(&*mu3P_overlaps[i]);
+                 if (mu) {
+                   // check here that muon match isn't the same as a muon used in the reco...
+                   if (mu==patMuonP || mu==patMuonM)  {
+                       //std::cout << "match between patTrack2_Kp and patMuonP/patMuonM" << endl;
+                       matchflag=true;
+                   }
+                 }
+               }
+
+               if(matchflag) continue;
+
+               TransientTrack kaon2PTT(patTrack2_Kp.track(), &(*bFieldHandle) );
+               if(!kaon2PTT.isValid()) continue;
+
+
+///////----- Negative Kaon -----///////
+
+for(vector<pat::GenericParticle>::const_iterator iKaon1M = thePATTrackHandle->begin(); iKaon1M != thePATTrackHandle->end(); ++iKaon1M )
+  {
+// 	       int ngenT1 = 0;//PdgIDatTruthLevel(iKaon2P->track(), genParticles, PId1);
+   patTrack1_Km = *iKaon1M;
+   if(iKaon1M->pt() < 0.5 || iKaon1M->charge() != -1 || fabs(iKaon1M->eta()) > 2.5) continue;
+
+   TLorentzVector p4kaon1P_0c, p4kaon1M_0c, p4phi1_0c, p4kaon2P_0c, p4kaon2M_0c, p4phi2_0c, p4jpsi_0c;
+   p4kaon1P_0c.SetXYZM(iKaon2P->px(),iKaon2P->py(),iKaon2P->pz(), PDG_KAON_MASS);
+   p4kaon1M_0c.SetXYZM(iKaon1M->px(),iKaon1M->py(),iKaon1M->pz(), PDG_KAON_MASS);
+
+   p4phi1_0c = p4kaon1P_0c + p4kaon1M_0c;
+   p4jpsi_0c = p4mu1_0c + p4mu2_0c;
+   if(fabs(p4phi1_0c.M() - PDG_PHI_MASS) > 0.1) continue;
+
+
+    if(!(patTrack1_Km.track()->quality(reco::TrackBase::highPurity))) continue;
+
+          bool matchflag = false;
+          const reco::CandidatePtrVector & mu2P_overlaps = patTrack1_Km.overlaps(muonTypeForPAT);
+          if ( mu2P_overlaps.size() > 0 ) //std::cout << "patTrack2_Kp overlaps with a muon." << endl;
+          for (size_t i = 0; i < mu2P_overlaps.size(); ++i) {
+            const pat::Muon *mu = dynamic_cast<const pat::Muon *>(&*mu2P_overlaps[i]);
+            if (mu) {
+              // check here that muon match isn't the same as a muon used in the reco...
+              if (mu==patMuonP || mu==patMuonM)  {
+                  //std::cout << "match between patTrack2_Kp and patMuonP/patMuonM" << endl;
+                  matchflag=true;
+              }
+            }
+          }
+
+          if(matchflag) continue;
+
+
+          	TransientTrack kaon1MTT(patTrack1_Km.track(), &(*bFieldHandle) );
+         	 if(!kaon1MTT.isValid()) continue;
+
+                phi1_Particles.push_back(pFactory.particle(kaon1PTT, PM_PDG_KAON_MASS, chi,ndf, PM_kaon_sigma));
+                phi1_Particles.push_back(pFactory.particle(kaon1MTT, PM_PDG_KAON_MASS, chi,ndf, PM_kaon_sigma));
+
+                KinematicParticleVertexFitter   phi1_Fitter;
+                RefCountedKinematicTree         phi1_Tree;
+                phi1_Tree = phi1_Fitter.fit(phi1_Particles);
+                if (!phi1_Tree->isValid()) continue;
+
+                phi1_Tree->movePointerToTheTop();
+                RefCountedKinematicParticle phi1_Particle       = phi1_Tree->currentParticle();
+                RefCountedKinematicVertex   phi1_Vtx            = phi1_Tree->currentDecayVertex();
+                if (!phi1_Vtx->vertexIsValid())  continue;
+                double phi1_Prob_tmp = TMath::Prob(phi1_Vtx->chiSquared(), phi1_Vtx->degreesOfFreedom());
+                if(phi1_Prob_tmp < 0.01) continue;
+
+                double phi1_mass_c0 = phi1_Particle->currentState().mass();
+                if ( fabs(phi1_mass_c0 - PDG_PHI_MASS) > 0.05 ) continue;
+
 
 
 
                //Now we are ready to combine!
-               if(fabs((p4jpsi_0c + p4phi_0c).M() - PDG_BS_MASS) > 0.6) continue;
+               if(fabs((p4jpsi_0c + p4phi1_0c).M() - PDG_BS_MASS) > 0.6) continue;
 
                std::vector<RefCountedKinematicParticle> Bs_candidate_init;
 
                Bs_candidate_init.push_back(pFactory.particle(muon1TT, PM_PDG_MUON_MASS, chi,ndf, PM_muon_sigma));
                Bs_candidate_init.push_back(pFactory.particle(muon2TT, PM_PDG_MUON_MASS, chi,ndf, PM_muon_sigma));
-               Bs_candidate_init.push_back(pFactory.particle(kaonPTT, PM_PDG_KAON_MASS, chi,ndf, PM_kaon_sigma));
-               Bs_candidate_init.push_back(pFactory.particle(kaonMTT, PM_PDG_KAON_MASS, chi,ndf, PM_kaon_sigma));
+               Bs_candidate_init.push_back(pFactory.particle(kaon1PTT, PM_PDG_KAON_MASS, chi,ndf, PM_kaon_sigma));
+               Bs_candidate_init.push_back(pFactory.particle(kaon1MTT, PM_PDG_KAON_MASS, chi,ndf, PM_kaon_sigma));
                RefCountedKinematicTree xbVFT, BsFitTree;
 
                std::vector<RefCountedKinematicParticle> Bs_candidate = Bs_candidate_init;
@@ -809,9 +920,9 @@ for(vector<pat::GenericParticle>::const_iterator iKaonM = thePATTrackHandle->beg
                     // compare primary tracks to check for matches with B cand
                     TrackRef trackRef = iTrack->castTo<TrackRef>();
 
-                    // the 4 tracks in the B cand are  patTrack_Kp glbTrackP glbTrackM
-                    if (  !(   (patTrack_Kp.track()==trackRef)  ||
-                               (patTrack_Km.track()==trackRef)  ||
+                    // the 4 tracks in the B cand are  patTrack2_Kp glbTrackP glbTrackM
+                    if (  !(   (patTrack2_Kp.track()==trackRef)  ||
+                               (patTrack1_Km.track()==trackRef)  ||
                                (trkTrackP==trackRef)            ||
                                (trkTrackM==trackRef)           ) )
                        {
@@ -998,62 +1109,62 @@ for(vector<pat::GenericParticle>::const_iterator iKaonM = thePATTrackHandle->beg
                           B_J_DecayVtxYE   ->push_back( MUMUvtx->error().cyy() );
                           B_J_DecayVtxZE   ->push_back( MUMUvtx->error().czz() );
 
-                          kaon1P_px_0c       ->push_back(iKaonP->px());
-                          kaon1P_py_0c       ->push_back(iKaonP->py());
-                          kaon1P_pz_0c       ->push_back(iKaonP->pz());
+                          kaon1P_px_0c       ->push_back(iKaon1P->px());
+                          kaon1P_py_0c       ->push_back(iKaon1P->py());
+                          kaon1P_pz_0c       ->push_back(iKaon1P->pz());
                           kaon1P_px_cjp       ->push_back(KpCandMC->currentState().globalMomentum().x());
                           kaon1P_py_cjp       ->push_back(KpCandMC->currentState().globalMomentum().y());
                           kaon1P_pz_cjp       ->push_back(KpCandMC->currentState().globalMomentum().z());
-                          kaon1P_track_normchi2  ->push_back(patTrack_Kp.track()->normalizedChi2());
-                          kaon1P_Hits       ->push_back(patTrack_Kp.track()->numberOfValidHits() );
-                          kaon1P_PHits      ->push_back(patTrack_Kp.track()->hitPattern().numberOfValidPixelHits() );
-                          kaon1P_dxy_Bsdecay	->push_back(patTrack_Kp.track()->dxy(bDecayPoint) );
-                          kaon1P_dz_Bsdecay		->push_back(patTrack_Kp.track()->dz(bDecayPoint) );
-   		          kaon1P_NTrackerLayers->push_back ( patTrack_Kp.track()->hitPattern().trackerLayersWithMeasurement() );
-   		          kaon1P_NPixelLayers->push_back ( patTrack_Kp.track()->hitPattern().pixelLayersWithMeasurement() );
+                          kaon1P_track_normchi2  ->push_back(patTrack1_Kp.track()->normalizedChi2());
+                          kaon1P_Hits       ->push_back(patTrack1_Kp.track()->numberOfValidHits() );
+                          kaon1P_PHits      ->push_back(patTrack1_Kp.track()->hitPattern().numberOfValidPixelHits() );
+                          kaon1P_dxy_Bsdecay	->push_back(patTrack1_Kp.track()->dxy(bDecayPoint) );
+                          kaon1P_dz_Bsdecay		->push_back(patTrack1_Kp.track()->dz(bDecayPoint) );
+   		          kaon1P_NTrackerLayers->push_back ( patTrack1_Kp.track()->hitPattern().trackerLayersWithMeasurement() );
+   		          kaon1P_NPixelLayers->push_back ( patTrack1_Kp.track()->hitPattern().pixelLayersWithMeasurement() );
 
-                          kaon1M_px_0c       ->push_back(iKaonM->px());
-                          kaon1M_py_0c       ->push_back(iKaonM->py());
-                          kaon1M_pz_0c       ->push_back(iKaonM->pz());
+                          kaon1M_px_0c       ->push_back(iKaon1M->px());
+                          kaon1M_py_0c       ->push_back(iKaon1M->py());
+                          kaon1M_pz_0c       ->push_back(iKaon1M->pz());
                           kaon1M_px_cjp       ->push_back(KmCandMC->currentState().globalMomentum().x());
                           kaon1M_py_cjp       ->push_back(KmCandMC->currentState().globalMomentum().y());
                           kaon1M_pz_cjp       ->push_back(KmCandMC->currentState().globalMomentum().z());
-                          kaon1M_track_normchi2  ->push_back(patTrack_Km.track()->normalizedChi2());
-                          kaon1M_Hits       ->push_back(patTrack_Km.track()->numberOfValidHits() );
-                          kaon1M_PHits      ->push_back(patTrack_Km.track()->hitPattern().numberOfValidPixelHits() );
-                          kaon1M_dxy_Bsdecay	->push_back(patTrack_Km.track()->dxy(bDecayPoint) );
-                          kaon1M_dz_Bsdecay		->push_back(patTrack_Km.track()->dz(bDecayPoint	) );
-   		          kaon1M_NTrackerLayers->push_back ( patTrack_Km.track()->hitPattern().trackerLayersWithMeasurement() );
-   		          kaon1M_NPixelLayers->push_back ( patTrack_Km.track()->hitPattern().pixelLayersWithMeasurement() );
+                          kaon1M_track_normchi2  ->push_back(patTrack1_Km.track()->normalizedChi2());
+                          kaon1M_Hits       ->push_back(patTrack1_Km.track()->numberOfValidHits() );
+                          kaon1M_PHits      ->push_back(patTrack1_Km.track()->hitPattern().numberOfValidPixelHits() );
+                          kaon1M_dxy_Bsdecay	->push_back(patTrack1_Km.track()->dxy(bDecayPoint) );
+                          kaon1M_dz_Bsdecay		->push_back(patTrack1_Km.track()->dz(bDecayPoint	) );
+   		          kaon1M_NTrackerLayers->push_back ( patTrack1_Km.track()->hitPattern().trackerLayersWithMeasurement() );
+   		          kaon1M_NPixelLayers->push_back ( patTrack1_Km.track()->hitPattern().pixelLayersWithMeasurement() );
 
 
-                          kaon2P_px_0c       ->push_back(iKaonP->px());
-                          kaon2P_py_0c       ->push_back(iKaonP->py());
-                          kaon2P_pz_0c       ->push_back(iKaonP->pz());
+                          kaon2P_px_0c       ->push_back(iKaon2P->px());
+                          kaon2P_py_0c       ->push_back(iKaon2P->py());
+                          kaon2P_pz_0c       ->push_back(iKaon2P->pz());
                           kaon2P_px_cjp       ->push_back(KpCandMC->currentState().globalMomentum().x());
                           kaon2P_py_cjp       ->push_back(KpCandMC->currentState().globalMomentum().y());
                           kaon2P_pz_cjp       ->push_back(KpCandMC->currentState().globalMomentum().z());
-                          kaon2P_track_normchi2  ->push_back(patTrack_Kp.track()->normalizedChi2());
-                          kaon2P_Hits       ->push_back(patTrack_Kp.track()->numberOfValidHits() );
-                          kaon2P_PHits      ->push_back(patTrack_Kp.track()->hitPattern().numberOfValidPixelHits() );
-                          kaon2P_dxy_Bsdecay	->push_back(patTrack_Kp.track()->dxy(bDecayPoint) );
-                          kaon2P_dz_Bsdecay		->push_back(patTrack_Kp.track()->dz(bDecayPoint) );
-   		          kaon2P_NTrackerLayers->push_back ( patTrack_Kp.track()->hitPattern().trackerLayersWithMeasurement() );
-   		          kaon2P_NPixelLayers->push_back ( patTrack_Kp.track()->hitPattern().pixelLayersWithMeasurement() );
+                          kaon2P_track_normchi2  ->push_back(patTrack2_Kp.track()->normalizedChi2());
+                          kaon2P_Hits       ->push_back(patTrack2_Kp.track()->numberOfValidHits() );
+                          kaon2P_PHits      ->push_back(patTrack2_Kp.track()->hitPattern().numberOfValidPixelHits() );
+                          kaon2P_dxy_Bsdecay	->push_back(patTrack2_Kp.track()->dxy(bDecayPoint) );
+                          kaon2P_dz_Bsdecay		->push_back(patTrack2_Kp.track()->dz(bDecayPoint) );
+   		          kaon2P_NTrackerLayers->push_back ( patTrack2_Kp.track()->hitPattern().trackerLayersWithMeasurement() );
+   		          kaon2P_NPixelLayers->push_back ( patTrack2_Kp.track()->hitPattern().pixelLayersWithMeasurement() );
 
-                          kaon2M_px_0c       ->push_back(iKaonM->px());
-                          kaon2M_py_0c       ->push_back(iKaonM->py());
-                          kaon2M_pz_0c       ->push_back(iKaonM->pz());
+                          kaon2M_px_0c       ->push_back(iKaon2M->px());
+                          kaon2M_py_0c       ->push_back(iKaon2M->py());
+                          kaon2M_pz_0c       ->push_back(iKaon2M->pz());
                           kaon2M_px_cjp       ->push_back(KmCandMC->currentState().globalMomentum().x());
                           kaon2M_py_cjp       ->push_back(KmCandMC->currentState().globalMomentum().y());
                           kaon2M_pz_cjp       ->push_back(KmCandMC->currentState().globalMomentum().z());
-                          kaon2M_track_normchi2  ->push_back(patTrack_Km.track()->normalizedChi2());
-                          kaon2M_Hits       ->push_back(patTrack_Km.track()->numberOfValidHits() );
-                          kaon2M_PHits      ->push_back(patTrack_Km.track()->hitPattern().numberOfValidPixelHits() );
-                          kaon2M_dxy_Bsdecay	->push_back(patTrack_Km.track()->dxy(bDecayPoint) );
-                          kaon2M_dz_Bsdecay		->push_back(patTrack_Km.track()->dz(bDecayPoint	) );
-   		          kaon2M_NTrackerLayers->push_back ( patTrack_Km.track()->hitPattern().trackerLayersWithMeasurement() );
-   		          kaon2M_NPixelLayers->push_back ( patTrack_Km.track()->hitPattern().pixelLayersWithMeasurement() );
+                          kaon2M_track_normchi2  ->push_back(patTrack2_Km.track()->normalizedChi2());
+                          kaon2M_Hits       ->push_back(patTrack2_Km.track()->numberOfValidHits() );
+                          kaon2M_PHits      ->push_back(patTrack2_Km.track()->hitPattern().numberOfValidPixelHits() );
+                          kaon2M_dxy_Bsdecay	->push_back(patTrack2_Km.track()->dxy(bDecayPoint) );
+                          kaon2M_dz_Bsdecay		->push_back(patTrack2_Km.track()->dz(bDecayPoint	) );
+   		          kaon2M_NTrackerLayers->push_back ( patTrack2_Km.track()->hitPattern().trackerLayersWithMeasurement() );
+   		          kaon2M_NPixelLayers->push_back ( patTrack2_Km.track()->hitPattern().pixelLayersWithMeasurement() );
 
 
                           B_mu_px1_cjp ->push_back(mu1CandMC_p.x());
@@ -1068,7 +1179,7 @@ for(vector<pat::GenericParticle>::const_iterator iKaonM = thePATTrackHandle->beg
 
                           B_Prob    ->push_back(B_Prob_tmp);
                           B_J_Prob  ->push_back(JP_Prob_tmp);
-                          B_Phi_Prob->push_back(phi_Prob_tmp);
+                          B_Phi1_Prob->push_back(phi1_Prob_tmp);
 
    //------------------//
                   mumCat->push_back( mumCategory );
@@ -1150,7 +1261,8 @@ for(vector<pat::GenericParticle>::const_iterator iKaonM = thePATTrackHandle->beg
 
                           /////////////////////////////////////////////////
 
-                          phiParticles.clear();
+                          phi1_Particles.clear();
+                          phi2_Particles.clear();
                           muonParticles.clear();
                           Bs_candidate_init.clear();
                           Bs_candidate.clear();
@@ -1191,7 +1303,7 @@ for(vector<pat::GenericParticle>::const_iterator iKaonM = thePATTrackHandle->beg
       B_mu_px1_cjp->clear();   B_mu_py1_cjp->clear();  B_mu_pz1_cjp->clear();
       B_mu_px2_cjp->clear();   B_mu_py2_cjp->clear();  B_mu_pz2_cjp->clear();
 
-      B_Prob->clear(); B_J_Prob->clear(); B_Phi_Prob->clear();
+      B_Prob->clear(); B_J_Prob->clear(); B_Phi1_Prob->clear();
 
       kaon1P_px_0c->clear();     kaon1P_py_0c->clear();    kaon1P_pz_0c->clear();
       kaon1P_px_cjp->clear();     kaon1P_py_cjp->clear();    kaon1P_pz_cjp->clear();
@@ -1312,7 +1424,7 @@ for(vector<pat::GenericParticle>::const_iterator iKaonM = thePATTrackHandle->beg
 
      tree_->Branch("B_Prob"            , &B_Prob               );
      tree_->Branch("B_J_Prob"          , &B_J_Prob             );
-     tree_->Branch("B_Phi_Prob"          , &B_Phi_Prob             );
+     tree_->Branch("B_Phi1_Prob"          , &B_Phi1_Prob             );
 
      tree_->Branch("kaon1P_px_0c"        , &kaon1P_px_0c           );
      tree_->Branch("kaon1P_py_0c"        , &kaon1P_py_0c           );
