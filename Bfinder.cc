@@ -99,6 +99,11 @@ Bfinder::Bfinder(const edm::ParameterSet& iConfig)
  B_DecayVtxX(0),    B_DecayVtxY(0),   B_DecayVtxZ(0),
  B_DecayVtxXE(0),   B_DecayVtxYE(0),  B_DecayVtxZE(0),
 
+ Bs_DecayVtx_vtxfit_X(0),   Bs_DecayVtx_vtxfit_Y(0),  Bs_DecayVtx_vtxfit_Z(0),
+ Bs_DecayVtx_vtxfit_XE(0),   Bs_DecayVtx_vtxfit_YE(0),  Bs_DecayVtx_vtxfit_ZE(0),
+ Bs_DecayVtx_vtxfit_XYE(0),   Bs_DecayVtx_vtxfit_XZE(0),  Bs_DecayVtx_vtxfit_YZE(0),
+ Bs_DecayVtx_vtxfit_CL(0),
+
  B_J_mass(0),       B_J_px(0),            B_J_py(0),        B_J_pz(0),
  B_J_DecayVtxX(0),  B_J_DecayVtxY(0),     B_J_DecayVtxZ(0),
  B_J_DecayVtxXE(0), B_J_DecayVtxYE(0),    B_J_DecayVtxZE(0),
@@ -1054,16 +1059,16 @@ for(vector<pat::GenericParticle>::const_iterator iKaon2M = iKaon1M; iKaon2M != t
                           PV_bestBang_RF_CL->push_back(    ChiSquaredProbability((double)(bestVtxRf.chi2()),(double)(bestVtxRf.ndof())) );
 
 
-                          Bc_DecayVtx_vtxfit_X ->push_back(    BcVtx.x() );
-                          Bc_DecayVtx_vtxfit_Y ->push_back(    BcVtx.y() );
-                          Bc_DecayVtx_vtxfit_Z ->push_back(    BcVtx.z() );
-                          Bc_DecayVtx_vtxfit_XE->push_back(    BcVtx.covariance(0, 0) );
-                          Bc_DecayVtx_vtxfit_YE->push_back(    BcVtx.covariance(1, 1) );
-                          Bc_DecayVtx_vtxfit_ZE->push_back(    BcVtx.covariance(2, 2) );
-                          Bc_DecayVtx_vtxfit_XYE->push_back(   BcVtx.covariance(0, 1) );
-                          Bc_DecayVtx_vtxfit_XZE->push_back(   BcVtx.covariance(0, 2) );
-                          Bc_DecayVtx_vtxfit_YZE->push_back(   BcVtx.covariance(1, 2) );
-                          Bc_DecayVtx_vtxfit_CL->push_back(    ChiSquaredProbability((double)(BcVtx.chi2()),(double)(BcVtx.ndof())) );
+                          Bs_DecayVtx_vtxfit_X ->push_back(    BsVtx.x() );
+                          Bs_DecayVtx_vtxfit_Y ->push_back(    BsVtx.y() );
+                          Bs_DecayVtx_vtxfit_Z ->push_back(    BsVtx.z() );
+                          Bs_DecayVtx_vtxfit_XE->push_back(    BsVtx.covariance(0, 0) );
+                          Bs_DecayVtx_vtxfit_YE->push_back(    BsVtx.covariance(1, 1) );
+                          Bs_DecayVtx_vtxfit_ZE->push_back(    BsVtx.covariance(2, 2) );
+                          Bs_DecayVtx_vtxfit_XYE->push_back(   BsVtx.covariance(0, 1) );
+                          Bs_DecayVtx_vtxfit_XZE->push_back(   BsVtx.covariance(0, 2) );
+                          Bs_DecayVtx_vtxfit_YZE->push_back(   BsVtx.covariance(1, 2) );
+                          Bs_DecayVtx_vtxfit_CL->push_back(    ChiSquaredProbability((double)(BsVtx.chi2()),(double)(BsVtx.ndof())) );
 
 
 
@@ -1334,6 +1339,12 @@ for(vector<pat::GenericParticle>::const_iterator iKaon2M = iKaon1M; iKaon2M != t
       B_DecayVtxX->clear();    B_DecayVtxY->clear();   B_DecayVtxZ->clear();
       B_DecayVtxXE->clear();   B_DecayVtxYE->clear();  B_DecayVtxZE->clear();
 
+      Bs_DecayVtx_vtxfit_X->clear();   Bs_DecayVtx_vtxfit_Y->clear();  Bs_DecayVtx_vtxfit_Z->clear();
+      Bs_DecayVtx_vtxfit_XE->clear();   Bs_DecayVtx_vtxfit_YE->clear();  Bs_DecayVtx_vtxfit_ZE->clear();
+      Bs_DecayVtx_vtxfit_XYE->clear();   Bs_DecayVtx_vtxfit_XZE->clear();  Bs_DecayVtx_vtxfit_YZE->clear();
+      Bs_DecayVtx_vtxfit_CL->clear();
+
+
       B_J_mass->clear();       B_J_px->clear();            B_J_py->clear();        B_J_pz->clear();
       B_J_DecayVtxX->clear();  B_J_DecayVtxY->clear();     B_J_DecayVtxZ->clear();
       B_J_DecayVtxXE->clear(); B_J_DecayVtxYE->clear();    B_J_DecayVtxZE->clear();
@@ -1444,6 +1455,17 @@ for(vector<pat::GenericParticle>::const_iterator iKaon2M = iKaon1M; iKaon2M != t
      tree_->Branch("B_DecayVtxXE"      , &B_DecayVtxXE         );
      tree_->Branch("B_DecayVtxYE"      , &B_DecayVtxYE         );
      tree_->Branch("B_DecayVtxZE"      , &B_DecayVtxZE         );
+
+     tree_->Branch("Bs_DecayVtx_vtxfit_X"       , &Bs_DecayVtx_vtxfit_X          );
+     tree_->Branch("Bs_DecayVtx_vtxfit_Y"       , &Bs_DecayVtx_vtxfit_Y          );
+     tree_->Branch("Bs_DecayVtx_vtxfit_Z"       , &Bs_DecayVtx_vtxfit_Z          );
+     tree_->Branch("Bs_DecayVtx_vtxfit_XE"       , &Bs_DecayVtx_vtxfit_XE          );
+     tree_->Branch("Bs_DecayVtx_vtxfit_YE"       , &Bs_DecayVtx_vtxfit_YE          );
+     tree_->Branch("Bs_DecayVtx_vtxfit_ZE"       , &Bs_DecayVtx_vtxfit_ZE         );
+     tree_->Branch("Bs_DecayVtx_vtxfit_XYE"       , &Bs_DecayVtx_vtxfit_XYE          );
+     tree_->Branch("Bs_DecayVtx_vtxfit_XZE"       , &Bs_DecayVtx_vtxfit_XZE          );
+     tree_->Branch("Bs_DecayVtx_vtxfit_YZE"       , &Bs_DecayVtx_vtxfit_YZE          );
+     tree_->Branch("Bs_DecayVtx_vtxfit_CL"      , &Bs_DecayVtx_vtxfit_CL         );
 
      tree_->Branch("B_J_mass"          , &B_J_mass             );
      tree_->Branch("B_J_px"            , &B_J_px               );

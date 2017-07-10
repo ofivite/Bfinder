@@ -140,6 +140,11 @@ private:
   std::vector<float>    *B_DecayVtxX        , *B_DecayVtxY      , *B_DecayVtxZ;
   std::vector<float>    *B_DecayVtxXE       , *B_DecayVtxYE     , *B_DecayVtxZE;
 
+  std::vector<float>    *Bs_DecayVtx_vtxfit_X        , *Bs_DecayVtx_vtxfit_Y      , *Bs_DecayVtx_vtxfit_Z;
+  std::vector<float>    *Bs_DecayVtx_vtxfit_XE       , *Bs_DecayVtx_vtxfit_YE     , *Bs_DecayVtx_vtxfit_ZE;
+  std::vector<float>    *Bs_DecayVtx_vtxfit_XYE       , *Bs_DecayVtx_vtxfit_XZE     , *Bs_DecayVtx_vtxfit_YZE;
+  std::vector<float>    *Bs_DecayVtx_vtxfit_CL;
+
   std::vector<float>    *B_J_mass;
   std::vector<float>    *B_J_px           , *B_J_py       , *B_J_pz;
   std::vector<float>    *B_J_DecayVtxX      , *B_J_DecayVtxY    , *B_J_DecayVtxZ;
