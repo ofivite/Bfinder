@@ -931,7 +931,7 @@ for(vector<pat::GenericParticle>::const_iterator iKaon2M = iKaon1M; iKaon2M != t
      /////////////////////////////////// // try refitting the primary without the tracks in the B reco candidate
 
                // first get tracks from the original primary
-               vector<reco::TransientTrack> vertexTracks;
+/*               vector<reco::TransientTrack> vertexTracks;
 
                for ( std::vector<TrackBaseRef >::const_iterator iTrack = bestPV_Bang.tracks_begin();
                  iTrack != bestPV_Bang.tracks_end(); ++iTrack)
@@ -978,7 +978,9 @@ for(vector<pat::GenericParticle>::const_iterator iKaon2M = iKaon1M; iKaon2M != t
                   bestVtxRf = reco::Vertex(v);
                 }
                }
+*/
 
+reco::Vertex bestVtxRf = bestPV_Bang;
 
  ///~~~fit 6 tracks from Bs together~~~///
   vector<reco::TransientTrack> BsTracks;
@@ -1311,7 +1313,9 @@ for(vector<pat::GenericParticle>::const_iterator iKaon2M = iKaon1M; iKaon2M != t
                           Bs_candidate_init.clear();
                           Bs_candidate.clear();
                           BsTracks.clear();
-                          vertexTracks.clear();
+ //                         vertexTracks.clear();
+ 	             } // one kaon
+   		  } // another kaon
    	     } // one kaon
    	} // another kaon
    } // muon from jpsi
