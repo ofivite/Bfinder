@@ -519,6 +519,7 @@ void Bfinder::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       ParticleMass PM_PDG_MUON_MASS = PDG_MUON_MASS;
       ParticleMass PM_PDG_JPSI_MASS = PDG_JPSI_MASS;
       ParticleMass PM_PDG_KAON_MASS = PDG_KAON_MASS;
+      ParticleMass PM_PDG_PION_MASS = PDG_PION_MASS;
       float PM_muon_sigma = PM_PDG_MUON_MASS*1.e-6;
       float PM_kaon_sigma = PM_PDG_KAON_MASS*1.e-6;
       float chi = 0.;
@@ -594,7 +595,7 @@ RefCountedKinematicTree
 // 	       int ngenT1 = 0;//PdgIDatTruthLevel(iKaonP->track(), genParticles, PId1);
 	       patTrack_Kp = *iKaonP;
 
-        if(iKaonP->pt() < 0.7 || iKaonP->charge() != 1 || fabs(iKaonP->eta()) > 2.5) continue;
+        if(iKaonP->pt() < 0.5 || iKaonP->charge() != 1 || fabs(iKaonP->eta()) > 2.5) continue;
 
 
 	       if(!(patTrack_Kp.track()->quality(reco::TrackBase::highPurity))) continue;
@@ -624,7 +625,7 @@ for(vector<pat::GenericParticle>::const_iterator iKaonM = thePATTrackHandle->beg
    if(iKaonP == iKaonM) continue;
 // 	       int ngenT1 = 0;//PdgIDatTruthLevel(iKaonP->track(), genParticles, PId1);
    patTrack_Km = *iKaonM;
-   if(iKaonM->pt() < 0.7 || iKaonM->charge() != -1 || fabs(iKaonP->eta()) > 2.5) continue;
+   if(iKaonM->pt() < 0.5 || iKaonM->charge() != -1 || fabs(iKaonP->eta()) > 2.5) continue;
 
 
     if(!(patTrack_Km.track()->quality(reco::TrackBase::highPurity))) continue;
@@ -650,17 +651,17 @@ for(vector<pat::GenericParticle>::const_iterator iKaonM = thePATTrackHandle->beg
 
 
                TLorentzVector p4kaonP_0c, p4kaonM_0c, p4phi_0c, p4jpsi_0c;
-               p4kaonP_0c.SetXYZM(iKaonP->px(),iKaonP->py(),iKaonP->pz(), PDG_KAON_MASS);
-               p4kaonM_0c.SetXYZM(iKaonM->px(),iKaonM->py(),iKaonM->pz(), PDG_KAON_MASS);
+               p4kaonP_0c.SetXYZM(iKaonP->px(),iKaonP->py(),iKaonP->pz(), PDG_PION_MASS);
+               p4kaonM_0c.SetXYZM(iKaonM->px(),iKaonM->py(),iKaonM->pz(), PDG_PION_MASS);
 
                p4phi_0c = p4kaonP_0c + p4kaonM_0c;
                p4jpsi_0c = p4mu1_0c + p4mu2_0c;
-               if(p4phi_0c.M() > PDG_PHI_MASS + 0.1) continue;
-               if(p4phi_0c.M() < PDG_PHI_MASS - 0.1) continue;
+              //  if(p4phi_0c.M() > PDG_PHI_MASS + 0.1) continue;
+              //  if(p4phi_0c.M() < PDG_PHI_MASS - 0.1) continue;
 
                 std::vector<RefCountedKinematicParticle> phiParticles;
-                phiParticles.push_back(pFactory.particle(kaonPTT, PM_PDG_KAON_MASS, chi,ndf, PM_kaon_sigma));
-                phiParticles.push_back(pFactory.particle(kaonMTT, PM_PDG_KAON_MASS, chi,ndf, PM_kaon_sigma));
+                phiParticles.push_back(pFactory.particle(kaonPTT, PM_PDG_PION_MASS, chi,ndf, PM_kaon_sigma));
+                phiParticles.push_back(pFactory.particle(kaonMTT, PM_PDG_PION_MASS, chi,ndf, PM_kaon_sigma));
 
                 KinematicParticleVertexFitter   phifitter;
                 RefCountedKinematicTree         phiTree;
@@ -672,23 +673,24 @@ for(vector<pat::GenericParticle>::const_iterator iKaonM = thePATTrackHandle->beg
                 RefCountedKinematicVertex   PHIvtx            = phiTree->currentDecayVertex();
                 if (!PHIvtx->vertexIsValid())  continue;
                 double phi_Prob_tmp = TMath::Prob(PHIvtx->chiSquared(), PHIvtx->degreesOfFreedom());
-                if(phi_Prob_tmp < 0.01) continue;
+                // if(phi_Prob_tmp < 0.01) continue;
 
-                double PHI_mass_c0 = PHIparticle->currentState().mass();
-                if ( PHI_mass_c0 < PDG_PHI_MASS - 0.05 ) continue;
-                if ( PHI_mass_c0 > PDG_PHI_MASS + 0.05 ) continue;
+                // double PHI_mass_c0 = PHIparticle->currentState().mass();
+                // if ( PHI_mass_c0 < PDG_PHI_MASS - 0.05 ) continue;
+                // if ( PHI_mass_c0 > PDG_PHI_MASS + 0.05 ) continue;
 
 
 
                //Now we are ready to combine!
                if(fabs((p4jpsi_0c + p4phi_0c).M() - PDG_BS_MASS) > 0.6) continue;
+               if ((p4jpsi_0c + p4phi_0c).M() < 2.6 || (p4jpsi_0c + p4phi_0c).M() > 5) continue;
 
                std::vector<RefCountedKinematicParticle> Bs_candidate_init;
 
                Bs_candidate_init.push_back(pFactory.particle(muon1TT, PM_PDG_MUON_MASS, chi,ndf, PM_muon_sigma));
                Bs_candidate_init.push_back(pFactory.particle(muon2TT, PM_PDG_MUON_MASS, chi,ndf, PM_muon_sigma));
-               Bs_candidate_init.push_back(pFactory.particle(kaonPTT, PM_PDG_KAON_MASS, chi,ndf, PM_kaon_sigma));
-               Bs_candidate_init.push_back(pFactory.particle(kaonMTT, PM_PDG_KAON_MASS, chi,ndf, PM_kaon_sigma));
+               Bs_candidate_init.push_back(pFactory.particle(kaonPTT, PM_PDG_PION_MASS, chi,ndf, PM_kaon_sigma));
+               Bs_candidate_init.push_back(pFactory.particle(kaonMTT, PM_PDG_PION_MASS, chi,ndf, PM_kaon_sigma));
                RefCountedKinematicTree xbVFT, BsFitTree;
 
                std::vector<RefCountedKinematicParticle> Bs_candidate = Bs_candidate_init;
@@ -716,12 +718,12 @@ for(vector<pat::GenericParticle>::const_iterator iKaonM = thePATTrackHandle->beg
 
                double Bs_mass_cjp_tmp = bCandCjp->currentState().mass();
 
-               if(Bs_mass_cjp_tmp < 5.2) continue;
-               if(Bs_mass_cjp_tmp > 5.5) continue;
+               if(Bs_mass_cjp_tmp < 3.6) continue;
+               if(Bs_mass_cjp_tmp > 4.) continue;
                //
                if(bDecayVertexCjp->chiSquared()<0) continue;
                double B_Prob_tmp   = TMath::Prob(bDecayVertexCjp->chiSquared(), (int) bDecayVertexCjp->degreesOfFreedom());
-               if(B_Prob_tmp < 0.02) continue;
+               if(B_Prob_tmp < 0.01) continue;
 
 
  	             GlobalPoint BsGP = GlobalPoint( (*bDecayVertexCjp).position().x(), (*bDecayVertexCjp).position().y(), (*bDecayVertexCjp).position().z() );
@@ -836,16 +838,19 @@ for(vector<pat::GenericParticle>::const_iterator iKaonM = thePATTrackHandle->beg
                 }
                }
 
-     TransientTrack JP_TT = MUMUparticle->refittedTransientTrack();
-     if (!JP_TT.isValid()) continue;
+    //  TransientTrack JP_TT = MUMUparticle->refittedTransientTrack();
+    //  if (!JP_TT.isValid()) continue;
 
-     TransientTrack phi_TT = PHIparticle->refittedTransientTrack();
-     if (!phi_TT.isValid()) continue;
+    //  TransientTrack phi_TT = PHIparticle->refittedTransientTrack();
+    //  if (!phi_TT.isValid()) continue;
 
  ///~~~fit 4 tracks from Bs together~~~///
   vector<reco::TransientTrack> BsTracks;
-  BsTracks.push_back(JP_TT);
-  BsTracks.push_back(phi_TT);
+  // BsTracks.push_back(JP_TT);
+  BsTracks.push_back(muon1TT);
+  BsTracks.push_back(muon2TT);
+  BsTracks.push_back(kaonPTT);
+  BsTracks.push_back(kaonMTT);
 
    AdaptiveVertexFitter BsVertexFitter;
    TransientVertex BsTV = BsVertexFitter.vertex(BsTracks, BsGP);
@@ -856,8 +861,8 @@ for(vector<pat::GenericParticle>::const_iterator iKaonM = thePATTrackHandle->beg
 
        BsVtx = reco::Vertex(BsTV);
 
-        JP_Bsdecay_weight->push_back(BsVtx.trackWeight(JP_TT.trackBaseRef()));
-        phi_Bsdecay_weight->push_back(BsVtx.trackWeight(phi_TT.trackBaseRef()));
+        // JP_Bsdecay_weight->push_back(BsVtx.trackWeight(JP_TT.trackBaseRef()));
+        // phi_Bsdecay_weight->push_back(BsVtx.trackWeight(phi_TT.trackBaseRef()));
         BsVertex_Chi->push_back(BsTV.totalChiSquared());
         BsVertex_normChi->push_back(BsTV.normalisedChiSquared());
       }
