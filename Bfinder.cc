@@ -683,7 +683,7 @@ for(vector<pat::GenericParticle>::const_iterator iKaonM = thePATTrackHandle->beg
 
                //Now we are ready to combine!
               //  if(fabs((p4jpsi_0c + p4phi_0c).M() - PDG_BS_MASS) > 0.6) continue;
-               if ((p4jpsi_0c + p4phi_0c).M() < 2.6 || (p4jpsi_0c + p4phi_0c).M() > 5 ) continue;
+            //   if ((p4jpsi_0c + p4phi_0c).M() < 2.6 || (p4jpsi_0c + p4phi_0c).M() > 5 ) continue;
                std::vector<RefCountedKinematicParticle> Bs_candidate_init;
 
                Bs_candidate_init.push_back(pFactory.particle(muon1TT, PM_PDG_MUON_MASS, chi,ndf, PM_muon_sigma));
