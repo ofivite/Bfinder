@@ -426,7 +426,7 @@ void Bfinder::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
   reco::Vertex bestVtx;
   reco::Vertex bestVtxBS;
-  reco::Vertex BsVtx;
+  // reco::Vertex BsVtx;
 
   // get primary vertex
   Handle<reco::VertexCollection> recVtxs;
@@ -656,28 +656,28 @@ for(vector<pat::GenericParticle>::const_iterator iKaonM = thePATTrackHandle->beg
 
                p4phi_0c = p4kaonP_0c + p4kaonM_0c;
                p4jpsi_0c = p4mu1_0c + p4mu2_0c;
-               if(p4phi_0c.M() > PDG_PHI_MASS + 0.1) continue;
-               if(p4phi_0c.M() < PDG_PHI_MASS - 0.1) continue;
+              //  if(p4phi_0c.M() > PDG_PHI_MASS + 0.1) continue;
+              //  if(p4phi_0c.M() < PDG_PHI_MASS - 0.1) continue;
+               //
+              //   std::vector<RefCountedKinematicParticle> phiParticles;
+              //   phiParticles.push_back(pFactory.particle(kaonPTT, PM_PDG_PION_MASS, chi,ndf, PM_pion_sigma));
+              //   phiParticles.push_back(pFactory.particle(kaonMTT, PM_PDG_PION_MASS, chi,ndf, PM_pion_sigma));
+               //
+              //   KinematicParticleVertexFitter   phifitter;
+              //   RefCountedKinematicTree         phiTree;
+              //   phiTree = phifitter.fit(phiParticles);
+              //   if (!phiTree->isValid()) continue;
+               //
+              //   phiTree->movePointerToTheTop();
+                // RefCountedKinematicParticle PHIparticle       = phiTree->currentParticle();
+                // RefCountedKinematicVertex   PHIvtx            = phiTree->currentDecayVertex();
+                // if (!PHIvtx->vertexIsValid())  continue;
+                // double phi_Prob_tmp = TMath::Prob(PHIvtx->chiSquared(), PHIvtx->degreesOfFreedom());
+                // if(phi_Prob_tmp < 0.01) continue;
 
-                std::vector<RefCountedKinematicParticle> phiParticles;
-                phiParticles.push_back(pFactory.particle(kaonPTT, PM_PDG_PION_MASS, chi,ndf, PM_pion_sigma));
-                phiParticles.push_back(pFactory.particle(kaonMTT, PM_PDG_PION_MASS, chi,ndf, PM_pion_sigma));
-
-                KinematicParticleVertexFitter   phifitter;
-                RefCountedKinematicTree         phiTree;
-                phiTree = phifitter.fit(phiParticles);
-                if (!phiTree->isValid()) continue;
-
-                phiTree->movePointerToTheTop();
-                RefCountedKinematicParticle PHIparticle       = phiTree->currentParticle();
-                RefCountedKinematicVertex   PHIvtx            = phiTree->currentDecayVertex();
-                if (!PHIvtx->vertexIsValid())  continue;
-                double phi_Prob_tmp = TMath::Prob(PHIvtx->chiSquared(), PHIvtx->degreesOfFreedom());
-                if(phi_Prob_tmp < 0.01) continue;
-
-                double PHI_mass_c0 = PHIparticle->currentState().mass();
-                if ( PHI_mass_c0 < PDG_PHI_MASS - 0.05 ) continue;
-                if ( PHI_mass_c0 > PDG_PHI_MASS + 0.05 ) continue;
+                // double PHI_mass_c0 = PHIparticle->currentState().mass();
+                // if ( PHI_mass_c0 < PDG_PHI_MASS - 0.05 ) continue;
+                // if ( PHI_mass_c0 > PDG_PHI_MASS + 0.05 ) continue;
 
 
 
@@ -727,7 +727,7 @@ for(vector<pat::GenericParticle>::const_iterator iKaonM = thePATTrackHandle->beg
                if(B_Prob_tmp < 0.01) continue;
 
 
- 	             GlobalPoint BsGP = GlobalPoint( (*bDecayVertexCjp).position().x(), (*bDecayVertexCjp).position().y(), (*bDecayVertexCjp).position().z() );
+ 	           //   GlobalPoint BsGP = GlobalPoint( (*bDecayVertexCjp).position().x(), (*bDecayVertexCjp).position().y(), (*bDecayVertexCjp).position().z() );
                ROOT::Math::XYZPoint bDecayPoint( (*bDecayVertexCjp).position().x(), (*bDecayVertexCjp).position().y(), (*bDecayVertexCjp).position().z() );
 
 	 // get children from final B fit
@@ -839,38 +839,38 @@ for(vector<pat::GenericParticle>::const_iterator iKaonM = thePATTrackHandle->beg
                 }
                }
 
-     TransientTrack JP_TT = MUMUparticle->refittedTransientTrack();
-     if (!JP_TT.isValid()) continue;
-
-     TransientTrack phi_TT = PHIparticle->refittedTransientTrack();
-     if (!phi_TT.isValid()) continue;
-
- ///~~~fit 4 tracks from Bs together~~~///
-  vector<reco::TransientTrack> BsTracks;
-  BsTracks.push_back(JP_TT);
-  BsTracks.push_back(phi_TT);
-
-   AdaptiveVertexFitter BsVertexFitter;
-   TransientVertex BsTV = BsVertexFitter.vertex(BsTracks, BsGP);
-
-    BsVertex_isValid->push_back( BsTV.isValid() );
-    if ( BsTV.isValid() )
-     {
-
-       BsVtx = reco::Vertex(BsTV);
-
-        JP_Bsdecay_weight->push_back(BsVtx.trackWeight(JP_TT.trackBaseRef()));
-        phi_Bsdecay_weight->push_back(BsVtx.trackWeight(phi_TT.trackBaseRef()));
-        BsVertex_Chi->push_back(BsTV.totalChiSquared());
-        BsVertex_normChi->push_back(BsTV.normalisedChiSquared());
-      }
-         else
-          {
-               JP_Bsdecay_weight->push_back(-1);
-               phi_Bsdecay_weight->push_back(-1);
-               BsVertex_Chi->push_back(-999);
-               BsVertex_normChi->push_back(-999);
-          }
+ //     TransientTrack JP_TT = MUMUparticle->refittedTransientTrack();
+ //     if (!JP_TT.isValid()) continue;
+ //
+ //     TransientTrack phi_TT = PHIparticle->refittedTransientTrack();
+ //     if (!phi_TT.isValid()) continue;
+ //
+ // ///~~~fit 4 tracks from Bs together~~~///
+ //  vector<reco::TransientTrack> BsTracks;
+ //  BsTracks.push_back(JP_TT);
+ //  BsTracks.push_back(phi_TT);
+ //
+ //   AdaptiveVertexFitter BsVertexFitter;
+ //   TransientVertex BsTV = BsVertexFitter.vertex(BsTracks, BsGP);
+ //
+ //    BsVertex_isValid->push_back( BsTV.isValid() );
+ //    if ( BsTV.isValid() )
+ //     {
+ //
+ //       BsVtx = reco::Vertex(BsTV);
+ //
+ //        JP_Bsdecay_weight->push_back(BsVtx.trackWeight(JP_TT.trackBaseRef()));
+ //        phi_Bsdecay_weight->push_back(BsVtx.trackWeight(phi_TT.trackBaseRef()));
+ //        BsVertex_Chi->push_back(BsTV.totalChiSquared());
+ //        BsVertex_normChi->push_back(BsTV.normalisedChiSquared());
+ //      }
+ //         else
+ //          {
+ //               JP_Bsdecay_weight->push_back(-1);
+ //               phi_Bsdecay_weight->push_back(-1);
+ //               BsVertex_Chi->push_back(-999);
+ //               BsVertex_normChi->push_back(-999);
+ //          }
 
                //cout << "PV bestPV_Bang: " <<bestPV_Bang.x()<< " "<<bestPV_Bang.y()<<" "<<bestPV_Bang.z()<< endl;
             // }}}
@@ -1030,16 +1030,16 @@ for(vector<pat::GenericParticle>::const_iterator iKaonM = thePATTrackHandle->beg
 
                           B_Prob    ->push_back(B_Prob_tmp);
                           B_J_Prob  ->push_back(JP_Prob_tmp);
-                          B_Phi_Prob->push_back(phi_Prob_tmp);
+                          // B_Phi_Prob->push_back(phi_Prob_tmp);
 
    //------------------//
                   mumCat->push_back( mumCategory );
    	             mum_isGlobalMuon->push_back ( recoMuonM->isGlobalMuon() );
                   mum_isTrackerMuon->push_back ( recoMuonM->isTrackerMuon() );
                   mumAngT->push_back( muon::isGoodMuon(*recoMuonM,muon::TMOneStationTight) ); // este es para poner la condicion si es o no softmuon
-                  if ( BsTV.isValid() )
-        	           mum_isTight->push_back ( muon::isTightMuon(*recoMuonM, BsVtx ) );
-                  else
+                  // if ( BsTV.isValid() )
+        	        //    mum_isTight->push_back ( muon::isTightMuon(*recoMuonM, BsVtx ) );
+                  // else
                     mum_isTight->push_back ( -1 );
                   mum_isGoodLS_OptimT->push_back( muon::isGoodMuon(*recoMuonM,muon::TMLastStationOptimizedLowPtTight) );
 
@@ -1076,9 +1076,9 @@ for(vector<pat::GenericParticle>::const_iterator iKaonM = thePATTrackHandle->beg
                   mup_isGlobalMuon->push_back ( recoMuonP->isGlobalMuon() );
                   mup_isTrackerMuon->push_back ( recoMuonP->isTrackerMuon() );
                   mupAngT->push_back( muon::isGoodMuon(*recoMuonP,muon::TMOneStationTight) ); // este es para poner la condicion si es o no softmuon
-                  if ( BsTV.isValid() )
-        	           mup_isTight->push_back ( muon::isTightMuon(*recoMuonP, BsVtx ) );
-                  else
+                  // if ( BsTV.isValid() )
+        	        //    mup_isTight->push_back ( muon::isTightMuon(*recoMuonP, BsVtx ) );
+                  // else
                     mup_isTight->push_back ( -1 );
                   mup_isGoodLS_OptimT->push_back( muon::isGoodMuon(*recoMuonP,muon::TMLastStationOptimizedLowPtTight) );
 
@@ -1112,11 +1112,11 @@ for(vector<pat::GenericParticle>::const_iterator iKaonM = thePATTrackHandle->beg
 
                           /////////////////////////////////////////////////
 
-                          phiParticles.clear();
+                          // phiParticles.clear();
                           muonParticles.clear();
                           Bs_candidate_init.clear();
                           Bs_candidate.clear();
-                          BsTracks.clear();
+                          // BsTracks.clear();
                           vertexTracks.clear();
    	     } // one kaon
    	} // another kaon

@@ -45,7 +45,7 @@ if __name__ == '__main__':
 #	parser.add_argument('dset', choices='A B C D'.split(), help='the letter for the 2012 dataset to take')
 	dset = ''
 #	parser.add_argument('task', help='The task name. For example PiPi_recovery')
-	task = 'Xinc_v0'
+	task = 'Xinc_v1'
 #	parser.add_argument('-u', '--units_per_job', default=7, type=int)
 	units_per_job = 150
 #	parser.add_argument('-r', '--run-range')
