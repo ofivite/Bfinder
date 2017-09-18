@@ -519,8 +519,9 @@ void Bfinder::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       ParticleMass PM_PDG_MUON_MASS = PDG_MUON_MASS;
       ParticleMass PM_PDG_JPSI_MASS = PDG_JPSI_MASS;
       ParticleMass PM_PDG_KAON_MASS = PDG_KAON_MASS;
+      ParticleMass PM_PDG_PION_MASS = PDG_PION_MASS;
       float PM_muon_sigma = PM_PDG_MUON_MASS*1.e-6;
-      float PM_kaon_sigma = PM_PDG_KAON_MASS*1.e-6;
+      float PM_pion_sigma = PM_PDG_PION_MASS*1.e-6;
       float chi = 0.;
       float ndf = 0.;
 
@@ -650,8 +651,8 @@ for(vector<pat::GenericParticle>::const_iterator iKaonM = thePATTrackHandle->beg
 
 
                TLorentzVector p4kaonP_0c, p4kaonM_0c, p4phi_0c, p4jpsi_0c;
-               p4kaonP_0c.SetXYZM(iKaonP->px(),iKaonP->py(),iKaonP->pz(), PDG_KAON_MASS);
-               p4kaonM_0c.SetXYZM(iKaonM->px(),iKaonM->py(),iKaonM->pz(), PDG_KAON_MASS);
+               p4kaonP_0c.SetXYZM(iKaonP->px(),iKaonP->py(),iKaonP->pz(), PDG_PION_MASS);
+               p4kaonM_0c.SetXYZM(iKaonM->px(),iKaonM->py(),iKaonM->pz(), PDG_PION_MASS);
 
                p4phi_0c = p4kaonP_0c + p4kaonM_0c;
                p4jpsi_0c = p4mu1_0c + p4mu2_0c;
@@ -659,8 +660,8 @@ for(vector<pat::GenericParticle>::const_iterator iKaonM = thePATTrackHandle->beg
                if(p4phi_0c.M() < PDG_PHI_MASS - 0.1) continue;
 
                 std::vector<RefCountedKinematicParticle> phiParticles;
-                phiParticles.push_back(pFactory.particle(kaonPTT, PM_PDG_KAON_MASS, chi,ndf, PM_kaon_sigma));
-                phiParticles.push_back(pFactory.particle(kaonMTT, PM_PDG_KAON_MASS, chi,ndf, PM_kaon_sigma));
+                phiParticles.push_back(pFactory.particle(kaonPTT, PM_PDG_PION_MASS, chi,ndf, PM_pion_sigma));
+                phiParticles.push_back(pFactory.particle(kaonMTT, PM_PDG_PION_MASS, chi,ndf, PM_pion_sigma));
 
                 KinematicParticleVertexFitter   phifitter;
                 RefCountedKinematicTree         phiTree;
@@ -687,8 +688,8 @@ for(vector<pat::GenericParticle>::const_iterator iKaonM = thePATTrackHandle->beg
 
                Bs_candidate_init.push_back(pFactory.particle(muon1TT, PM_PDG_MUON_MASS, chi,ndf, PM_muon_sigma));
                Bs_candidate_init.push_back(pFactory.particle(muon2TT, PM_PDG_MUON_MASS, chi,ndf, PM_muon_sigma));
-               Bs_candidate_init.push_back(pFactory.particle(kaonPTT, PM_PDG_KAON_MASS, chi,ndf, PM_kaon_sigma));
-               Bs_candidate_init.push_back(pFactory.particle(kaonMTT, PM_PDG_KAON_MASS, chi,ndf, PM_kaon_sigma));
+               Bs_candidate_init.push_back(pFactory.particle(kaonPTT, PM_PDG_PION_MASS, chi,ndf, PM_pion_sigma));
+               Bs_candidate_init.push_back(pFactory.particle(kaonMTT, PM_PDG_PION_MASS, chi,ndf, PM_pion_sigma));
                RefCountedKinematicTree xbVFT, BsFitTree;
 
                std::vector<RefCountedKinematicParticle> Bs_candidate = Bs_candidate_init;
