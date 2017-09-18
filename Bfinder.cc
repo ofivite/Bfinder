@@ -518,7 +518,7 @@ void Bfinder::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 	  //Let's check the vertex and mass
       ParticleMass PM_PDG_MUON_MASS = PDG_MUON_MASS;
       ParticleMass PM_PDG_JPSI_MASS = PDG_JPSI_MASS;
-      ParticleMass PM_PDG_KAON_MASS = PDG_KAON_MASS;
+      // ParticleMass PM_PDG_KAON_MASS = PDG_KAON_MASS;
       ParticleMass PM_PDG_PION_MASS = PDG_PION_MASS;
       float PM_muon_sigma = PM_PDG_MUON_MASS*1.e-6;
       float PM_pion_sigma = PM_PDG_PION_MASS*1.e-6;
@@ -682,7 +682,9 @@ for(vector<pat::GenericParticle>::const_iterator iKaonM = thePATTrackHandle->beg
 
 
                //Now we are ready to combine!
-               if(fabs((p4jpsi_0c + p4phi_0c).M() - PDG_BS_MASS) > 0.6) continue;
+              //  if(fabs((p4jpsi_0c + p4phi_0c).M() - PDG_BS_MASS) > 0.6) continue;
+               if((p4jpsi_0c + p4phi_0c).M() < 3.1) continue;
+               if((p4jpsi_0c + p4phi_0c).M() > 4.5) continue;
 
                std::vector<RefCountedKinematicParticle> Bs_candidate_init;
 
@@ -717,12 +719,12 @@ for(vector<pat::GenericParticle>::const_iterator iKaonM = thePATTrackHandle->beg
 
                double Bs_mass_cjp_tmp = bCandCjp->currentState().mass();
 
-               if(Bs_mass_cjp_tmp < 5.2) continue;
-               if(Bs_mass_cjp_tmp > 5.5) continue;
+               if(Bs_mass_cjp_tmp < 3.6) continue;
+               if(Bs_mass_cjp_tmp > 4.) continue;
                //
                if(bDecayVertexCjp->chiSquared()<0) continue;
                double B_Prob_tmp   = TMath::Prob(bDecayVertexCjp->chiSquared(), (int) bDecayVertexCjp->degreesOfFreedom());
-               if(B_Prob_tmp < 0.02) continue;
+               if(B_Prob_tmp < 0.01) continue;
 
 
  	             GlobalPoint BsGP = GlobalPoint( (*bDecayVertexCjp).position().x(), (*bDecayVertexCjp).position().y(), (*bDecayVertexCjp).position().z() );
