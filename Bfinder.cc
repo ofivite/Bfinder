@@ -675,9 +675,9 @@ for(vector<pat::GenericParticle>::const_iterator iKaonM = thePATTrackHandle->beg
                 double phi_Prob_tmp = TMath::Prob(PHIvtx->chiSquared(), PHIvtx->degreesOfFreedom());
                 if(phi_Prob_tmp < 0.01) continue;
 
-                double PHI_mass_c0 = PHIparticle->currentState().mass();
-                if ( PHI_mass_c0 < PDG_PHI_MASS - 0.05 ) continue;
-                if ( PHI_mass_c0 > PDG_PHI_MASS + 0.05 ) continue;
+                // double PHI_mass_c0 = PHIparticle->currentState().mass();
+                // if ( PHI_mass_c0 < PDG_PHI_MASS - 0.05 ) continue;
+                // if ( PHI_mass_c0 > PDG_PHI_MASS + 0.05 ) continue;
 
 
 
